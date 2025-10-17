@@ -2,7 +2,7 @@ import React from 'react';
 import ModelCard from './ModelCard';
 import SkeletonGrid from './SkeletonGrid';
 import ErrorState from './ErrorState';
-import type { MentalModel } from '@/types/mentalModels';
+import type { MentalModel } from '@/types/mental-models';
 
 type MentalModelsListProps = {
   models?: MentalModel[];
@@ -40,4 +40,5 @@ const MentalModelsList = ({
   );
 };
 
+export { MentalModelsList };
 export default MentalModelsList;
