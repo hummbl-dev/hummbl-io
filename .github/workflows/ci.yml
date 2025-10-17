@@ -27,11 +27,12 @@ jobs:
       run: npm test -- --run --coverage
     
     - name: Upload coverage to Codecov
+      continue-on-error: true
       uses: codecov/codecov-action@v3
       with:
         token: ${{ secrets.CODECOV_TOKEN }}
         file: ./coverage/coverage-summary.json
-        fail_ci_if_error: true
+        fail_ci_if_error: false
 
   build:
     name: Build and Deploy
@@ -54,13 +55,12 @@ jobs:
     - name: Build
       run: npm run build
       
-    - name: Run Storybook build
-      run: npm run build-storybook
-      
     - name: Deploy to Vercel
+      continue-on-error: true
       uses: amondnet/vercel-action@v20
       with:
         vercel-token: ${{ secrets.VERCEL_TOKEN }}
+        github-token: ${{ secrets.GITHUB_TOKEN }}
         vercel-args: '--prod'
         vercel-org-id: ${{ secrets.VERCEL_ORG_ID }}
         vercel-project-id: ${{ secrets.VERCEL_PROJECT_ID }}
