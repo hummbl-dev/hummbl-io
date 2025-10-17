@@ -11,14 +11,8 @@ export default defineConfig({
   },
   test: {
     globals: true,
-    environment: 'jsdom',
+    environment: 'happy-dom',
     setupFiles: './vitest.setup.ts',
-    environmentOptions: {
-      jsdom: {
-        resources: 'usable',
-      },
-    },
-    pool: 'forks',
     coverage: {
       provider: 'v8',
       reporter: ['text', 'json', 'html', 'json-summary']
