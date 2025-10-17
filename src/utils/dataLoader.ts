@@ -5,61 +5,42 @@
  * Supports both static JSON files and dynamic API calls
  */
 
-const BUILD_OUTPUT_DIR = (import.meta.env?.VITE_BUILD_OUTPUT_DIR as string) || '/data';
-const USE_STATIC_DATA = (import.meta.env?.VITE_USE_STATIC_DATA as string) !== 'false'; // Default to true
+export const config = {
+  get useStatic() {
+    return import.meta.env.VITE_USE_STATIC_DATA === 'true';
+  },
+  get baseDir() {
+    return import.meta.env.VITE_BUILD_OUTPUT_DIR || '/data';
+  },
+};
+
+async function fetchData(url: string, label: string) {
+  const res = await fetch(url);
+  if (!res.ok) throw new Error(`Failed to load ${label}: ${res.status}`);
+  return res.json();
+}
 
 export async function loadNarratives() {
-  if (USE_STATIC_DATA) {
-    const response = await fetch(`${BUILD_OUTPUT_DIR}/narratives.json`);
-    if (!response.ok) throw new Error(`Failed to load narratives: ${response.status}`);
-    return response.json();
-  }
-  // Fallback to API
-  const response = await fetch('/api/narratives');
-  if (!response.ok) throw new Error('Failed to fetch narratives from API');
-  return response.json();
+  const path = config.useStatic ? `${config.baseDir}/narratives.json` : '/api/narratives';
+  return fetchData(path, 'narratives');
 }
 
 export async function loadNetwork() {
-  if (USE_STATIC_DATA) {
-    const response = await fetch(`${BUILD_OUTPUT_DIR}/network.json`);
-    if (!response.ok) throw new Error('Failed to load network data');
-    return response.json();
-  }
-  const response = await fetch('/api/network');
-  if (!response.ok) throw new Error('Failed to fetch network from API');
-  return response.json();
+  const path = config.useStatic ? `${config.baseDir}/network.json` : '/api/network';
+  return fetchData(path, 'network data');
 }
 
 export async function loadQDM() {
-  if (USE_STATIC_DATA) {
-    const response = await fetch(`${BUILD_OUTPUT_DIR}/qdm.json`);
-    if (!response.ok) throw new Error('Failed to load QDM data');
-    return response.json();
-  }
-  const response = await fetch('/api/qdm');
-  if (!response.ok) throw new Error('Failed to fetch QDM from API');
-  return response.json();
+  const path = config.useStatic ? `${config.baseDir}/qdm.json` : '/api/qdm';
+  return fetchData(path, 'QDM data');
 }
 
 export async function loadLedger() {
-  if (USE_STATIC_DATA) {
-    const response = await fetch(`${BUILD_OUTPUT_DIR}/ledger.json`);
-    if (!response.ok) throw new Error('Failed to load ledger data');
-    return response.json();
-  }
-  const response = await fetch('/api/ledger');
-  if (!response.ok) throw new Error('Failed to fetch ledger from API');
-  return response.json();
+  const path = config.useStatic ? `${config.baseDir}/ledger.json` : '/api/ledger';
+  return fetchData(path, 'ledger data');
 }
 
 export async function loadSITREP() {
-  if (USE_STATIC_DATA) {
-    const response = await fetch(`${BUILD_OUTPUT_DIR}/sitrep.json`);
-    if (!response.ok) throw new Error('Failed to load SITREP data');
-    return response.json();
-  }
-  const response = await fetch('/api/sitrep');
-  if (!response.ok) throw new Error('Failed to fetch SITREP from API');
-  return response.json();
+  const path = config.useStatic ? `${config.baseDir}/sitrep.json` : '/api/sitrep';
+  return fetchData(path, 'SITREP data');
 }

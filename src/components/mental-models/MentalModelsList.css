@@ -1,0 +1,355 @@
+.mental-models-container {
+  max-width: 1400px;
+  margin: 0 auto;
+  padding: 1.5rem 2rem 3rem;
+}
+
+.filters {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 1.5rem;
+  flex-wrap: wrap;
+  gap: 1rem;
+  align-items: flex-end;
+}
+
+.search-box {
+  flex: 1;
+  min-width: 280px;
+  max-width: 500px;
+}
+
+.search-input {
+  width: 100%;
+  padding: 0.75rem 1.25rem;
+  border: 2px solid #e2e8f0;
+  border-radius: 8px;
+  font-size: 1rem;
+  transition: all 0.2s ease;
+  background-color: #fff;
+  color: #1a202c;
+}
+
+.search-input:focus {
+  outline: none;
+  border-color: #4299e1;
+  box-shadow: 0 0 0 3px rgba(66, 153, 225, 0.2);
+}
+
+.filter-group {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  flex-wrap: wrap;
+}
+
+.filter-group label {
+  font-weight: 500;
+  color: #4a5568;
+  font-size: 0.95rem;
+}
+
+.filter-select {
+  padding: 0.6rem 1rem;
+  border: 2px solid #e2e8f0;
+  border-radius: 8px;
+  background-color: #fff;
+  font-size: 0.95rem;
+  color: #2d3748;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  min-width: 180px;
+}
+
+.filter-select:focus {
+  outline: none;
+  border-color: #4299e1;
+  box-shadow: 0 0 0 3px rgba(66, 153, 225, 0.2);
+}
+
+.models-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+  gap: 1.5rem;
+  margin-top: 1.5rem;
+  padding: 0.25rem;
+}
+
+.model-card {
+  border: 1px solid #e2e8f0;
+  border-radius: 10px;
+  padding: 1.5rem;
+  background-color: #fff;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  cursor: pointer;
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  position: relative;
+  overflow: hidden;
+}
+
+.model-card::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 4px;
+  background: linear-gradient(90deg, #4299e1, #48bb78);
+  transform: scaleX(0);
+  transform-origin: left;
+  transition: transform 0.3s ease;
+}
+
+.model-card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1),
+              0 8px 10px -6px rgba(0, 0, 0, 0.1);
+  border-color: #cbd5e0;
+}
+
+.model-card:hover::before {
+  transform: scaleX(1);
+}
+
+.model-header {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 1rem;
+  align-items: flex-start;
+  gap: 0.75rem;
+}
+
+.model-code {
+  font-family: 'Fira Code', 'Cascadia Code', 'Consolas', monospace;
+  font-weight: 600;
+  color: #2b6cb0;
+  background-color: #ebf8ff;
+  padding: 0.25rem 0.75rem;
+  border-radius: 9999px;
+  font-size: 0.85em;
+  letter-spacing: 0.02em;
+  flex-shrink: 0;
+}
+
+.model-transformation {
+  font-size: 0.8em;
+  color: #4a5568;
+  background-color: #f7fafc;
+  padding: 0.25rem 0.75rem;
+  border-radius: 9999px;
+  font-weight: 500;
+  border: 1px solid #e2e8f0;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 100%;
+}
+
+.model-name {
+  margin: 0 0 0.75rem 0;
+  color: #1a202c;
+  font-size: 1.25rem;
+  font-weight: 600;
+  line-height: 1.4;
+  transition: color 0.2s ease;
+}
+
+.model-card:hover .model-name {
+  color: #2b6cb0;
+}
+
+.model-definition {
+  color: #4a5568;
+  font-size: 0.95rem;
+  line-height: 1.6;
+  margin: 0 0 1rem 0;
+  flex-grow: 1;
+}
+
+.model-footer {
+  margin-top: auto;
+  padding-top: 1rem;
+  border-top: 1px solid #e2e8f0;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  font-size: 0.85rem;
+  color: #718096;
+}
+
+.model-example {
+  display: block;
+  font-size: 0.85em;
+  color: #718096;
+  font-style: italic;
+  line-height: 1.5;
+  background-color: #f8fafc;
+  padding: 0.75rem;
+  border-radius: 6px;
+  margin-top: 0.75rem;
+  border-left: 3px solid #cbd5e0;
+}
+
+.model-example::before {
+  content: 'Example: ';
+  font-weight: 500;
+  color: #4a5568;
+}
+
+.no-results {
+  grid-column: 1 / -1;
+  text-align: center;
+  padding: 4rem 2rem;
+  color: #718096;
+  font-size: 1.1rem;
+  background-color: #f8fafc;
+  border-radius: 10px;
+  margin: 1rem 0;
+  border: 2px dashed #e2e8f0;
+}
+
+/* Responsive adjustments */
+@media (max-width: 1024px) {
+  .models-grid {
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  }
+}
+
+@media (max-width: 768px) {
+  .mental-models-container {
+    padding: 1rem 1.25rem 2.5rem;
+  }
+  
+  .filters {
+    flex-direction: column;
+    gap: 1.25rem;
+  }
+  
+  .search-box,
+  .filter-group {
+    width: 100%;
+    max-width: 100%;
+  }
+  
+  .filter-group {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.5rem;
+  }
+  
+  .filter-select {
+    width: 100%;
+  }
+  
+  .models-grid {
+    grid-template-columns: 1fr;
+    gap: 1.25rem;
+  }
+}
+
+/* Dark mode support */
+@media (prefers-color-scheme: dark) {
+  .search-input,
+  .filter-select,
+  .model-card,
+  .model-example {
+    background-color: #2d3748;
+    border-color: #4a5568;
+    color: #e2e8f0;
+  }
+  
+  .search-input:focus,
+  .filter-select:focus {
+    border-color: #63b3ed;
+    box-shadow: 0 0 0 3px rgba(99, 179, 237, 0.3);
+  }
+  
+  .model-card {
+    background-color: #2d3748;
+    border-color: #4a5568;
+  }
+  
+  .model-card:hover {
+    border-color: #718096;
+    box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.25),
+                0 8px 10px -6px rgba(0, 0, 0, 0.2);
+  }
+  
+  .model-name {
+    color: #f7fafc;
+  }
+  
+  .model-name:hover {
+    color: #90cdf4;
+  }
+  
+  .model-code {
+    color: #90cdf4;
+    background-color: rgba(144, 205, 244, 0.1);
+  }
+  
+  .model-definition {
+    color: #cbd5e0;
+  }
+  
+  .model-transformation {
+    background-color: rgba(74, 85, 104, 0.3);
+    color: #cbd5e0;
+    border-color: #4a5568;
+  }
+  
+  .model-footer {
+    border-color: #4a5568;
+    color: #a0aec0;
+  }
+  
+  .model-example {
+    background-color: rgba(74, 85, 104, 0.3);
+    border-left-color: #4a5568;
+    color: #cbd5e0;
+  }
+  
+  .model-example::before {
+    color: #a0aec0;
+  }
+  
+  .no-results {
+    background-color: rgba(74, 85, 104, 0.3);
+    border-color: #4a5568;
+    color: #a0aec0;
+  }
+}
+
+/* Animation for loading state */
+@keyframes pulse {
+  0%, 100% { opacity: 0.6; }
+  50% { opacity: 1; }
+}
+
+.loading-card {
+  animation: pulse 1.5s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+  background-color: #f7fafc;
+  border-radius: 10px;
+  min-height: 200px;
+}
+
+@media (prefers-color-scheme: dark) {
+  .loading-card {
+    background-color: #2d3748;
+  }
+}
+
+/* Print styles */
+@media print {
+  .model-card {
+    break-inside: avoid;
+    border: 1px solid #e2e8f0;
+    page-break-inside: avoid;
+  }
+  
+  .models-grid {
+    display: block;
+  }
+}
