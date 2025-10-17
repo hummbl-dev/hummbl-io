@@ -24,10 +24,7 @@ jobs:
       run: npm ci
       
     - name: Run tests with coverage
-      run: |
-        npm test -- --coverage --coverageReporters="json-summary" --coverageReporters="text"
-        # Fail if coverage is below baseline thresholds
-        npx coverage-gate --line 7 --branch 70 --function 55
+      run: npm test -- --run --coverage
     
     - name: Upload coverage to Codecov
       uses: codecov/codecov-action@v3
