@@ -89,15 +89,15 @@
 .stat-number {
   font-size: var(--text-3xl);
   font-weight: var(--font-extrabold);
-  color: var(--text-primary);
+  color: #111827;
   line-height: 1;
   margin-bottom: var(--space-2);
 }
 
 .stat-label {
   font-size: var(--text-sm);
-  font-weight: var(--font-semibold);
-  color: var(--text-secondary);
+  font-weight: var(--font-bold);
+  color: #374151;
   text-transform: uppercase;
   letter-spacing: var(--tracking-wide);
   margin-bottom: var(--space-2);
@@ -105,8 +105,9 @@
 
 .stat-description {
   font-size: var(--text-sm);
-  color: var(--text-tertiary);
+  color: #4b5563;
   line-height: var(--leading-relaxed);
+  font-weight: var(--font-medium);
 }
 
 .stat-divider {
