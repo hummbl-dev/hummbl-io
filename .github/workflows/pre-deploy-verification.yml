@@ -13,12 +13,12 @@ jobs:
     runs-on: ubuntu-latest
     
     steps:
-    - uses: actions/checkout@v3
+    - uses: actions/checkout@v4
       with:
         fetch-depth: 0
     
     - name: Setup Node.js
-      uses: actions/setup-node@v3
+      uses: actions/setup-node@v4
       with:
         node-version: '18.x'
         cache: 'npm'
@@ -36,12 +36,18 @@ jobs:
     
     - name: Upload build artifacts
       if: always()
-      uses: actions/upload-artifact@v3
+      uses: actions/upload-artifact@v4
       with:
         name: build-artifacts
         path: |
           public/data/**
           dist/**
+    
+    - name: Create verification log
+      if: github.event_name == 'pull_request'
+      run: |
+        # Create a verification log for the comment
+        node scripts/verify_production_integrity.mjs > verification.log 2>&1 || true
     
     - name: Comment on PR
       if: github.event_name == 'pull_request'
@@ -49,19 +55,19 @@ jobs:
       with:
         script: |
           const fs = require('fs');
-          const verificationOutput = fs.readFileSync('verification.log', 'utf8');
+          let verificationOutput = '(No verification log found)';
+          
+          if (fs.existsSync('verification.log')) {
+            verificationOutput = fs.readFileSync('verification.log', 'utf8');
+          }
           
           await github.rest.issues.createComment({
             issue_number: context.issue.number,
             owner: context.repo.owner,
             repo: context.repo.repo,
-            body: `### 🔍 Pre-Deploy Verification Results\n\n\`\`\`\n${verificationOutput}\n\`\`\`\n
-✅ Build and verification completed successfully.`
+            body: `### 🔍 Pre-Deploy Verification Results\n\n\`\`\`\n${verificationOutput}\n\`\`\`\n\n✅ Build and verification completed successfully.`
           });
-        
-        # Create a verification log for the comment
-        node scripts/verify_production_integrity.mjs > verification.log 2>&1 || true
-        
+    
     - name: Fail if verification failed
       if: failure()
       run: |

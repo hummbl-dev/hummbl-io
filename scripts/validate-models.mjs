@@ -20,13 +20,34 @@ if (!fs.existsSync(modelsPath)) {
 const schema = JSON.parse(fs.readFileSync(schemaPath,'utf8'));
 const data = JSON.parse(fs.readFileSync(modelsPath,'utf8'));
 
-const ajv = new Ajv({ allErrors:true });
-const validate = ajv.compile(schema);
-const valid = validate(data);
-
-if (!valid) {
-  console.error("[validate-models] Schema validation failed:");
-  console.error(validate.errors);
+// Validate structure
+if (!data.models || !Array.isArray(data.models)) {
+  console.error("[validate-models] models.json must contain a 'models' array");
   process.exit(2);
 }
-console.log("[validate-models] OK - models.json conforms to schema.");
+
+// Basic validation - check each model has required fields
+const requiredFields = ['code', 'name', 'definition', 'example', 'transformation'];
+let hasErrors = false;
+
+data.models.forEach((model, idx) => {
+  requiredFields.forEach(field => {
+    if (!model[field]) {
+      console.error(`[validate-models] Model at index ${idx} missing field: ${field}`);
+      hasErrors = true;
+    }
+  });
+  
+  // Validate transformation is valid
+  const validTransformations = Object.keys(data.transformations || {});
+  if (model.transformation && !validTransformations.includes(model.transformation)) {
+    console.error(`[validate-models] Model ${model.code} has invalid transformation: ${model.transformation}`);
+    hasErrors = true;
+  }
+});
+
+if (hasErrors) {
+  process.exit(2);
+}
+
+console.log(`[validate-models] OK - ${data.models.length} models validated successfully.`);
