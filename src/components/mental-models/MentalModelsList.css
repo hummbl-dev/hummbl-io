@@ -188,22 +188,22 @@
 .model-example {
   display: block;
   font-size: 0.9em;
-  color: #1f2937 !important;
+  color: #ffffff !important;
   font-weight: 500;
   font-style: normal;
   line-height: 1.6;
-  background-color: #f0fdf4;
+  background: linear-gradient(135deg, #059669 0%, #047857 100%);
   padding: 0.875rem;
   border-radius: 8px;
   margin-top: auto;
   border-left: 4px solid #10b981;
-  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 }
 
 .model-example::before {
   content: 'Example: ';
   font-weight: 700;
-  color: #10b981 !important;
+  color: #d1fae5 !important;
   font-style: normal;
   display: block;
   margin-bottom: 0.25rem;
