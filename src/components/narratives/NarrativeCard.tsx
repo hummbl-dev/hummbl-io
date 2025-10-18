@@ -102,7 +102,7 @@ export function NarrativeCard({ narrative, onClick }: NarrativeCardProps) {
         <div>
           <span style={{ fontSize: '12px', color: '#6b7280' }}>Signals</span>
           <div style={{ fontSize: '18px', fontWeight: 600, color: '#111827' }}>
-            {narrative.linked_signals ? narrative.linked_signals.length : 0}
+            {narrative.linked_signals?.length || 0}
           </div>
         </div>
         <div>
