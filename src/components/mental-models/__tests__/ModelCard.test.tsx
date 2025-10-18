@@ -13,6 +13,7 @@ const mockModel: MentalModel = {
   name: 'First Principles',
   code: 'FP',
   description: 'Breaking down problems into basics',
+  example: 'Start from foundational truths',
   category: 'Problem Solving',
   tags: ['thinking'],
   transformations: ['P'] as TransformationKey[],
@@ -24,8 +25,10 @@ describe('ModelCard', () => {
   it('renders full model info', () => {
     render(<ModelCard model={mockModel} onSelect={() => {}} />);
     expect(screen.getByText('First Principles')).toBeInTheDocument();
-    expect(screen.getByText('Problem Solving')).toBeInTheDocument();
+    expect(screen.getByText('FP')).toBeInTheDocument();
+    expect(screen.getByText('P')).toBeInTheDocument();
     expect(screen.getByText(/Breaking down problems/i)).toBeInTheDocument();
+    expect(screen.getByText(/Start from foundational truths/i)).toBeInTheDocument();
   });
 
   it('calls onSelect when clicked', async () => {
