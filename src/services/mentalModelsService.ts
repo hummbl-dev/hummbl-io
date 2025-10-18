@@ -17,7 +17,7 @@ type MentalModelsResponse = {
 // Constants
 const CACHE_KEY = 'hummbl:mental-models:cache';
 const CACHE_TTL = 24 * 60 * 60 * 1000; // 24 hours in milliseconds
-const DATA_URL = '/data/mental-models.json';
+const DATA_URL = '/models.json';
 
 /**
  * Fetches mental models from the server
@@ -37,17 +37,33 @@ export async function fetchMentalModels(): Promise<MentalModel[]> {
       throw new Error(`Failed to fetch mental models: ${response.statusText}`);
     }
 
-    const data: MentalModelsResponse = await response.json();
+    const data: any = await response.json();
     
-    // Validate the response
-    if (!isValidMentalModelsResponse(data)) {
-      throw new Error('Invalid mental models data format');
-    }
+    // Transform models.json format to expected format
+    const transformedData: MentalModelsResponse = {
+      version: data.version,
+      lastUpdated: data.lastUpdated,
+      models: data.models.map((model: any) => ({
+        id: model.code.toLowerCase().replace(/[^a-z0-9]/g, '-'),
+        name: model.name,
+        code: model.code,
+        description: model.definition || model.description,
+        example: model.example,
+        category: getCategoryFromTransformation(model.transformation),
+        tags: [model.transformation?.toLowerCase() || 'general'],
+        transformations: [model.transformation],
+        sources: [],
+        meta: {
+          isCore: true,
+          difficulty: 3
+        }
+      }))
+    };
 
-    // Cache the response
-    saveToCache(data);
+    // Cache the transformed response
+    saveToCache(transformedData);
     
-    return data.models;
+    return transformedData.models;
   } catch (error) {
     console.error('Error fetching mental models:', error);
     throw error;
@@ -91,6 +107,19 @@ export function useMentalModels() {
   }, []);
 
   return { models, isLoading, error };
+}
+
+// Transformation helpers
+function getCategoryFromTransformation(transformation: string): string {
+  const categoryMap: Record<string, string> = {
+    'P': 'Perspective & Identity',
+    'IN': 'Inversion & Reversal',
+    'CO': 'Composition & Integration',
+    'DE': 'Decomposition & Analysis',
+    'RE': 'Recursion & Self-Reference',
+    'SY': 'Meta-Systems & Emergence'
+  };
+  return categoryMap[transformation] || 'General';
 }
 
 // Cache helpers
