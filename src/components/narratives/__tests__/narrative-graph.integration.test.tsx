@@ -440,13 +440,14 @@ describe('Narrative-Graph Integration Tests', () => {
       const { rerender } = render(<NarrativeList />);
 
       await waitFor(() => {
-        expect(screen.queryByText(/Perspective/i) || document.body).toBeTruthy();
+        // Use exact title to avoid matching multiple elements
+        expect(screen.queryByText('Perspective / Identity') || document.body).toBeTruthy();
       });
 
       rerender(<NarrativeList />);
 
       await waitFor(() => {
-        expect(screen.queryByText(/Perspective/i) || document.body).toBeTruthy();
+        expect(screen.queryByText('Perspective / Identity') || document.body).toBeTruthy();
       });
     });
 
