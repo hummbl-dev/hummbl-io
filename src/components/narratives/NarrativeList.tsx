@@ -3,6 +3,7 @@
 import { useState } from 'react';
 import { useNarratives } from '../../hooks/useNarratives';
 import { NarrativeCard } from './NarrativeCard';
+import { NarrativeCardSkeleton } from './NarrativeCardSkeleton';
 import { NarrativeHero } from './NarrativeHero';
 import { NarrativeDetailModal } from './NarrativeDetailModal';
 import type { Narrative } from '../../types/narrative';
@@ -26,10 +27,16 @@ export function NarrativeList() {
 
   if (loading) {
     return (
-      <div className="narrative-loading">
-        <div className="loading-spinner" role="status" aria-label="Loading"></div>
-        <p className="loading-text">Loading narratives...</p>
-      </div>
+      <>
+        <NarrativeHero narrativeCount={0} />
+        <div className="narrative-list-container">
+          <div className="narrative-grid">
+            {Array.from({ length: 6 }).map((_, idx) => (
+              <NarrativeCardSkeleton key={idx} />
+            ))}
+          </div>
+        </div>
+      </>
     );
   }
 
