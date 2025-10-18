@@ -401,6 +401,76 @@
 .citation-source {
   font-size: var(--text-sm);
   color: var(--text-tertiary);
+  margin-bottom: var(--space-3);
+}
+
+.citation-links {
+  display: flex;
+  gap: var(--space-2);
+  flex-wrap: wrap;
+  margin-top: var(--space-3);
+}
+
+.citation-link {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2);
+  padding: 6px var(--space-3);
+  font-size: var(--text-sm);
+  font-weight: var(--font-medium);
+  text-decoration: none;
+  border-radius: var(--radius-md);
+  transition: all var(--transition-base);
+  cursor: pointer;
+}
+
+.citation-link svg {
+  flex-shrink: 0;
+}
+
+.citation-link.scholar-link {
+  background: #4285f4;
+  color: white;
+  border: none;
+}
+
+.citation-link.scholar-link:hover {
+  background: #3367d6;
+  transform: translateY(-1px);
+  box-shadow: 0 2px 4px rgba(66, 133, 244, 0.3);
+}
+
+.citation-link.direct-link {
+  background: var(--color-primary);
+  color: white;
+  border: none;
+}
+
+.citation-link.direct-link:hover {
+  background: var(--color-primary-dark);
+  transform: translateY(-1px);
+  box-shadow: 0 2px 4px rgba(16, 185, 129, 0.3);
+}
+
+.citation-link.copy-link {
+  background: var(--gray-100);
+  color: var(--text-secondary);
+  border: 1px solid var(--border-light);
+}
+
+.citation-link.copy-link:hover {
+  background: var(--gray-200);
+  color: var(--text-primary);
+  border-color: var(--border-dark);
+}
+
+.citation-link:focus-visible {
+  outline: 2px solid var(--color-primary);
+  outline-offset: 2px;
+}
+
+.citation-link:active {
+  transform: translateY(0);
 }
 
 /* Methods Grid */

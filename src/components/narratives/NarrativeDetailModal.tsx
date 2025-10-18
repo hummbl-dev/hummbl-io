@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from 'react';
 import type { Narrative } from '../../types/narrative';
+import { generateScholarUrl, getDirectSourceUrl, copyCitationToClipboard } from '../../utils/citationLinks';
 import './NarrativeDetailModal.css';
 
 interface NarrativeDetailModalProps {
@@ -255,18 +256,64 @@ export function NarrativeDetailModal({ narrative, isOpen, onClose }: NarrativeDe
             <div id="citations-panel" role="tabpanel" className="tab-panel">
               {narrative.citations && narrative.citations.length > 0 ? (
                 <div className="citations-list">
-                  {narrative.citations.map((citation, idx) => (
-                    <div key={idx} className="citation-card">
-                      <div className="citation-number">{idx + 1}</div>
-                      <div className="citation-content">
-                        <div className="citation-author">{citation.author}</div>
-                        <div className="citation-title">{citation.title}</div>
-                        <div className="citation-source">
-                          <em>{citation.source}</em>, {citation.year}
+                  {narrative.citations.map((citation, idx) => {
+                    const scholarUrl = generateScholarUrl(citation);
+                    const directUrl = getDirectSourceUrl(citation);
+                    
+                    return (
+                      <div key={idx} className="citation-card">
+                        <div className="citation-number">{idx + 1}</div>
+                        <div className="citation-content">
+                          <div className="citation-author">{citation.author}</div>
+                          <div className="citation-title">{citation.title}</div>
+                          <div className="citation-source">
+                            <em>{citation.source}</em>, {citation.year}
+                          </div>
+                          <div className="citation-links">
+                            <a
+                              href={scholarUrl}
+                              target="_blank"
+                              rel="noopener noreferrer"
+                              className="citation-link scholar-link"
+                              aria-label={`Search for "${citation.title}" on Google Scholar`}
+                            >
+                              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                                <circle cx="11" cy="11" r="8"/>
+                                <path d="m21 21-4.35-4.35"/>
+                              </svg>
+                              Google Scholar
+                            </a>
+                            {directUrl && (
+                              <a
+                                href={directUrl}
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                className="citation-link direct-link"
+                                aria-label={`Direct link to ${citation.title}`}
+                              >
+                                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                                  <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
+                                  <polyline points="14 2 14 8 20 8"/>
+                                </svg>
+                                Direct Link
+                              </a>
+                            )}
+                            <button
+                              className="citation-link copy-link"
+                              onClick={() => copyCitationToClipboard(citation)}
+                              aria-label={`Copy citation for "${citation.title}"`}
+                            >
+                              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                                <rect x="9" y="9" width="13" height="13" rx="2" ry="2"/>
+                                <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/>
+                              </svg>
+                              Copy
+                            </button>
+                          </div>
                         </div>
                       </div>
-                    </div>
-                  ))}
+                    );
+                  })}
                 </div>
               ) : (
                 <div className="empty-state">
