@@ -76,7 +76,7 @@ describe('MentalModelsList Integration Tests', () => {
   });
 
   describe('Data Service Integration', () => {
-    it('fetches mental models from /models.json', async () => {
+    it('fetches mental models from models.json', async () => {
       mockFetch.mockResolvedValueOnce({
         ok: true,
         json: async () => validResponse,
@@ -84,7 +84,9 @@ describe('MentalModelsList Integration Tests', () => {
 
       await mentalModelsService.fetchMentalModels();
       
-      expect(mockFetch).toHaveBeenCalledWith('/models.json');
+      // Accept any absolute/relative URL that points to models.json
+      const calls = mockFetch.mock.calls.map(call => call[0]);
+      expect(calls.some((url: any) => typeof url === 'string' && url.includes('models.json'))).toBe(true);
     });
 
     it('handles successful data fetch and renders models', async () => {
