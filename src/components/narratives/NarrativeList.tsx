@@ -2,10 +2,12 @@
 
 import { useState } from 'react';
 import { useNarratives } from '../../hooks/useNarratives';
+import { useNarrativeFilters, type FilterOptions } from '../../hooks/useNarrativeFilters';
 import { NarrativeCard } from './NarrativeCard';
 import { NarrativeCardSkeleton } from './NarrativeCardSkeleton';
 import { NarrativeHero } from './NarrativeHero';
 import { NarrativeDetailModal } from './NarrativeDetailModal';
+import { NarrativeFilters } from './NarrativeFilters';
 import type { Narrative } from '../../types/narrative';
 import './NarrativeList.css';
 
@@ -13,6 +15,22 @@ export function NarrativeList() {
   const { narratives, loading, error, refetch } = useNarratives();
   const [selectedNarrative, setSelectedNarrative] = useState<Narrative | null>(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
+
+  // Filter state
+  const [filters, setFilters] = useState<FilterOptions>({
+    searchTerm: '',
+    category: null,
+    evidenceGrade: null,
+    complexityLevel: null,
+    sortBy: 'default',
+    sortDirection: 'desc',
+  });
+
+  // Apply filters
+  const { filteredNarratives, resultCount, totalCount } = useNarrativeFilters(narratives, filters);
+
+  // Extract unique categories
+  const categories = Array.from(new Set(narratives.map((n) => n.category))).sort();
 
   const handleCardClick = (narrative: Narrative) => {
     setSelectedNarrative(narrative);
@@ -77,15 +95,35 @@ export function NarrativeList() {
 
       {/* Narrative List */}
       <div className="narrative-list-container">
-        <div className="narrative-grid">
-          {narratives.map((narrative) => (
-            <NarrativeCard
-              key={narrative.narrative_id}
-              narrative={narrative}
-              onClick={() => handleCardClick(narrative)}
-            />
-          ))}
-        </div>
+        {/* Filters */}
+        <NarrativeFilters
+          filters={filters}
+          onFiltersChange={setFilters}
+          resultCount={resultCount}
+          totalCount={totalCount}
+          categories={categories}
+        />
+
+        {/* Narrative Grid */}
+        {filteredNarratives.length > 0 ? (
+          <div className="narrative-grid">
+            {filteredNarratives.map((narrative) => (
+              <NarrativeCard
+                key={narrative.narrative_id}
+                narrative={narrative}
+                onClick={() => handleCardClick(narrative)}
+              />
+            ))}
+          </div>
+        ) : (
+          <div className="narrative-empty">
+            <div className="empty-state-icon" aria-hidden="true">🔍</div>
+            <h2 className="empty-state-title">No Narratives Found</h2>
+            <p className="empty-state-description">
+              Try adjusting your search terms or filters to find what you're looking for.
+            </p>
+          </div>
+        )}
       </div>
 
       {/* Detail Modal */}
