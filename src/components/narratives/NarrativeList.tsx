@@ -1,12 +1,28 @@
 // Narrative list component
 
+import { useState } from 'react';
 import { useNarratives } from '../../hooks/useNarratives';
 import { NarrativeCard } from './NarrativeCard';
 import { NarrativeHero } from './NarrativeHero';
+import { NarrativeDetailModal } from './NarrativeDetailModal';
+import type { Narrative } from '../../types/narrative';
 import './NarrativeList.css';
 
 export function NarrativeList() {
   const { narratives, loading, error, refetch } = useNarratives();
+  const [selectedNarrative, setSelectedNarrative] = useState<Narrative | null>(null);
+  const [isModalOpen, setIsModalOpen] = useState(false);
+
+  const handleCardClick = (narrative: Narrative) => {
+    setSelectedNarrative(narrative);
+    setIsModalOpen(true);
+  };
+
+  const handleCloseModal = () => {
+    setIsModalOpen(false);
+    // Wait for animation to complete before clearing selected narrative
+    setTimeout(() => setSelectedNarrative(null), 200);
+  };
 
   if (loading) {
     return (
@@ -59,14 +75,18 @@ export function NarrativeList() {
             <NarrativeCard
               key={narrative.narrative_id}
               narrative={narrative}
-              onClick={() => {
-                // TODO: Implement narrative detail view
-                // For now, this is a placeholder for future modal implementation
-              }}
+              onClick={() => handleCardClick(narrative)}
             />
           ))}
         </div>
       </div>
+
+      {/* Detail Modal */}
+      <NarrativeDetailModal
+        narrative={selectedNarrative}
+        isOpen={isModalOpen}
+        onClose={handleCloseModal}
+      />
     </>
   );
 }
