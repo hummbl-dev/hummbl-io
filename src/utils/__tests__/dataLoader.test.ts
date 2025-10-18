@@ -103,9 +103,9 @@ describe('Data Loader', () => {
       expect(config.useStatic).toBe(false);
     });
 
-    it('config.useStatic returns false when VITE_USE_STATIC_DATA is undefined', () => {
+    it('config.useStatic returns true when VITE_USE_STATIC_DATA is undefined (defaults to true)', () => {
       vi.stubEnv('VITE_USE_STATIC_DATA', undefined);
-      expect(config.useStatic).toBe(false);
+      expect(config.useStatic).toBe(true);
     });
 
     it('config.baseDir returns VITE_BUILD_OUTPUT_DIR when set', () => {
