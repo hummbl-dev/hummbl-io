@@ -4,8 +4,8 @@ This directory contains utility scripts for the HUMMBL project.
 
 ## Available Scripts
 
-### `create-issues.sh`
-**Purpose:** Batch-create GitHub issues for DevOps Phase 2 roadmap
+### `create-labels.sh`
+**Purpose:** Create standard GitHub labels for the project
 
 **Prerequisites:**
 - [GitHub CLI](https://cli.github.com/) installed
@@ -13,6 +13,27 @@ This directory contains utility scripts for the HUMMBL project.
 
 **Usage:**
 ```bash
+./scripts/create-labels.sh
+```
+
+**Note:** Run this before `create-issues.sh` to ensure labels exist.
+
+---
+
+### `create-issues.sh`
+**Purpose:** Batch-create GitHub issues for DevOps Phase 2 roadmap
+
+**Prerequisites:**
+- [GitHub CLI](https://cli.github.com/) installed
+- Authenticated with GitHub (`gh auth login`)
+- **Labels created** (run `./scripts/create-labels.sh` first)
+
+**Usage:**
+```bash
+# 1. Create labels first
+./scripts/create-labels.sh
+
+# 2. Then create issues
 ./scripts/create-issues.sh
 ```
 
