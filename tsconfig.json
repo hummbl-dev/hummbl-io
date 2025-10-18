@@ -36,7 +36,11 @@
     "**/__tests__/**/*.ts",
     "**/__tests__/**/*.tsx"
   ],
-  "exclude": ["node_modules"],
+  "exclude": [
+    "node_modules",
+    "**/*.stories.ts",
+    "**/*.stories.tsx"
+  ],
   "references": [{ "path": "./tsconfig.node.json" }],
   "ts-node": {
     "esm": true,

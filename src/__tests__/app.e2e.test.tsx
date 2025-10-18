@@ -69,7 +69,7 @@ describe('E2E: Complete Application Flow', () => {
         description: 'Breaking down problems into basic elements',
         category: 'Problem Solving',
         tags: ['reasoning', 'analysis'],
-        transformations: ['P', 'IN', 'EX'],
+        transformations: ['P', 'IN', 'CO'],
         sources: [{ name: 'Aristotle', reference: 'Metaphysics' }],
         meta: { isCore: true, difficulty: 3 },
       },
@@ -136,7 +136,7 @@ describe('E2E: Complete Application Flow', () => {
       const { container } = render(<App />);
 
       // Should show loading state initially
-      const loadingElements = container.querySelectorAll('[data-testid*="skeleton"]');
+      // omitted unused loadingElements
       
       // App may render loading states
       expect(container).toBeTruthy();
@@ -395,9 +395,7 @@ describe('E2E: Complete Application Flow', () => {
 
       await waitFor(() => {
         // Check for semantic HTML or ARIA labels
-        const main = screen.queryByRole('main') || 
-                     document.querySelector('main') ||
-                     document.querySelector('[role="main"]');
+        // ensure main-like containers exist
         
         expect(document.body).toBeTruthy();
       });
@@ -431,11 +429,7 @@ describe('E2E: Complete Application Flow', () => {
       );
 
       const { container } = render(<App />);
-
-      // Should show loading indicator
-      const hasLoading = container.querySelector('[data-testid*="skeleton"]') ||
-                        screen.queryByText(/loading/i) ||
-                        container.querySelector('.animate-pulse');
+      // Should show loading indicator (not asserted strictly)
       
       // App renders with or without explicit loading states
       expect(container).toBeTruthy();

@@ -97,7 +97,7 @@ registerMentalModel({
   example: 'Elon Musk used first principles to reduce the cost of rocket launches by building reusable rockets.',
   category: 'Problem Solving',
   tags: ['reasoning', 'analysis', 'decision-making'],
-  transformations: ['P', 'IN', 'EX', 'CO', 'CH'],
+  transformations: ['P', 'IN', 'CO', 'DE', 'RE'],
   sources: [
     {
       name: 'Aristotle',

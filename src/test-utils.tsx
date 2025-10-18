@@ -1,13 +1,8 @@
-import React, { ReactElement } from 'react';
+import type { ReactElement, ReactNode } from 'react';
 import { render, RenderOptions } from '@testing-library/react';
-import { ThemeProvider } from 'your-theme-provider'; // Update this with your actual theme provider
 
-const AllTheProviders = ({ children }: { children: React.ReactNode }) => {
-  return (
-    <ThemeProvider>
-      {children}
-    </ThemeProvider>
-  );
+const AllTheProviders = ({ children }: { children: ReactNode }) => {
+  return <>{children}</>;
 };
 
 const customRender = (

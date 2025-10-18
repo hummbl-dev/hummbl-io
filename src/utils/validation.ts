@@ -1,5 +1,5 @@
 import { MentalModel } from '../models/mentalModels';
-import { TransformationKey, transformationMap } from '../types/transformation';
+import { transformationMap } from '../types/transformation';
 
 /**
  * Validates a single mental model against the schema

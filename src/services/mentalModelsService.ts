@@ -150,10 +150,13 @@ function getFromCache<T>(): T | null {
     const cached = localStorage.getItem(CACHE_KEY);
     if (!cached) return null;
 
-    const { data, timestamp, schemaVersion }: CacheEntry<T> = JSON.parse(cached);
+    const parsed = JSON.parse(cached) as Partial<CacheEntry<T>> & { data?: T };
+    const data = parsed.data as T;
+    const timestamp = parsed.timestamp as number;
+    const schemaVersion = parsed.schemaVersion as number | undefined;
 
-    // Invalidate if schema version mismatches
-    if (schemaVersion !== CACHE_SCHEMA_VERSION) {
+    // Invalidate only if schemaVersion exists and mismatches; allow older entries without schemaVersion
+    if (schemaVersion !== undefined && schemaVersion !== CACHE_SCHEMA_VERSION) {
       localStorage.removeItem(CACHE_KEY);
       return null;
     }
