@@ -123,9 +123,9 @@
 
 .model-code {
   font-family: 'Fira Code', 'Cascadia Code', 'Consolas', monospace;
-  font-weight: 600;
-  color: #2b6cb0;
-  background-color: #ebf8ff;
+  font-weight: 700;
+  color: #1e40af;
+  background-color: #dbeafe;
   padding: 0.25rem 0.75rem;
   border-radius: 9999px;
   font-size: 0.85em;
@@ -135,12 +135,12 @@
 
 .model-transformation {
   font-size: 0.8em;
-  color: #4a5568;
-  background-color: #f7fafc;
+  color: #030712;
+  background-color: #e5e7eb;
   padding: 0.25rem 0.75rem;
   border-radius: 9999px;
-  font-weight: 500;
-  border: 1px solid #e2e8f0;
+  font-weight: 700;
+  border: 1px solid #9ca3af;
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
@@ -149,9 +149,9 @@
 
 .model-name {
   margin: 0 0 0.75rem 0;
-  color: #1a202c;
+  color: #0f172a;
   font-size: 1.25rem;
-  font-weight: 600;
+  font-weight: 700;
   line-height: 1.4;
   transition: color 0.2s ease;
 }
@@ -161,7 +161,7 @@
 }
 
 .model-definition {
-  color: #4a5568;
+  color: #1f2937;
   font-size: 0.95rem;
   line-height: 1.6;
   margin: 0 0 1rem 0;
@@ -182,20 +182,21 @@
 .model-example {
   display: block;
   font-size: 0.85em;
-  color: #718096;
+  color: #1f2937;
   font-style: italic;
   line-height: 1.5;
-  background-color: #f8fafc;
+  background-color: #f3f4f6;
   padding: 0.75rem;
   border-radius: 6px;
   margin-top: 0.75rem;
-  border-left: 3px solid #cbd5e0;
+  border-left: 3px solid #4b5563;
 }
 
 .model-example::before {
   content: 'Example: ';
-  font-weight: 500;
-  color: #4a5568;
+  font-weight: 800;
+  color: #030712;
+  font-style: normal;
 }
 
 .no-results {
@@ -286,18 +287,18 @@
   }
   
   .model-code {
-    color: #90cdf4;
-    background-color: rgba(144, 205, 244, 0.1);
+    color: #bfdbfe;
+    background-color: rgba(30, 58, 138, 0.3);
   }
   
   .model-definition {
-    color: #cbd5e0;
+    color: #e5e7eb;
   }
   
   .model-transformation {
-    background-color: rgba(74, 85, 104, 0.3);
-    color: #cbd5e0;
-    border-color: #4a5568;
+    background-color: rgba(55, 65, 81, 0.4);
+    color: #f3f4f6;
+    border-color: #6b7280;
   }
   
   .model-footer {
@@ -306,13 +307,13 @@
   }
   
   .model-example {
-    background-color: rgba(74, 85, 104, 0.3);
-    border-left-color: #4a5568;
-    color: #cbd5e0;
+    background-color: rgba(55, 65, 81, 0.3);
+    border-left-color: #6b7280;
+    color: #e5e7eb;
   }
   
   .model-example::before {
-    color: #a0aec0;
+    color: #f3f4f6;
   }
   
   .no-results {

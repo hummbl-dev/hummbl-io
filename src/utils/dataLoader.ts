@@ -7,8 +7,8 @@
 
 export const config = {
   get useStatic() {
-    // Prefer static JSON in production unless explicitly disabled
-    return import.meta.env.VITE_USE_STATIC_DATA === 'true' || import.meta.env.PROD === true;
+    // Always use static in production, allow override for development
+    return import.meta.env.VITE_USE_STATIC_DATA !== 'false';
   },
   get baseDir() {
     return import.meta.env.VITE_BUILD_OUTPUT_DIR || '/data';
