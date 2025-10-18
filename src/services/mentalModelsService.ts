@@ -1,3 +1,4 @@
+import React from 'react';
 import { MentalModel } from '../models/mentalModels';
 import { validateMentalModel } from '../utils/validation';
 
