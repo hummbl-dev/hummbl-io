@@ -1,7 +1,6 @@
 import { useState, useEffect } from 'react';
 import { NarrativeList } from './components/narratives/NarrativeList';
 import { MentalModelsList } from './components/mental-models/MentalModelsList';
-import { ViewSwitcher } from './components/view/ViewSwitcher';
 import { Hero } from './components/Hero/Hero';
 import { ViewType } from './types/view';
 import type { MentalModel } from './models/mentalModels';
@@ -85,11 +84,9 @@ function App() {
     );
   }, [mentalModelsState]);
 
-  // Update header tagline based on current view
+  // Static tagline
   const getTagline = () => {
-    return currentView === 'narratives' 
-      ? 'Cognitive Framework - 6 Core Narratives' 
-      : 'Cognitive Framework - 120 Mental Models';
+    return 'Cognitive Operating System';
   };
 
   // Handle model selection
@@ -107,13 +104,6 @@ function App() {
         <div className="header-content">
           <h1 className="logo">HUMMBL</h1>
           <p className="tagline">{getTagline()}</p>
-          
-          {/* View Switcher */}
-          <ViewSwitcher 
-            currentView={currentView}
-            onViewChange={setCurrentView}
-            className="header-view-switcher"
-          />
         </div>
       </header>
 
