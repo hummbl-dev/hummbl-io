@@ -45,7 +45,6 @@
         "axe-core": "^4.9.1",
         "chrome-launcher": "^1.1.1",
         "lighthouse": "^12.2.0",
-        "lighthouse-ci": "^0.13.0",
         "puppeteer": "^23.7.0",
         "ts-jest": "^29.1.1",
         "vitest": "^3.2.4"
