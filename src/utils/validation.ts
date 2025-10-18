@@ -1,4 +1,5 @@
 import { MentalModel } from '../models/mentalModels';
+import { TransformationKey, transformationMap } from '../types/transformation';
 
 /**
  * Validates a single mental model against the schema
@@ -39,11 +40,9 @@ export function validateMentalModel(model: unknown): model is MentalModel {
     return false;
   }
 
-  // Validate transformations
-  if (!m.transformations.every(t => 
-    typeof t === 'string' && 
-    ['P', 'IN', 'EX', 'CO', 'CH'].includes(t)
-  )) {
+  // Validate transformations against allowed keys
+  const allowed: Set<string> = new Set(Object.keys(transformationMap)); // ['P','IN','CO','DE','RE','SY']
+  if (!m.transformations.every(t => typeof t === 'string' && allowed.has(t))) {
     console.error('Invalid transformation keys', model);
     return false;
   }
