@@ -55,26 +55,9 @@ jobs:
       env:
         ALERT_WEBHOOK_URL: ${{ secrets.ALERT_WEBHOOK_URL }}
     
-    - name: Update check-in timestamp
-      run: |
-        echo "Last checked: $(date -u +'%Y-%m-%dT%H:%M:%SZ')" > last-check.txt
-        
-        # Update the readme or status page if needed
-        if [ -f "README.md" ]; then
-          sed -i '/## 🛡️ System Status/,/## / { /Last verified:/c\
-            Last verified: '$(date -u +"%Y-%m-%d %H:%M %Z")\\n          }' README.md
-        fi
-    
-    - name: Commit status updates
+    - name: Log check completion
       if: always()
       run: |
-        git config --global user.name 'GitHub Actions'
-        git config --global user.email 'actions@github.com'
-        
-        git add last-check.txt
-        git add README.md 2>/dev/null || true
-        
-        if ! git diff --cached --quiet; then
-          git commit -m "📅 Update last check timestamp"
-          git push
-        fi
+        echo "✅ Scheduled integrity check completed at: $(date -u +'%Y-%m-%dT%H:%M:%SZ')"
+        echo "Check status: ${{ job.status }}"
+        echo "View full results in GitHub Actions logs"
