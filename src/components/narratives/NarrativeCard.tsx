@@ -1,6 +1,7 @@
 // Narrative card component
 
 import type { Narrative } from '../../types/narrative';
+import './NarrativeCard.css';
 
 interface NarrativeCardProps {
   narrative: Narrative;
@@ -13,136 +14,134 @@ export function NarrativeCard({ narrative, onClick }: NarrativeCardProps) {
     return null;
   }
 
-  const evidenceColors = {
-    A: '#10B981', // Green
-    B: '#F59E0B', // Orange
-    C: '#EF4444', // Red
+  const handleClick = () => {
+    onClick?.();
   };
 
-  const categoryColors = {
-    perspective: '#3B82F6',
-    transformation: '#EF4444',
-    construction: '#10B981',
-    analysis: '#F59E0B',
-    structure: '#8B5CF6',
-    'meta-cognition': '#EC4899',
+  const handleKeyDown = (e: React.KeyboardEvent) => {
+    if (e.key === 'Enter' || e.key === ' ') {
+      e.preventDefault();
+      onClick?.();
+    }
+  };
+
+  // Calculate confidence level
+  const getConfidenceLevel = (confidence: number) => {
+    if (confidence >= 0.8) return 'high';
+    if (confidence >= 0.6) return 'medium';
+    return 'low';
   };
 
   return (
-    <div
-      onClick={onClick}
+    <article
       className="narrative-card"
-      style={{
-        border: '1px solid #e5e7eb',
-        borderRadius: '8px',
-        padding: '20px',
-        cursor: onClick ? 'pointer' : 'default',
-        transition: 'all 0.2s',
-        backgroundColor: '#fff',
-      }}
-      onMouseEnter={(e) => {
-        e.currentTarget.style.boxShadow = '0 4px 12px rgba(0,0,0,0.1)';
-        e.currentTarget.style.transform = 'translateY(-2px)';
-      }}
-      onMouseLeave={(e) => {
-        e.currentTarget.style.boxShadow = 'none';
-        e.currentTarget.style.transform = 'translateY(0)';
-      }}
+      onClick={handleClick}
+      onKeyDown={handleKeyDown}
+      tabIndex={0}
+      role="button"
+      aria-label={`View details for ${narrative.title}`}
     >
       {/* Header */}
-      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'start', marginBottom: '12px' }}>
-        <div>
-          <h3 style={{ margin: 0, fontSize: '18px', fontWeight: 600 }}>
+      <header className="narrative-card-header">
+        <div className="narrative-card-title-section">
+          <h3 className="narrative-card-title">
             {narrative.title}
           </h3>
-          <p style={{ margin: '4px 0 0 0', fontSize: '12px', color: '#6b7280' }}>
+          <p className="narrative-card-id">
             {narrative.narrative_id}
           </p>
         </div>
-        <div style={{ display: 'flex', gap: '8px', alignItems: 'center' }}>
-          <span
-            style={{
-              backgroundColor: evidenceColors[narrative.evidence_quality],
-              color: '#fff',
-              padding: '2px 8px',
-              borderRadius: '4px',
-              fontSize: '12px',
-              fontWeight: 600,
-            }}
-          >
+        <div className="narrative-badges">
+          <span className={`evidence-badge grade-${String(narrative.evidence_quality || 'C').toLowerCase()}`}>
             {narrative.evidence_quality}
           </span>
-          <span
-            style={{
-              backgroundColor: categoryColors[narrative.category as keyof typeof categoryColors] || '#6b7280',
-              color: '#fff',
-              padding: '2px 8px',
-              borderRadius: '4px',
-              fontSize: '12px',
-            }}
-          >
+          <span className={`category-badge category-${String(narrative.category || 'perspective').toLowerCase().replace(/\s+/g, '-')}`}>
             {narrative.category}
           </span>
         </div>
-      </div>
+      </header>
 
       {/* Summary */}
-      <p style={{ margin: '0 0 12px 0', fontSize: '14px', color: '#374151', lineHeight: '1.5' }}>
+      <p className="narrative-card-summary">
         {narrative.summary}
       </p>
 
+      {/* Complexity */}
+      {narrative.complexity && (
+        <div className="narrative-complexity">
+          <span 
+            className="complexity-badge" 
+            data-level={narrative.complexity.cognitive_load}
+            title="Cognitive Load"
+          >
+            {narrative.complexity.cognitive_load} load
+          </span>
+          <span className="complexity-time" title="Time to Elicit">
+            ⏱ {narrative.complexity.time_to_elicit}
+          </span>
+          <span className="complexity-badge" data-level={narrative.complexity.expertise_required}>
+            {narrative.complexity.expertise_required}
+          </span>
+        </div>
+      )}
+
+      {/* Domain Tags */}
+      {narrative.domain && narrative.domain.length > 0 && (
+        <div className="narrative-domains">
+          {narrative.domain.slice(0, 3).map((domain) => (
+            <span key={domain} className="domain-badge">
+              {domain}
+            </span>
+          ))}
+          {narrative.domain.length > 3 && (
+            <span className="domain-badge" style={{ opacity: 0.7 }}>
+              +{narrative.domain.length - 3}
+            </span>
+          )}
+        </div>
+      )}
+
       {/* Metrics */}
-      <div style={{ display: 'flex', gap: '16px', marginBottom: '12px' }}>
-        <div>
-          <span style={{ fontSize: '12px', color: '#6b7280' }}>Confidence</span>
-          <div style={{ fontSize: '18px', fontWeight: 600, color: '#111827' }}>
+      <div className="narrative-metrics">
+        <div className="metric-item">
+          <span className="metric-label">Confidence</span>
+          <div className={`metric-value ${getConfidenceLevel(narrative.confidence || 0)}`}>
             {narrative.confidence ? (narrative.confidence * 100).toFixed(0) : '0'}%
           </div>
         </div>
-        <div>
-          <span style={{ fontSize: '12px', color: '#6b7280' }}>Signals</span>
-          <div style={{ fontSize: '18px', fontWeight: 600, color: '#111827' }}>
+        <div className="metric-item">
+          <span className="metric-label">Signals</span>
+          <div className="metric-value">
             {narrative.linked_signals?.length || 0}
           </div>
         </div>
-        <div>
-          <span style={{ fontSize: '12px', color: '#6b7280' }}>Relations</span>
-          <div style={{ fontSize: '18px', fontWeight: 600, color: '#111827' }}>
+        <div className="metric-item">
+          <span className="metric-label">Relations</span>
+          <div className="metric-value">
             {narrative.relationships ? narrative.relationships.length : 0}
+          </div>
+        </div>
+        <div className="metric-item">
+          <span className="metric-label">Citations</span>
+          <div className="metric-value">
+            {narrative.citations?.length || 0}
           </div>
         </div>
       </div>
 
       {/* Tags */}
-      <div style={{ display: 'flex', flexWrap: 'wrap', gap: '6px' }}>
-        {(narrative.tags || []).slice(0, 4).map((tag) => (
-          <span
-            key={tag}
-            style={{
-              backgroundColor: '#f3f4f6',
-              color: '#374151',
-              padding: '2px 8px',
-              borderRadius: '4px',
-              fontSize: '11px',
-            }}
-          >
+      <div className="narrative-tags">
+        {(narrative.tags || []).slice(0, 5).map((tag) => (
+          <span key={tag} className="narrative-tag">
             {tag}
           </span>
         ))}
-        {narrative.tags && narrative.tags.length > 4 && (
-          <span
-            style={{
-              backgroundColor: '#f3f4f6',
-              color: '#6b7280',
-              padding: '2px 8px',
-              borderRadius: '4px',
-              fontSize: '11px',
-            }}
-          >
-            +{narrative.tags.length - 4}
+        {narrative.tags && narrative.tags.length > 5 && (
+          <span className="narrative-tag more-tags">
+            +{narrative.tags.length - 5} more
           </span>
         )}
       </div>
-    </div>
+    </article>
   );
 }
