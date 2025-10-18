@@ -94,7 +94,7 @@ export function NarrativeCard({ narrative, onClick }: NarrativeCardProps) {
             </span>
           ))}
           {narrative.domain.length > 3 && (
-            <span className="domain-badge" style={{ opacity: 0.7 }}>
+            <span className="domain-badge more-domains">
               +{narrative.domain.length - 3}
             </span>
           )}

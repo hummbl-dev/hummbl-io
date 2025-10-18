@@ -253,6 +253,10 @@
   text-transform: capitalize;
 }
 
+.domain-badge.more-domains {
+  opacity: 0.7;
+}
+
 /* Tags */
 .narrative-tags {
   display: flex;

@@ -59,7 +59,10 @@ export function NarrativeList() {
             <NarrativeCard
               key={narrative.narrative_id}
               narrative={narrative}
-              onClick={() => console.log('Navigate to:', narrative.narrative_id)}
+              onClick={() => {
+                // TODO: Implement narrative detail view
+                // For now, this is a placeholder for future modal implementation
+              }}
             />
           ))}
         </div>
