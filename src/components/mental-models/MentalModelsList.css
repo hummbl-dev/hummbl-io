@@ -181,10 +181,11 @@
 
 .model-example {
   display: block;
-  font-size: 0.85em;
-  color: #000000;
-  font-style: italic;
-  line-height: 1.5;
+  font-size: 0.9em;
+  color: #000000 !important;
+  font-weight: 500;
+  font-style: normal;
+  line-height: 1.6;
   background-color: #f3f4f6;
   padding: 0.75rem;
   border-radius: 6px;
@@ -194,8 +195,8 @@
 
 .model-example::before {
   content: 'Example: ';
-  font-weight: 800;
-  color: #000000;
+  font-weight: 700;
+  color: #000000 !important;
   font-style: normal;
 }
 
