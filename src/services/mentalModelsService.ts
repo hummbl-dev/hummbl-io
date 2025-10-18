@@ -39,31 +39,49 @@ export async function fetchMentalModels(): Promise<MentalModel[]> {
 
     const data: any = await response.json();
     
-    // Transform models.json format to expected format
-    const transformedData: MentalModelsResponse = {
-      version: data.version,
-      lastUpdated: data.lastUpdated,
-      models: data.models.map((model: any) => ({
-        id: model.code.toLowerCase().replace(/[^a-z0-9]/g, '-'),
-        name: model.name,
-        code: model.code,
-        description: model.definition || model.description,
-        example: model.example,
-        category: getCategoryFromTransformation(model.transformation),
-        tags: [model.transformation?.toLowerCase() || 'general'],
-        transformations: [model.transformation],
-        sources: [],
-        meta: {
-          isCore: true,
-          difficulty: 3
-        }
-      }))
-    };
-
-    // Cache the transformed response
-    saveToCache(transformedData);
+    // Check if this is the old models.json format (has 'definition' field)
+    // or the new format (has 'description' and proper structure)
+    const needsTransformation = data.models.length > 0 && 
+                                data.models[0].definition && 
+                                !data.models[0].description;
     
-    return transformedData.models;
+    let finalData: MentalModelsResponse;
+    
+    if (needsTransformation) {
+      // Transform old models.json format to expected format
+      finalData = {
+        version: data.version,
+        lastUpdated: data.lastUpdated,
+        models: data.models.map((model: any) => ({
+          id: model.code.toLowerCase().replace(/[^a-z0-9]/g, '-'),
+          name: model.name,
+          code: model.code,
+          description: model.definition,
+          example: model.example,
+          category: getCategoryFromTransformation(model.transformation),
+          tags: [model.transformation?.toLowerCase() || 'general'],
+          transformations: [model.transformation],
+          sources: [],
+          meta: {
+            isCore: true,
+            difficulty: 3
+          }
+        }))
+      };
+    } else {
+      // Data is already in correct format
+      finalData = data as MentalModelsResponse;
+    }
+
+    // Validate the response
+    if (!isValidMentalModelsResponse(finalData)) {
+      throw new Error('Invalid mental models data format');
+    }
+
+    // Cache the response
+    saveToCache(finalData);
+    
+    return finalData.models;
   } catch (error) {
     console.error('Error fetching mental models:', error);
     throw error;
