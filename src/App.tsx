@@ -4,6 +4,7 @@ import { MentalModelsList } from './components/mental-models/MentalModelsList';
 import { ViewSwitcher } from './components/view/ViewSwitcher';
 import { ViewType } from './types/view';
 import { MentalModel } from './types/mental-model';
+import { fetchMentalModels, clearMentalModelsCache } from './services/mentalModelsService';
 import './App.css';
 
 // Types for persisted state
@@ -52,17 +53,13 @@ function App() {
   useEffect(() => {
     const loadMentalModels = async () => {
       if (currentView !== 'models') return;
-      
+
       setIsLoading(true);
       setError(null);
-      
+
       try {
-        const response = await fetch('/data/models.json');
-        if (!response.ok) {
-          throw new Error(`HTTP error! status: ${response.status}`);
-        }
-        const data = await response.json();
-        setMentalModels(data.models || []);
+        const models = await fetchMentalModels();
+        setMentalModels(models);
       } catch (err) {
         console.error('Failed to load mental models:', err);
         setError('Failed to load mental models. Please try again later.');
@@ -130,6 +127,28 @@ function App() {
           <NarrativeList />
         ) : (
           <div className="mental-models-wrapper">
+            <div style={{ display: 'flex', justifyContent: 'flex-end', gap: 8, marginBottom: 12 }}>
+              <button
+                onClick={async () => {
+                  clearMentalModelsCache();
+                  setIsLoading(true);
+                  try {
+                    const models = await fetchMentalModels();
+                    setMentalModels(models);
+                    setError(null);
+                  } catch (err) {
+                    console.error('Failed to refresh mental models:', err);
+                    setError('Failed to load mental models. Please try again later.');
+                  } finally {
+                    setIsLoading(false);
+                  }
+                }}
+                className="button refresh-button"
+              >
+                Refresh data
+              </button>
+            </div>
+
             {isLoading ? (
               <div className="loading">Loading mental models...</div>
             ) : error ? (
@@ -137,9 +156,21 @@ function App() {
             ) : (
               <MentalModelsList
                 models={mentalModels}
-                onModelSelect={handleModelSelect}
-                initialState={mentalModelsState}
-                onStateChange={handleMentalModelsStateChange}
+                onSelect={handleModelSelect}
+                onRetry={async () => {
+                  clearMentalModelsCache();
+                  setIsLoading(true);
+                  try {
+                    const models = await fetchMentalModels();
+                    setMentalModels(models);
+                    setError(null);
+                  } catch (err) {
+                    console.error('Retry failed:', err);
+                    setError('Failed to load mental models. Please try again later.');
+                  } finally {
+                    setIsLoading(false);
+                  }
+                }}
               />
             )}
           </div>

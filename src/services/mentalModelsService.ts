@@ -6,6 +6,7 @@ import { validateMentalModel } from '../utils/validation';
 type CacheEntry<T> = {
   data: T;
   timestamp: number;
+  schemaVersion: number;
 };
 
 type MentalModelsResponse = {
@@ -16,6 +17,9 @@ type MentalModelsResponse = {
 
 // Constants
 const CACHE_KEY = 'hummbl:mental-models:cache';
+// Bump this number to invalidate all existing caches in the field
+const CACHE_SCHEMA_VERSION = 2;
+// Keep TTL but allow schema to force-refresh regardless of TTL
 const CACHE_TTL = 24 * 60 * 60 * 1000; // 24 hours in milliseconds
 const DATA_URL = '/models.json';
 
@@ -146,7 +150,13 @@ function getFromCache<T>(): T | null {
     const cached = localStorage.getItem(CACHE_KEY);
     if (!cached) return null;
 
-    const { data, timestamp }: CacheEntry<T> = JSON.parse(cached);
+    const { data, timestamp, schemaVersion }: CacheEntry<T> = JSON.parse(cached);
+
+    // Invalidate if schema version mismatches
+    if (schemaVersion !== CACHE_SCHEMA_VERSION) {
+      localStorage.removeItem(CACHE_KEY);
+      return null;
+    }
     
     // Check if cache is still valid
     if (Date.now() - timestamp > CACHE_TTL) {
@@ -165,11 +175,23 @@ function saveToCache<T>(data: T): void {
   try {
     const entry: CacheEntry<T> = {
       data,
-      timestamp: Date.now()
+      timestamp: Date.now(),
+      schemaVersion: CACHE_SCHEMA_VERSION,
     };
     localStorage.setItem(CACHE_KEY, JSON.stringify(entry));
   } catch (error) {
     console.warn('Failed to save to cache:', error);
+  }
+}
+
+/**
+ * Clears the mental models cache explicitly (used by settings or manual refresh)
+ */
+export function clearMentalModelsCache(): void {
+  try {
+    localStorage.removeItem(CACHE_KEY);
+  } catch {
+    // no-op
   }
 }
 
