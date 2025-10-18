@@ -27,12 +27,21 @@ jobs:
           echo "test-status: $?" >> .github/actions/summary.md
       - name: Run build
         run: npm run build
+      - name: Start preview server
+        run: |
+          nohup npx vite preview --host --port 4173 > /dev/null 2>&1 &
+          for i in {1..30}; do
+            if curl -sSf http://localhost:4173 > /dev/null; then echo "preview up"; break; fi;
+            sleep 1;
+          done
+      - name: Setup Chrome for Lighthouse
+        uses: browser-actions/setup-chrome@v1
       - name: Validate models schema
         run: node scripts/validate-models.mjs
       - name: Audit (Lighthouse + Axe)
         run: node scripts/audit.mjs
         env:
-          TARGET_URL: https://hummbl.io
+          TARGET_URL: http://localhost:4173
           LH_MIN: 0.9
           AXE_MAX: 0
       - name: Telemetry
@@ -46,3 +55,9 @@ jobs:
         with:
           name: phase3-summary
           path: .github/actions/summary.md
+      - name: Upload audit reports
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: audit-reports
+          path: reports
