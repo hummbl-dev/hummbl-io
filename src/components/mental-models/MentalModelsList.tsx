@@ -1,8 +1,8 @@
-import React from 'react';
 import ModelCard from './ModelCard';
 import SkeletonGrid from './SkeletonGrid';
 import ErrorState from './ErrorState';
-import type { MentalModel } from '@/types/mental-models';
+import type { MentalModel } from '@/models/mentalModels';
+import './MentalModelsList.css';
 
 type MentalModelsListProps = {
   models?: MentalModel[];
@@ -23,7 +23,7 @@ const MentalModelsList = ({
   if (error) return <ErrorState message={error} onRetry={onRetry} />;
   if (!models.length)
     return (
-      <p data-testid="empty-state" className="text-center p-6">
+      <p data-testid="empty-state" className="no-results">
         No models found
       </p>
     );
@@ -31,7 +31,7 @@ const MentalModelsList = ({
   return (
     <div
       data-testid="mental-models-list"
-      className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4"
+      className="models-grid"
     >
       {models.map((model) => (
         <ModelCard key={model.id} model={model} onSelect={onSelect} />

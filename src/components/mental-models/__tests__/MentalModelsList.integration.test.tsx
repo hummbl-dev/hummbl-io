@@ -5,6 +5,8 @@ import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
 import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import MentalModelsList from '../MentalModelsList';
+import type { MentalModel } from '@/models/mentalModels';
+import type { TransformationKey } from '@/types/transformation';
 import * as mentalModelsService from '../../../services/mentalModelsService';
 
 /**
@@ -32,7 +34,7 @@ describeMaybe('MentalModelsList Integration Tests', () => {
   };
   global.localStorage = localStorageMock as any;
 
-  const validResponse = {
+  const validResponse: { version: string; lastUpdated: string; models: MentalModel[] } = {
     version: '1.0.0',
     lastUpdated: '2025-10-17T15:30:00Z',
     models: [
@@ -43,7 +45,7 @@ describeMaybe('MentalModelsList Integration Tests', () => {
         description: 'Breaking down problems into basic elements',
         category: 'Problem Solving',
         tags: ['reasoning', 'analysis'],
-        transformations: ['P', 'IN', 'EX'],
+        transformations: ['P', 'IN', 'CO'] as TransformationKey[],
         sources: [{ name: 'Aristotle', reference: 'Metaphysics' }],
         meta: {
           isCore: true,
@@ -59,7 +61,7 @@ describeMaybe('MentalModelsList Integration Tests', () => {
         description: 'Consider consequences of consequences',
         category: 'Decision Making',
         tags: ['strategy', 'systems'],
-        transformations: ['IN', 'EX', 'CH'],
+        transformations: ['IN', 'CO', 'DE'] as TransformationKey[],
         sources: [{ name: 'Howard Marks', reference: 'The Most Important Thing' }],
         meta: {
           isCore: true,

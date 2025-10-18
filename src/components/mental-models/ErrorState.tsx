@@ -1,4 +1,3 @@
-import React from 'react';
 
 type ErrorStateProps = {
   message?: string;

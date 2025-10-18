@@ -1,13 +1,15 @@
 /// <reference types="vitest" />
 /// <reference types="@testing-library/jest-dom" />
 
-import { describe, it, expect, vi, beforeEach } from 'vitest';
+import { describe, it, expect, vi } from 'vitest';
 import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import MentalModelsList from '../MentalModelsList';
+import type { MentalModel } from '@/models/mentalModels';
+import type { TransformationKey } from '@/types/transformation';
 
 // Mock the mental models data
-const mockModels = [
+const mockModels: MentalModel[] = [
   {
     id: '1',
     name: 'First Principles',
@@ -15,7 +17,7 @@ const mockModels = [
     description: 'Breaking down complex problems into basic elements',
     category: 'Problem Solving',
     tags: ['thinking', 'problem-solving'],
-    transformations: ['P'],
+    transformations: ['P'] as TransformationKey[],
     sources: [{ name: 'Aristotle', reference: 'Metaphysics' }],
     meta: {
       added: '2025-01-01',
@@ -31,7 +33,7 @@ const mockModels = [
     description: 'Consider second-level effects of decisions',
     category: 'Decision Making',
     tags: ['strategy', 'systems'],
-    transformations: ['I', 'R', 'M'],
+    transformations: ['IN', 'RE', 'SY'] as TransformationKey[],
     sources: [{ name: 'Howard Marks', reference: 'The Most Important Thing' }],
     meta: {
       added: '2024-05-01',

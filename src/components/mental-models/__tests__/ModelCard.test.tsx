@@ -5,15 +5,17 @@ import { describe, it, expect, vi } from 'vitest';
 import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import ModelCard from '../ModelCard';
+import type { MentalModel } from '@/models/mentalModels';
+import type { TransformationKey } from '@/types/transformation';
 
-const mockModel = {
+const mockModel: MentalModel = {
   id: '1',
   name: 'First Principles',
   code: 'FP',
   description: 'Breaking down problems into basics',
   category: 'Problem Solving',
   tags: ['thinking'],
-  transformations: ['P'],
+  transformations: ['P'] as TransformationKey[],
   sources: [{ name: 'Aristotle', reference: 'Metaphysics' }],
   meta: { added: '2025-01-01', updated: '2025-01-01', isCore: true, difficulty: 3 },
 };
@@ -33,9 +35,19 @@ describe('ModelCard', () => {
     expect(onSelect).toHaveBeenCalledWith(mockModel);
   });
 
-  it('renders gracefully with missing optional fields', () => {
-    const incomplete = { ...mockModel, description: undefined, category: undefined };
-    render(<ModelCard model={incomplete} onSelect={() => {}} />);
+  it('renders gracefully with minimal required fields', () => {
+    const minimal: MentalModel = {
+      id: mockModel.id,
+      name: mockModel.name,
+      code: mockModel.code,
+      description: mockModel.description,
+      category: mockModel.category,
+      tags: [],
+      transformations: ['P'] as TransformationKey[],
+      sources: [],
+      meta: { isCore: true, difficulty: 3 }
+    };
+    render(<ModelCard model={minimal} onSelect={() => {}} />);
     expect(screen.getByText('First Principles')).toBeInTheDocument();
   });
 });
