@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import { NarrativeList } from './components/narratives/NarrativeList';
 import { MentalModelsList } from './components/mental-models/MentalModelsList';
 import { ViewSwitcher } from './components/view/ViewSwitcher';
+import { Hero } from './components/Hero/Hero';
 import { ViewType } from './types/view';
 import type { MentalModel } from './models/mentalModels';
 import { fetchMentalModels, clearMentalModelsCache } from './services/mentalModelsService';
@@ -115,6 +116,9 @@ function App() {
           />
         </div>
       </header>
+
+      {/* Hero Section */}
+      <Hero onViewChange={setCurrentView} />
 
       <main className="main-content">
         {currentView === 'narratives' ? (
