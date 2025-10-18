@@ -8,6 +8,11 @@ interface NarrativeCardProps {
 }
 
 export function NarrativeCard({ narrative, onClick }: NarrativeCardProps) {
+  // Early return if narrative is incomplete
+  if (!narrative || !narrative.title) {
+    return null;
+  }
+
   const evidenceColors = {
     A: '#10B981', // Green
     B: '#F59E0B', // Orange
@@ -91,26 +96,26 @@ export function NarrativeCard({ narrative, onClick }: NarrativeCardProps) {
         <div>
           <span style={{ fontSize: '12px', color: '#6b7280' }}>Confidence</span>
           <div style={{ fontSize: '18px', fontWeight: 600, color: '#111827' }}>
-            {(narrative.confidence * 100).toFixed(0)}%
+            {narrative.confidence ? (narrative.confidence * 100).toFixed(0) : '0'}%
           </div>
         </div>
         <div>
           <span style={{ fontSize: '12px', color: '#6b7280' }}>Signals</span>
           <div style={{ fontSize: '18px', fontWeight: 600, color: '#111827' }}>
-            {narrative.linked_signals.length}
+            {narrative.linked_signals ? narrative.linked_signals.length : 0}
           </div>
         </div>
         <div>
           <span style={{ fontSize: '12px', color: '#6b7280' }}>Relations</span>
           <div style={{ fontSize: '18px', fontWeight: 600, color: '#111827' }}>
-            {narrative.relationships.length}
+            {narrative.relationships ? narrative.relationships.length : 0}
           </div>
         </div>
       </div>
 
       {/* Tags */}
       <div style={{ display: 'flex', flexWrap: 'wrap', gap: '6px' }}>
-        {narrative.tags.slice(0, 4).map((tag) => (
+        {(narrative.tags || []).slice(0, 4).map((tag) => (
           <span
             key={tag}
             style={{
@@ -124,7 +129,7 @@ export function NarrativeCard({ narrative, onClick }: NarrativeCardProps) {
             {tag}
           </span>
         ))}
-        {narrative.tags.length > 4 && (
+        {narrative.tags && narrative.tags.length > 4 && (
           <span
             style={{
               backgroundColor: '#f3f4f6',

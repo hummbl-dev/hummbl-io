@@ -10,6 +10,7 @@
         "test": "vitest",
         "test:ui": "vitest --ui",
         "test:coverage": "vitest --coverage",
+        "test:e2e": "jest src/__tests__/app.e2e.test.tsx --config=jest.config.js --runInBand --detectOpenHandles --verbose",
         "storybook": "storybook dev -p 6006",
         "build-storybook": "storybook build"
     },

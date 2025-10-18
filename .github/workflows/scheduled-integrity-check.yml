@@ -1,0 +1,80 @@
+name: Scheduled Integrity Check
+
+on:
+  schedule:
+    - cron: '0 */6 * * *'  # Every 6 hours
+    - cron: '0 0 * * *'     # Daily at midnight
+  workflow_dispatch:
+
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    
+    steps:
+    - uses: actions/checkout@v3
+      with:
+        fetch-depth: 0
+    
+    - name: Setup Node.js
+      uses: actions/setup-node@v3
+      with:
+        node-version: '18.x'
+        cache: 'npm'
+    
+    - name: Install dependencies
+      run: npm ci
+    
+    - name: Verify production deployment
+      run: |
+        # Set production URL from secret or default
+        PRODUCTION_URL=${PRODUCTION_URL:-https://www.hummbl.io}
+        
+        # Run verification against production
+        echo "Verifying production deployment at $PRODUCTION_URL"
+        node scripts/verify_production_integrity.mjs
+        
+        # Generate compliance report
+        node scripts/generate_compliance_report.mjs > compliance-report.json
+        
+        # Upload compliance report
+        echo "COMPLIANCE_REPORT=$(cat compliance-report.json | jq -c '.')" >> $GITHUB_OUTPUT
+      env:
+        PRODUCTION_URL: ${{ secrets.PRODUCTION_URL }}
+    
+    - name: Upload compliance report
+      uses: actions/upload-artifact@v3
+      with:
+        name: compliance-report-${{ github.run_id }}
+        path: compliance-report.json
+    
+    - name: Send Alert on Failure
+      if: failure()
+      continue-on-error: true
+      run: |
+        node scripts/alert_integrity_failure.mjs
+      env:
+        ALERT_WEBHOOK_URL: ${{ secrets.ALERT_WEBHOOK_URL }}
+    
+    - name: Update check-in timestamp
+      run: |
+        echo "Last checked: $(date -u +'%Y-%m-%dT%H:%M:%SZ')" > last-check.txt
+        
+        # Update the readme or status page if needed
+        if [ -f "README.md" ]; then
+          sed -i '/## 🛡️ System Status/,/## / { /Last verified:/c\
+            Last verified: '$(date -u +"%Y-%m-%d %H:%M %Z")\\n          }' README.md
+        fi
+    
+    - name: Commit status updates
+      if: always()
+      run: |
+        git config --global user.name 'GitHub Actions'
+        git config --global user.email 'actions@github.com'
+        
+        git add last-check.txt
+        git add README.md 2>/dev/null || true
+        
+        if ! git diff --cached --quiet; then
+          git commit -m "📅 Update last check timestamp"
+          git push
+        fi
