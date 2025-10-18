@@ -3,7 +3,7 @@ import { NarrativeList } from './components/narratives/NarrativeList';
 import { MentalModelsList } from './components/mental-models/MentalModelsList';
 import { ViewSwitcher } from './components/view/ViewSwitcher';
 import { ViewType } from './types/view';
-import { MentalModel } from './types/mental-model';
+import type { MentalModel } from './models/mentalModels';
 import { fetchMentalModels, clearMentalModelsCache } from './services/mentalModelsService';
 import './App.css';
 
@@ -43,7 +43,7 @@ function App() {
   const [error, setError] = useState<string | null>(null);
 
   // State for mental models UI state
-  const [mentalModelsState, setMentalModelsState] = useState<MentalModelsState>(() => {
+  const [mentalModelsState] = useState<MentalModelsState>(() => {
     // Initialize from localStorage or use defaults
     const savedState = localStorage.getItem(LOCAL_STORAGE_KEYS.MENTAL_MODELS_STATE);
     return savedState ? JSON.parse(savedState) : DEFAULT_MENTAL_MODELS_STATE;
@@ -97,13 +97,7 @@ function App() {
     console.log('Selected model:', model);
   };
 
-  // Handle mental models state updates
-  const handleMentalModelsStateChange = (updates: Partial<MentalModelsState>) => {
-    setMentalModelsState(prev => ({
-      ...prev,
-      ...updates
-    }));
-  };
+  // Handle mental models state updates (inline where used)
 
   return (
     <div className="app">
@@ -144,8 +138,21 @@ function App() {
                   }
                 }}
                 className="button refresh-button"
+                aria-label="Refresh data"
+                title="Refresh data"
               >
-                Refresh data
+                <svg 
+                  width="20" 
+                  height="20" 
+                  viewBox="0 0 24 24" 
+                  fill="none" 
+                  stroke="currentColor" 
+                  strokeWidth="2"
+                  strokeLinecap="round" 
+                  strokeLinejoin="round"
+                >
+                  <path d="M21.5 2v6h-6M2.5 22v-6h6M2 11.5a10 10 0 0 1 18.8-4.3M22 12.5a10 10 0 0 1-18.8 4.2"/>
+                </svg>
               </button>
             </div>
 

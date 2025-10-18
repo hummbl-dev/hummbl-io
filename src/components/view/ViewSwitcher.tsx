@@ -20,10 +20,9 @@ export const ViewSwitcher: React.FC<ViewSwitcherProps> = ({
         className={`view-button ${currentView === 'narratives' ? 'active' : ''}`}
         onClick={() => onViewChange('narratives')}
         aria-pressed={currentView === 'narratives'}
-        aria-label="View Transformation Narratives"
+        aria-label="View Transformations"
       >
-        <span className="view-button-text">Transformation Narratives</span>
-        <span className="view-button-badge">6</span>
+        <span className="view-button-text">Transformations</span>
       </button>
       <button
         type="button"
@@ -33,7 +32,6 @@ export const ViewSwitcher: React.FC<ViewSwitcherProps> = ({
         aria-label="View Mental Models"
       >
         <span className="view-button-text">Mental Models</span>
-        <span className="view-button-badge">120</span>
       </button>
     </div>
   );
