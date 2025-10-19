@@ -19,9 +19,19 @@ const ModelCard = ({ model, onSelect }: ModelCardProps) => {
       onClick={() => onSelect(model)}
       className="model-card"
     >
-      {/* Header with code */}
+      {/* Header with code and transformations */}
       <div className="model-header">
         <span className="model-code">{model.code}</span>
+        <div className="model-badges">
+          {model.transformations && model.transformations.slice(0, 3).map((t, i) => (
+            <span key={i} className="model-transformation">
+              {t}
+            </span>
+          ))}
+          {model.transformations && model.transformations.length > 3 && (
+            <span className="model-transformation-more">+{model.transformations.length - 3}</span>
+          )}
+        </div>
       </div>
 
       {/* Title */}
@@ -35,26 +45,6 @@ const ModelCard = ({ model, onSelect }: ModelCardProps) => {
         <p className="model-definition" data-testid="model-description">
           {model.description}
         </p>
-      )}
-
-      {/* Tags */}
-      {model.tags && model.tags.length > 0 && (
-        <div className="model-tags">
-          {model.tags.slice(0, isExpanded ? model.tags.length : 3).map((tag, i) => (
-            <span key={i} className="model-tag">{tag}</span>
-          ))}
-          {!isExpanded && model.tags.length > 3 && (
-            <button
-              className="model-tag-more"
-              onClick={(e) => {
-                e.stopPropagation();
-                setIsExpanded(true);
-              }}
-            >
-              +{model.tags.length - 3}
-            </button>
-          )}
-        </div>
       )}
 
       {/* Example */}
