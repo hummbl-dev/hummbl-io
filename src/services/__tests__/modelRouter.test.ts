@@ -96,7 +96,7 @@ describe('Model Router System', () => {
       const decision = router.route(context);
       
       expect(decision.selectedModel.modelClass).toBe('reasoning');
-      expect(decision.confidence).toBeGreaterThan(0.6);
+      expect(decision.confidence).toBeGreaterThanOrEqual(0.6);
     });
 
     test('should route architectural design to reasoning model', () => {

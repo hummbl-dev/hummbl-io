@@ -1,7 +1,7 @@
 // Related content recommendation engine
 
 import type { Narrative } from '../types/narrative';
-import type { MentalModel } from '../types/mentalModel';
+import type { MentalModel } from '../types/mental-model';
 
 export interface RelatedItem {
   id: string;
@@ -120,13 +120,13 @@ export function findRelatedMentalModels(
 
   for (const model of allModels) {
     // Skip the current model
-    if (model.id === currentModel.id) continue;
+    if (model.code === currentModel.code) continue;
 
     let score = 0;
     const reasons: string[] = [];
 
     // Same category (high weight)
-    if (model.category === currentModel.category) {
+    if (model.transformation === currentModel.transformation) {
       score += 0.5;
       reasons.push('same category');
     }
@@ -143,8 +143,8 @@ export function findRelatedMentalModels(
 
     // Description similarity
     const descSimilarity = textSimilarity(
-      currentModel.description || '',
-      model.description || ''
+      currentModel.definition || '',
+      model.definition || ''
     );
     if (descSimilarity > 0.05) {
       score += descSimilarity * 0.2;
@@ -152,13 +152,13 @@ export function findRelatedMentalModels(
     }
 
     // Same difficulty level
-    if (model.difficulty === currentModel.difficulty) {
+    if (model.complexity === currentModel.complexity) {
       score += 0.05;
     }
 
     if (score > 0.1) {
       related.push({
-        id: model.id,
+        id: model.code,
         type: 'mentalModel',
         title: model.name,
         score,
@@ -287,12 +287,12 @@ export function getHistoryBasedRecommendations(
 
   // Score mental models
   allModels.forEach((model) => {
-    if (viewedIds.has(model.id)) return;
+    if (viewedIds.has(model.code)) return;
 
     let score = 0;
 
     // Category match
-    if (topCategories.includes(model.category)) {
+    if (topCategories.includes(model.transformation)) {
       score += 0.5;
     }
 
@@ -302,7 +302,7 @@ export function getHistoryBasedRecommendations(
 
     if (score > 0) {
       recommendations.push({
-        id: model.id,
+        id: model.code,
         type: 'mentalModel',
         title: model.name,
         score,

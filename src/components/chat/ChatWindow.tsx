@@ -1,12 +1,9 @@
 // Chat window modal component
 
-import { useState, useRef, useEffect } from 'react';
+import { useRef, useEffect } from 'react';
 import { ChatMessage } from './ChatMessage';
 import { ChatInput } from './ChatInput';
-import type { ChatConversation, ChatMessage } from '../../types/chat';
-import type { ChatContext } from '../../types/chatContext';
-import { openaiStreamingService } from '../../services/openaiStreamingService';
-import { intelligentRouting } from '../../services/intelligentRouting';
+import type { ChatConversation } from '../../types/chat';
 import './ChatWindow.css';
 
 interface ChatWindowProps {
@@ -32,12 +29,6 @@ export function ChatWindow({
   onOpenHistory,
   streamingResponse = '',
 }: ChatWindowProps) {
-  const [input, setInput] = useState('');
-  const [isLoadingState, setIsLoadingState] = useState(false);
-  const [errorState, setErrorState] = useState<string | null>(null);
-  const [streamingMessage, setStreamingMessage] = useState<string>('');
-  const [selectedModel, setSelectedModel] = useState<string>('');
-  const [routingConfidence, setRoutingConfidence] = useState<number>(0);
   const messagesEndRef = useRef<HTMLDivElement>(null);
 
   // Auto-scroll to bottom when new messages arrive or streaming updates
@@ -103,13 +94,13 @@ export function ChatWindow({
               <h4>Welcome to HUMMBL AI!</h4>
               <p>I can help you explore mental models and narratives.</p>
               <div className="suggested-prompts">
-                <button onClick={() => sendMessage()}>
+                <button onClick={() => onSendMessage('What mental models are available?')}>
                   What mental models are available?
                 </button>
-                <button onClick={() => sendMessage('Explain first principles thinking')}>
+                <button onClick={() => onSendMessage('Explain first principles thinking')}>
                   Explain first principles thinking
                 </button>
-                <button onClick={() => sendMessage('How do narratives work?')}>
+                <button onClick={() => onSendMessage('How do narratives work?')}>
                   How do narratives work?
                 </button>
               </div>

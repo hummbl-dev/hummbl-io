@@ -1,7 +1,7 @@
 // Advanced search engine with fuzzy matching and multi-field support
 
 import type { Narrative } from '../types/narrative';
-import type { MentalModel } from '../types/mentalModel';
+import type { MentalModel } from '../types/mental-model';
 
 export interface SearchOptions {
   fuzzyThreshold?: number; // 0-1, lower = more strict

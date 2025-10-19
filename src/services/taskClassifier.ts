@@ -16,14 +16,19 @@ export class TaskClassifier {
       /read|view|check|examine|analyze.*file/i,
       /edit|modify|update|change.*file/i,
       /create|write|generate.*file/i,
-      /delete|remove.*file/i
+      /delete|remove.*file/i,
+      /add.*to.*file|modify.*code|update.*component/i,
+      /implement.*improvements|implement.*changes|implement.*system/i
     ],
     commandExecution: [
       /run|execute|start|launch/i,
       /install|npm|yarn|pip/i,
       /build|compile|deploy/i,
       /test|lint|format/i,
-      /git|commit|push|pull/i
+      /git|commit|push|pull/i,
+      /fix.*build|fix.*error/i,
+      /add.*streaming|add.*responses/i,
+      /implement.*improvements|implement.*changes/i
     ],
     gitOperations: [
       /git|commit|push|pull|merge|branch/i,
@@ -352,7 +357,7 @@ export class TaskClassifier {
   /**
    * Calculate classification confidence
    */
-  private calculateConfidence(intents: string[], input: string): number {
+  private calculateConfidence(intents: string[], _input: string): number {
     if (intents.length === 0) return 0.3; // Low confidence for unclear tasks
     if (intents.length === 1) return 0.7; // Medium confidence for single intent
     if (intents.length <= 3) return 0.9; // High confidence for clear multi-intent
@@ -362,8 +367,8 @@ export class TaskClassifier {
   /**
    * Check if input matches any pattern in array
    */
-  private matchesAnyPattern(input: string, patterns: RegExp[]): boolean {
-    return patterns.some(pattern => pattern.test(input));
+  private matchesAnyPattern(_input: string, patterns: RegExp[]): boolean {
+    return patterns.some(pattern => pattern.test(_input));
   }
 }
 

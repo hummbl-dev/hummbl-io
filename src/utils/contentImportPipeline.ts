@@ -1,7 +1,7 @@
 // Scalable content import pipeline for narratives and mental models
 
 import type { Narrative } from '../types/narrative';
-import type { MentalModel } from '../types/mentalModel';
+import type { MentalModel } from '../types/mental-model';
 
 export interface ImportResult<T> {
   success: boolean;
@@ -206,7 +206,31 @@ export class ContentImportPipeline {
       });
     }
 
-    return item as Narrative;
+    // Construct proper Narrative object with all required fields
+    return {
+      narrative_id: item.narrative_id as string,
+      version: item.version as string || '1.0',
+      provenance_hash: item.provenance_hash as string || '',
+      evidence_quality: (item.evidence_quality as 'A' | 'B' | 'C') || 'C',
+      title: item.title as string,
+      summary: item.summary as string,
+      category: item.category as string || 'General',
+      tags: Array.isArray(item.tags) ? item.tags : [],
+      domain: Array.isArray(item.domain) ? item.domain : [],
+      confidence: typeof item.confidence === 'number' ? item.confidence : 0.5,
+      complexity: item.complexity as any || {
+        cognitive_load: 'medium',
+        time_to_elicit: 'medium',
+        expertise_required: 'medium'
+      },
+      linked_signals: Array.isArray(item.linked_signals) ? item.linked_signals : [],
+      relationships: Array.isArray(item.relationships) ? item.relationships : [],
+      citations: Array.isArray(item.citations) ? item.citations : [],
+      elicitation_methods: Array.isArray(item.elicitation_methods) ? item.elicitation_methods : [],
+      examples: Array.isArray(item.examples) ? item.examples : [],
+      related_frameworks: Array.isArray(item.related_frameworks) ? item.related_frameworks : [],
+      changelog: Array.isArray(item.changelog) ? item.changelog : []
+    } as Narrative;
   }
 
   /**
@@ -265,7 +289,20 @@ export class ContentImportPipeline {
       }
     }
 
-    return item as MentalModel;
+    // Construct proper MentalModel object with all required fields
+    return {
+      code: item.code as string,
+      name: item.name as string,
+      definition: item.definition as string,
+      example: item.example as string,
+      transformation: item.transformation as any,
+      tags: Array.isArray(item.tags) ? item.tags : [],
+      relatedModels: Array.isArray(item.relatedModels) ? item.relatedModels : [],
+      complexity: item.complexity as any || 'medium',
+      confidence: typeof item.confidence === 'number' ? item.confidence : 0.5,
+      lastUpdated: item.lastUpdated as string,
+      sources: Array.isArray(item.sources) ? item.sources : []
+    } as MentalModel;
   }
 
   /**
