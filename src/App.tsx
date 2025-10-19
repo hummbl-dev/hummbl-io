@@ -1,11 +1,13 @@
 import { useState, useEffect } from 'react';
 import { NarrativeList } from './components/narratives/NarrativeList';
 import { MentalModelsList } from './components/mental-models/MentalModelsList';
+import { MentalModelsFilters } from './components/mental-models/MentalModelsFilters';
 import ModelDetailModal from './components/mental-models/ModelDetailModal';
 import { Hero } from './components/Hero/Hero';
 import { ViewType } from './types/view';
 import type { MentalModel } from './models/mentalModels';
 import { fetchMentalModels, clearMentalModelsCache } from './services/mentalModelsService';
+import { useMentalModelFilters } from './hooks/useMentalModelFilters';
 import './App.css';
 
 // Types for persisted state
@@ -43,6 +45,17 @@ function App() {
   const [isLoading, setIsLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
   const [selectedModel, setSelectedModel] = useState<MentalModel | null>(null);
+
+  // Mental models filtering
+  const {
+    filters,
+    setFilters,
+    filteredModels,
+    categories,
+    transformations,
+    resultCount,
+    totalCount,
+  } = useMentalModelFilters(mentalModels);
 
   // State for mental models UI state
   const [mentalModelsState] = useState<MentalModelsState>(() => {
@@ -150,24 +163,34 @@ function App() {
             ) : error ? (
               <div className="error">{error}</div>
             ) : (
-              <MentalModelsList
-                models={mentalModels}
-                onSelect={handleModelSelect}
-                onRetry={async () => {
-                  clearMentalModelsCache();
-                  setIsLoading(true);
-                  try {
-                    const models = await fetchMentalModels();
-                    setMentalModels(models);
-                    setError(null);
-                  } catch (err) {
-                    console.error('Retry failed:', err);
-                    setError('Failed to load mental models. Please try again later.');
-                  } finally {
-                    setIsLoading(false);
-                  }
-                }}
-              />
+              <>
+                <MentalModelsFilters
+                  filters={filters}
+                  onFiltersChange={setFilters}
+                  resultCount={resultCount}
+                  totalCount={totalCount}
+                  categories={categories}
+                  transformations={transformations}
+                />
+                <MentalModelsList
+                  models={filteredModels}
+                  onSelect={handleModelSelect}
+                  onRetry={async () => {
+                    clearMentalModelsCache();
+                    setIsLoading(true);
+                    try {
+                      const models = await fetchMentalModels();
+                      setMentalModels(models);
+                      setError(null);
+                    } catch (err) {
+                      console.error('Retry failed:', err);
+                      setError('Failed to load mental models. Please try again later.');
+                    } finally {
+                      setIsLoading(false);
+                    }
+                  }}
+                />
+              </>
             )}
           </div>
         )}
