@@ -19,19 +19,9 @@ const ModelCard = ({ model, onSelect }: ModelCardProps) => {
       onClick={() => onSelect(model)}
       className="model-card"
     >
-      {/* Header with code and transformations */}
+      {/* Header with code */}
       <div className="model-header">
         <span className="model-code">{model.code}</span>
-        <div className="model-badges">
-          {model.transformations && model.transformations.slice(0, 3).map((t, i) => (
-            <span key={i} className="model-transformation">
-              {t}
-            </span>
-          ))}
-          {model.transformations && model.transformations.length > 3 && (
-            <span className="model-transformation-more">+{model.transformations.length - 3}</span>
-          )}
-        </div>
       </div>
 
       {/* Title */}
