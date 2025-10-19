@@ -345,9 +345,9 @@
 }
 
 .example-label {
-  font-size: var(--text-sm);
-  font-weight: var(--font-bold);
-  color: var(--text-primary);
+  font-size: 1rem;
+  font-weight: 700;
+  color: #111827;
   margin: 0 0 var(--space-2) 0;
 }
 
@@ -392,8 +392,8 @@
 }
 
 .citation-author {
-  font-size: var(--text-base);
-  font-weight: var(--font-bold);
+  font-size: 1.1rem;
+  font-weight: 700;
   color: #111827;
   margin-bottom: var(--space-1);
 }
@@ -495,8 +495,8 @@
 }
 
 .method-name {
-  font-size: var(--text-lg);
-  font-weight: var(--font-bold);
+  font-size: 1.25rem;
+  font-weight: 700;
   color: #111827;
   margin: 0 0 var(--space-4) 0;
 }
@@ -574,8 +574,8 @@
 }
 
 .relationship-target {
-  font-size: var(--text-lg);
-  font-weight: var(--font-bold);
+  font-size: 1.25rem;
+  font-weight: 700;
   color: #111827;
   margin-bottom: var(--space-2);
 }
