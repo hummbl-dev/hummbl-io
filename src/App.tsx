@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useMemo } from 'react';
 import { NarrativeList } from './components/narratives/NarrativeList';
 import { MentalModelsList } from './components/mental-models/MentalModelsList';
 import { MentalModelsFilters } from './components/mental-models/MentalModelsFilters';
@@ -9,6 +9,7 @@ import { ViewType } from './types/view';
 import type { MentalModel } from './models/mentalModels';
 import { fetchMentalModels, clearMentalModelsCache } from './services/mentalModelsService';
 import { useMentalModelFilters } from './hooks/useMentalModelFilters';
+import type { ChatContext } from './types/chatContext';
 import './App.css';
 
 // Types for persisted state
@@ -216,6 +217,44 @@ function App() {
         mentalModels={mentalModels}
         narratives={[]}
         apiKey={import.meta.env.VITE_OPENAI_API_KEY}
+        context={useMemo((): ChatContext | null => {
+          // If a model modal is open
+          if (selectedModel) {
+            return {
+              type: 'mental-model',
+              viewMode: 'modal-open',
+              currentItem: selectedModel,
+              metadata: {
+                totalModels: mentalModels.length
+              }
+            };
+          }
+
+          // If browsing mental models
+          if (currentView === 'models') {
+            return {
+              type: 'mental-model',
+              viewMode: 'browsing',
+              metadata: {
+                totalModels: mentalModels.length,
+                activeFilters: []
+              }
+            };
+          }
+
+          // If browsing narratives
+          if (currentView === 'narratives') {
+            return {
+              type: 'narrative',
+              viewMode: 'browsing',
+              metadata: {
+                totalNarratives: 0 // TODO: Add narratives count when available
+              }
+            };
+          }
+
+          return null;
+        }, [selectedModel, currentView, mentalModels.length])}
       />
     </div>
   );

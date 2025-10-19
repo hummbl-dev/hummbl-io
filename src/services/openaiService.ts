@@ -64,9 +64,19 @@ export class OpenAIService {
     }
   }
 
-  // Build system context from mental models and narratives
-  buildSystemContext(mentalModels?: any[], narratives?: any[]): string {
+  // Build system context from mental models, narratives, and current view context
+  buildSystemContext(
+    mentalModels?: any[], 
+    narratives?: any[],
+    contextDescription?: string
+  ): string {
     let context = 'You are HUMMBL AI Assistant, helping users understand mental models and narratives for better decision-making.\n\n';
+
+    // Add current context if provided
+    if (contextDescription) {
+      context += `CURRENT CONTEXT: ${contextDescription}\n\n`;
+      context += 'Use this context to provide relevant, focused answers about what the user is currently viewing.\n\n';
+    }
 
     if (mentalModels && mentalModels.length > 0) {
       context += `Available Mental Models (${mentalModels.length}):\n`;

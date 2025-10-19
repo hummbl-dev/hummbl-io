@@ -7,15 +7,18 @@ import { ChatSettings } from './ChatSettings';
 import { getOpenAIService } from '../../services/openaiService';
 import { chatStorage } from '../../services/chatStorageService';
 import type { ChatConversation } from '../../types/chat';
+import type { ChatContext } from '../../types/chatContext';
+import { buildContextDescription } from '../../types/chatContext';
 import './ChatWidget.css';
 
 interface ChatWidgetProps {
   mentalModels?: any[];
   narratives?: any[];
   apiKey?: string;
+  context?: ChatContext | null;
 }
 
-export function ChatWidget({ mentalModels, narratives, apiKey }: ChatWidgetProps) {
+export function ChatWidget({ mentalModels, narratives, apiKey, context }: ChatWidgetProps) {
   const [isOpen, setIsOpen] = useState(false);
   const [conversation, setConversation] = useState<ChatConversation | null>(null);
   const [conversations, setConversations] = useState<ChatConversation[]>([]);
@@ -121,9 +124,14 @@ export function ChatWidget({ mentalModels, narratives, apiKey }: ChatWidgetProps
       const updatedConv = chatStorage.addMessage(conversation, 'user', message);
       setConversation(updatedConv);
 
-      // Build system context
+      // Build system context with current view context
       const openAI = getOpenAIService();
-      const systemContext = openAI.buildSystemContext(mentalModels, narratives);
+      const contextDescription = buildContextDescription(context || null);
+      const systemContext = openAI.buildSystemContext(
+        mentalModels, 
+        narratives,
+        contextDescription
+      );
 
       // Prepare messages for API
       const apiMessages = updatedConv.messages.map(msg => ({
