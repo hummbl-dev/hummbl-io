@@ -20,17 +20,17 @@ export function NarrativeHero({ narrativeCount }: NarrativeHeroProps) {
 
         <div className="narrative-hero-stats">
           <div className="narrative-stat-card">
-            <div className="stat-icon">
+            <div className="narrative-stat-icon">
               <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
                 <path d="M12 2L2 7l10 5 10-5-10-5z"/>
                 <path d="M2 17l10 5 10-5"/>
                 <path d="M2 12l10 5 10-5"/>
               </svg>
             </div>
-            <div className="stat-content">
-              <div className="stat-number">{narrativeCount}</div>
-              <div className="stat-label">Core Narratives</div>
-              <div className="stat-description">
+            <div className="narrative-stat-content">
+              <div className="narrative-stat-number">{narrativeCount}</div>
+              <div className="narrative-stat-label">Core Narratives</div>
+              <div className="narrative-stat-description">
                 Foundational narrative structures for systematic elicitation
               </div>
             </div>
@@ -39,16 +39,16 @@ export function NarrativeHero({ narrativeCount }: NarrativeHeroProps) {
           <div className="stat-divider"></div>
 
           <div className="narrative-stat-card">
-            <div className="stat-icon">
+            <div className="narrative-stat-icon">
               <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
                 <circle cx="12" cy="12" r="10"/>
                 <path d="M12 6v6l4 2"/>
               </svg>
             </div>
-            <div className="stat-content">
-              <div className="stat-number">120+</div>
-              <div className="stat-label">Connected Models</div>
-              <div className="stat-description">
+            <div className="narrative-stat-content">
+              <div className="narrative-stat-number">120+</div>
+              <div className="narrative-stat-label">Connected Models</div>
+              <div className="narrative-stat-description">
                 Mental models linked through narrative frameworks
               </div>
             </div>
@@ -57,7 +57,7 @@ export function NarrativeHero({ narrativeCount }: NarrativeHeroProps) {
           <div className="stat-divider"></div>
 
           <div className="narrative-stat-card">
-            <div className="stat-icon">
+            <div className="narrative-stat-icon">
               <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
                 <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
                 <polyline points="14 2 14 8 20 8"/>
@@ -66,10 +66,10 @@ export function NarrativeHero({ narrativeCount }: NarrativeHeroProps) {
                 <polyline points="10 9 9 9 8 9"/>
               </svg>
             </div>
-            <div className="stat-content">
-              <div className="stat-number">A-Grade</div>
-              <div className="stat-label">Evidence Quality</div>
-              <div className="stat-description">
+            <div className="narrative-stat-content">
+              <div className="narrative-stat-number">A-Grade</div>
+              <div className="narrative-stat-label">Evidence Quality</div>
+              <div className="narrative-stat-description">
                 Academically validated with peer-reviewed citations
               </div>
             </div>
