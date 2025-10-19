@@ -1,16 +1,16 @@
 // Floating chat widget component
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { ChatWindow } from './ChatWindow';
 import { ConversationHistory } from './ConversationHistory';
 import { ChatSettings } from './ChatSettings';
 import { getOpenAIService } from '../../services/openaiService';
+import { getStreamingService } from '../../services/openaiStreamingService';
 import { chatStorage } from '../../services/chatStorageService';
 import type { ChatConversation } from '../../types/chat';
 import type { ChatContext } from '../../types/chatContext';
 import { buildContextDescription } from '../../types/chatContext';
 import './ChatWidget.css';
-
 interface ChatWidgetProps {
   mentalModels?: any[];
   narratives?: any[];
@@ -27,6 +27,8 @@ export function ChatWidget({ mentalModels, narratives, apiKey, context }: ChatWi
   const [hasApiKey, setHasApiKey] = useState(false);
   const [showHistory, setShowHistory] = useState(false);
   const [showSettings, setShowSettings] = useState(false);
+  const [streamingResponse, setStreamingResponse] = useState<string>('');
+  const streamingRef = useRef<boolean>(false);
 
   // Initialize conversations on mount
   useEffect(() => {
@@ -112,12 +114,14 @@ export function ChatWidget({ mentalModels, narratives, apiKey, context }: ChatWi
   const handleSendMessage = async (message: string) => {
     if (!conversation || !hasApiKey) {
       setError('OpenAI API key not configured');
-      setTimeout(() => setError(null), 5000); // Clear after 5 seconds
+      setTimeout(() => setError(null), 5000);
       return;
     }
 
-    setError(null); // Clear any previous errors
+    setError(null);
     setIsLoading(true);
+    setStreamingResponse('');
+    streamingRef.current = true;
 
     try {
       // Add user message
@@ -139,27 +143,54 @@ export function ChatWidget({ mentalModels, narratives, apiKey, context }: ChatWi
         content: msg.content,
       }));
 
-      // Get AI response
-      const response = await openAI.sendMessage(apiMessages, systemContext);
+      // Use streaming service
+      const streamingService = getStreamingService(apiKey);
+      let accumulatedResponse = '';
 
-      // Add AI response
-      const finalConv = chatStorage.addMessage(updatedConv, 'assistant', response);
-      setConversation(finalConv);
+      await streamingService.sendMessageStream(
+        apiMessages,
+        systemContext,
+        {
+          onToken: (token: string) => {
+            accumulatedResponse += token;
+            setStreamingResponse(accumulatedResponse);
+          },
+          onComplete: () => {
+            streamingRef.current = false;
+            
+            // Add complete AI response to conversation
+            const finalConv = chatStorage.addMessage(updatedConv, 'assistant', accumulatedResponse);
+            setConversation(finalConv);
 
-      // Save to localStorage and update state
-      const updatedConversations = conversations.map(c => 
-        c.id === finalConv.id ? finalConv : c
+            // Save to localStorage and update state
+            const updatedConversations = conversations.map(c => 
+              c.id === finalConv.id ? finalConv : c
+            );
+            setConversations(updatedConversations);
+            chatStorage.saveConversations(updatedConversations);
+
+            // Clear streaming state
+            setStreamingResponse('');
+            setIsLoading(false);
+          },
+          onError: (err: Error) => {
+            streamingRef.current = false;
+            console.error('Streaming error:', err);
+            setError(err.message);
+            setTimeout(() => setError(null), 5000);
+            setIsLoading(false);
+            setStreamingResponse('');
+          }
+        }
       );
-      setConversations(updatedConversations);
-      chatStorage.saveConversations(updatedConversations);
     } catch (err) {
+      streamingRef.current = false;
       console.error('Chat error:', err);
       const errorMessage = err instanceof Error ? err.message : 'Failed to send message';
       setError(errorMessage);
-      // Auto-clear error after 5 seconds
       setTimeout(() => setError(null), 5000);
-    } finally {
       setIsLoading(false);
+      setStreamingResponse('');
     }
   };
 
@@ -199,6 +230,7 @@ export function ChatWidget({ mentalModels, narratives, apiKey, context }: ChatWi
         error={error}
         onOpenSettings={() => setShowSettings(true)}
         onOpenHistory={() => setShowHistory(true)}
+        streamingResponse={streamingResponse}
       />
 
       {/* Conversation History */}

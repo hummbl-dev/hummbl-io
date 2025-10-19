@@ -15,6 +15,7 @@ interface ChatWindowProps {
   error: string | null;
   onOpenSettings: () => void;
   onOpenHistory: () => void;
+  streamingResponse?: string;
 }
 
 export function ChatWindow({
@@ -26,13 +27,14 @@ export function ChatWindow({
   error,
   onOpenSettings,
   onOpenHistory,
+  streamingResponse = '',
 }: ChatWindowProps) {
   const messagesEndRef = useRef<HTMLDivElement>(null);
 
-  // Auto-scroll to bottom when new messages arrive
+  // Auto-scroll to bottom when new messages arrive or streaming updates
   useEffect(() => {
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
-  }, [conversation?.messages]);
+  }, [conversation?.messages, streamingResponse]);
 
   // Close on Escape key
   useEffect(() => {
@@ -108,7 +110,18 @@ export function ChatWindow({
               {conversation.messages.map((message) => (
                 <ChatMessage key={message.id} message={message} />
               ))}
-              {isLoading && (
+              {streamingResponse && (
+                <ChatMessage
+                  key="streaming"
+                  message={{
+                    id: 'streaming',
+                    role: 'assistant',
+                    content: streamingResponse,
+                    timestamp: Date.now(),
+                  }}
+                />
+              )}
+              {isLoading && !streamingResponse && (
                 <div className="chat-loading">
                   <div className="loading-dots">
                     <span></span>
