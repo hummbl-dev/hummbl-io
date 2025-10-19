@@ -84,11 +84,6 @@ function App() {
     );
   }, [mentalModelsState]);
 
-  // Static tagline
-  const getTagline = () => {
-    return 'Cognitive Operating System';
-  };
-
   // Handle model selection
   const handleModelSelect = (model: MentalModel) => {
     // TODO: Implement model detail view or navigation
@@ -103,7 +98,6 @@ function App() {
       <header className="header">
         <div className="header-content">
           <h1 className="logo">HUMMBL</h1>
-          <p className="tagline">{getTagline()}</p>
         </div>
       </header>
 

@@ -30,7 +30,7 @@
     linear-gradient(135deg, #10b981 0%, #047857 100%),
     url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23ffffff' fill-opacity='0.03'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
   color: white;
-  padding: var(--space-10) var(--space-4);
+  padding: var(--space-6) var(--space-4);
   text-align: center;
   box-shadow: 0 4px 12px rgba(16, 185, 129, 0.2);
   position: relative;
@@ -60,36 +60,29 @@
 }
 
 .header h1 {
-  font-size: var(--text-4xl);
+  font-size: 3.5rem;
   font-weight: var(--font-extrabold);
-  letter-spacing: var(--tracking-tight);
-  margin-bottom: var(--space-3);
+  letter-spacing: 0.05em;
+  margin-bottom: 0;
   color: white;
-  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  text-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
   animation: fadeInDown 0.6s ease-out;
+  line-height: 1;
 }
 
+/* Tagline removed - keeping class for potential future use */
 .header-subtitle {
-  font-size: var(--text-lg);
-  font-weight: var(--font-normal);
-  color: rgba(255, 255, 255, 0.95);
-  margin-bottom: var(--space-8);
-  animation: fadeInUp 0.6s ease-out 0.1s both;
+  display: none;
 }
 
 /* Mobile header adjustments */
 @media (max-width: 640px) {
   .header {
-    padding: var(--space-8) var(--space-4);
+    padding: var(--space-5) var(--space-4);
   }
   
   .header h1 {
-    font-size: var(--text-3xl);
-  }
-  
-  .header-subtitle {
-    font-size: var(--text-base);
-    margin-bottom: var(--space-6);
+    font-size: 2.5rem;
   }
 }
 
