@@ -50,10 +50,11 @@ export function ChatWidget({ mentalModels, narratives, apiKey }: ChatWidgetProps
   const handleSendMessage = async (message: string) => {
     if (!conversation || !hasApiKey) {
       setError('OpenAI API key not configured');
+      setTimeout(() => setError(null), 5000); // Clear after 5 seconds
       return;
     }
 
-    setError(null);
+    setError(null); // Clear any previous errors
     setIsLoading(true);
 
     try {
@@ -91,7 +92,10 @@ export function ChatWidget({ mentalModels, narratives, apiKey }: ChatWidgetProps
       chatStorage.saveConversations(allConversations);
     } catch (err) {
       console.error('Chat error:', err);
-      setError(err instanceof Error ? err.message : 'Failed to send message');
+      const errorMessage = err instanceof Error ? err.message : 'Failed to send message';
+      setError(errorMessage);
+      // Auto-clear error after 5 seconds
+      setTimeout(() => setError(null), 5000);
     } finally {
       setIsLoading(false);
     }
