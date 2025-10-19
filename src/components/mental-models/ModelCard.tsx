@@ -1,4 +1,3 @@
-import { useState } from 'react';
 import type { MentalModel } from '@/models/mentalModels';
 
 type ModelCardProps = {
@@ -7,8 +6,6 @@ type ModelCardProps = {
 };
 
 const ModelCard = ({ model, onSelect }: ModelCardProps) => {
-  const [isExpanded, setIsExpanded] = useState(false);
-  
   const difficultyStars = model.meta?.difficulty
     ? '●'.repeat(model.meta.difficulty) + '○'.repeat(5 - model.meta.difficulty)
     : null;
