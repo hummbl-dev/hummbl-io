@@ -74,7 +74,7 @@
 .modal-title {
   font-size: var(--text-2xl);
   font-weight: var(--font-bold);
-  color: var(--text-primary);
+  color: #111827;
   margin: 0;
   line-height: var(--leading-tight);
 }
@@ -209,13 +209,13 @@
 .section-title {
   font-size: var(--text-lg);
   font-weight: var(--font-semibold);
-  color: var(--text-primary);
+  color: #111827;
   margin: 0 0 var(--space-3) 0;
 }
 
 .section-text {
   font-size: var(--text-base);
-  color: var(--text-secondary);
+  color: #1f2937;
   line-height: var(--leading-relaxed);
   margin: 0;
 }
@@ -297,12 +297,12 @@
 }
 
 .framework-item {
-  padding: var(--space-3) var(--space-4);
+  padding: var(--space-2) var(--space-3);
   background: var(--gray-50);
   border-radius: var(--radius-md);
   margin-bottom: var(--space-2);
   font-size: var(--text-base);
-  color: var(--text-secondary);
+  color: #1f2937;
 }
 
 .framework-item:last-child {
@@ -346,7 +346,7 @@
 
 .example-text {
   font-size: var(--text-base);
-  color: var(--text-secondary);
+  color: #1f2937;
   line-height: var(--leading-relaxed);
   margin: 0;
 }
@@ -387,13 +387,13 @@
 .citation-author {
   font-size: var(--text-base);
   font-weight: var(--font-bold);
-  color: var(--text-primary);
+  color: #111827;
   margin-bottom: var(--space-1);
 }
 
 .citation-title {
   font-size: var(--text-base);
-  color: var(--text-secondary);
+  color: #1f2937;
   margin-bottom: var(--space-2);
   line-height: var(--leading-relaxed);
 }
@@ -490,7 +490,7 @@
 .method-name {
   font-size: var(--text-lg);
   font-weight: var(--font-bold);
-  color: var(--text-primary);
+  color: #111827;
   margin: 0 0 var(--space-4) 0;
 }
 
@@ -514,7 +514,7 @@
 
 .method-value {
   font-size: var(--text-sm);
-  color: var(--text-secondary);
+  color: #374151;
   font-weight: var(--font-medium);
 }
 
@@ -569,13 +569,13 @@
 .relationship-target {
   font-size: var(--text-lg);
   font-weight: var(--font-bold);
-  color: var(--text-primary);
+  color: #111827;
   margin-bottom: var(--space-2);
 }
 
 .relationship-description {
   font-size: var(--text-base);
-  color: var(--text-secondary);
+  color: #1f2937;
   line-height: var(--leading-relaxed);
 }
 
