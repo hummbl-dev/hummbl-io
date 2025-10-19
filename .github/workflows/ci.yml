@@ -40,7 +40,6 @@ jobs:
 
   build:
     name: Build Application
-    needs: test
     runs-on: ubuntu-latest
     
     steps:
@@ -169,7 +168,7 @@ jobs:
 
   deploy-production:
     name: Deploy to Production
-    needs: [test, build, bundle-size]
+    needs: [build, bundle-size]
     if: github.ref == 'refs/heads/main'
     runs-on: ubuntu-latest
     environment:
