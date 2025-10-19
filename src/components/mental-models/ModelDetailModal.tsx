@@ -73,29 +73,18 @@ const ModelDetailModal = ({ model, onClose }: ModelDetailModalProps) => {
             </section>
           )}
 
-          {/* Transformations */}
-          {model.transformations && model.transformations.length > 0 && (
+          {/* Tags & Transformations */}
+          {((model.tags && model.tags.length > 0) || (model.transformations && model.transformations.length > 0)) && (
             <section className="modal-section">
-              <h3 className="modal-section-title">
-                Transformations ({model.transformations.length})
-              </h3>
-              <div className="modal-transformations">
-                {model.transformations.map((t, i) => (
-                  <span key={i} className="modal-transformation">
+              <h3 className="modal-section-title">Tags & Categories</h3>
+              <div className="modal-tags">
+                {model.transformations && model.transformations.map((t, i) => (
+                  <span key={`t-${i}`} className="modal-transformation">
                     {t}
                   </span>
                 ))}
-              </div>
-            </section>
-          )}
-
-          {/* Tags */}
-          {model.tags && model.tags.length > 0 && (
-            <section className="modal-section">
-              <h3 className="modal-section-title">Tags</h3>
-              <div className="modal-tags">
-                {model.tags.map((tag, i) => (
-                  <span key={i} className="modal-tag">
+                {model.tags && model.tags.map((tag, i) => (
+                  <span key={`tag-${i}`} className="modal-tag">
                     {tag}
                   </span>
                 ))}
