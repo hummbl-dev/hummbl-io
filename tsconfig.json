@@ -30,6 +30,8 @@
   },
   "include": [
     "src",
+    "scripts",
+    "hummbl/devops/agents",
     "vitest.setup.ts",
     "**/*.test.ts",
     "**/*.test.tsx",
