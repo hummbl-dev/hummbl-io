@@ -6,10 +6,6 @@ type ModelCardProps = {
 };
 
 const ModelCard = ({ model, onSelect }: ModelCardProps) => {
-  const difficultyStars = model.meta?.difficulty
-    ? '●'.repeat(model.meta.difficulty) + '○'.repeat(5 - model.meta.difficulty)
-    : null;
-
   return (
     <div
       data-testid="model-card"
@@ -39,11 +35,6 @@ const ModelCard = ({ model, onSelect }: ModelCardProps) => {
       {/* Footer with metadata */}
       <div className="model-footer">
         <div className="model-meta">
-          {difficultyStars && (
-            <span className="model-difficulty" title={`Difficulty: ${model.meta?.difficulty}/5`}>
-              {difficultyStars}
-            </span>
-          )}
           {model.sources && model.sources.length > 0 && (
             <span className="model-sources" title={model.sources.map(s => s.name).join(', ')}>
               {model.sources.length} {model.sources.length === 1 ? 'source' : 'sources'}
