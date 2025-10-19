@@ -209,11 +209,12 @@
   overflow-y: auto;
   flex: 1;
   background: #ffffff;
+  scroll-padding-top: 5rem;
 }
 
 .tab-panel {
   animation: fadeIn 0.2s ease-out;
-  padding-top: 1.5rem;
+  padding-top: 2.5rem;
 }
 
 /* Sections */
