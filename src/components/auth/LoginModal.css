@@ -56,8 +56,99 @@
   color: var(--text-primary);
 }
 
-.login-form {
+.oauth-section {
   padding: var(--space-5);
+  padding-bottom: 0;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+}
+
+.oauth-btn {
+  width: 100%;
+  padding: var(--space-3);
+  border: 2px solid var(--border-light);
+  border-radius: var(--radius-md);
+  background: white;
+  font-size: var(--text-base);
+  font-weight: var(--font-semibold);
+  cursor: pointer;
+  transition: all 0.2s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-2);
+}
+
+.oauth-btn:hover:not(:disabled) {
+  border-color: var(--color-primary);
+  transform: translateY(-1px);
+}
+
+.oauth-btn:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.oauth-icon {
+  font-weight: bold;
+  font-size: var(--text-lg);
+}
+
+.oauth-btn.google:hover:not(:disabled) {
+  border-color: #4285f4;
+  color: #4285f4;
+}
+
+.oauth-btn.github:hover:not(:disabled) {
+  border-color: #333;
+  color: #333;
+}
+
+.oauth-btn.microsoft:hover:not(:disabled) {
+  border-color: #00a4ef;
+  color: #00a4ef;
+}
+
+.oauth-btn.apple:hover:not(:disabled) {
+  border-color: #000;
+  color: #000;
+}
+
+.login-divider {
+  padding: var(--space-4) var(--space-5);
+  text-align: center;
+  position: relative;
+  color: var(--text-secondary);
+  font-size: var(--text-sm);
+}
+
+.login-divider::before,
+.login-divider::after {
+  content: '';
+  position: absolute;
+  top: 50%;
+  width: 40%;
+  height: 1px;
+  background: var(--border-light);
+}
+
+.login-divider::before {
+  left: 0;
+}
+
+.login-divider::after {
+  right: 0;
+}
+
+.login-divider span {
+  background: white;
+  padding: 0 var(--space-2);
+  position: relative;
+}
+
+.login-form {
+  padding: 0 var(--space-5) var(--space-5);
 }
 
 .login-field {
@@ -145,20 +236,31 @@
   cursor: not-allowed;
 }
 
-.login-info {
+.login-footer {
   padding: var(--space-4) var(--space-5);
   background: var(--bg-secondary);
   border-top: 2px solid var(--border-light);
+  text-align: center;
+}
+
+.login-toggle {
+  background: none;
+  border: none;
+  color: var(--color-primary);
   font-size: var(--text-sm);
-  color: var(--text-secondary);
+  font-weight: var(--font-semibold);
+  cursor: pointer;
+  transition: opacity 0.2s ease;
 }
 
-.login-info p {
-  margin: var(--space-2) 0;
+.login-toggle:hover:not(:disabled) {
+  opacity: 0.8;
+  text-decoration: underline;
 }
 
-.login-note {
-  font-size: var(--text-xs) !important;
+.login-toggle:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
 }
 
 /* Animations */

@@ -5,6 +5,7 @@ import { MentalModelsFilters } from './components/mental-models/MentalModelsFilt
 import ModelDetailModal from './components/mental-models/ModelDetailModal';
 import { Hero } from './components/Hero/Hero';
 import { ChatWidget } from './components/chat/ChatWidget';
+import { AuthProvider } from './contexts/AuthContext';
 import { ViewType } from './types/view';
 import type { MentalModel } from './models/mentalModels';
 import { fetchMentalModels, clearMentalModelsCache } from './services/mentalModelsService';
@@ -109,7 +110,8 @@ function App() {
   // Handle mental models state updates (inline where used)
 
   return (
-    <div className="app">
+    <AuthProvider>
+      <div className="app">
       {/* Header */}
       <header className="header">
         <div className="header-content">
@@ -256,7 +258,8 @@ function App() {
           return null;
         }, [selectedModel, currentView, mentalModels.length])}
       />
-    </div>
+      </div>
+    </AuthProvider>
   );
 }
 
