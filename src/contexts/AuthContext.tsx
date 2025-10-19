@@ -2,7 +2,7 @@
 
 import { createContext, useContext, useEffect, useState, ReactNode } from 'react';
 import { User, Session, AuthError, Provider } from '@supabase/supabase-js';
-import { supabase } from '../lib/supabaseClient';
+import { supabase, isAuthEnabled } from '../lib/supabaseClient';
 
 type OAuthProvider = 'google' | 'github' | 'azure' | 'apple';
 
@@ -28,10 +28,20 @@ export function AuthProvider({ children }: AuthProviderProps) {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
+    // Skip if Supabase is not configured
+    if (!isAuthEnabled) {
+      console.warn('Auth disabled: Supabase not configured');
+      setLoading(false);
+      return;
+    }
+
     // Get initial session
     supabase.auth.getSession().then(({ data: { session } }) => {
       setSession(session);
       setUser(session?.user ?? null);
+      setLoading(false);
+    }).catch((error) => {
+      console.error('Failed to get session:', error);
       setLoading(false);
     });
 
