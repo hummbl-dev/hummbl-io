@@ -48,9 +48,6 @@ const ModelDetailModal = ({ model, onClose }: ModelDetailModalProps) => {
           
           {/* Badges */}
           <div className="modal-badges">
-            {model.meta?.isCore && (
-              <span className="modal-badge modal-badge-core">Core Model</span>
-            )}
             <span className="modal-badge modal-badge-category">{model.category}</span>
             {difficultyStars && (
               <span className="modal-badge modal-badge-difficulty">

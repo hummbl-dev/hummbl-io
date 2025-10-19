@@ -23,9 +23,6 @@ const ModelCard = ({ model, onSelect }: ModelCardProps) => {
       <div className="model-header">
         <span className="model-code">{model.code}</span>
         <div className="model-badges">
-          {model.meta?.isCore && (
-            <span className="model-badge model-badge-core">Core</span>
-          )}
           {model.transformations && model.transformations.slice(0, 3).map((t, i) => (
             <span key={i} className="model-transformation">
               {t}
