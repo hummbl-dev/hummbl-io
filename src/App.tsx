@@ -4,6 +4,7 @@ import { MentalModelsList } from './components/mental-models/MentalModelsList';
 import { MentalModelsFilters } from './components/mental-models/MentalModelsFilters';
 import ModelDetailModal from './components/mental-models/ModelDetailModal';
 import { Hero } from './components/Hero/Hero';
+import { ChatWidget } from './components/chat/ChatWidget';
 import { ViewType } from './types/view';
 import type { MentalModel } from './models/mentalModels';
 import { fetchMentalModels, clearMentalModelsCache } from './services/mentalModelsService';
@@ -209,6 +210,13 @@ function App() {
           onClose={() => setSelectedModel(null)}
         />
       )}
+
+      {/* Chat Widget */}
+      <ChatWidget
+        mentalModels={mentalModels}
+        narratives={[]}
+        apiKey={import.meta.env.VITE_OPENAI_API_KEY}
+      />
     </div>
   );
 }
