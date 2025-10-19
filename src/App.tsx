@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { NarrativeList } from './components/narratives/NarrativeList';
 import { MentalModelsList } from './components/mental-models/MentalModelsList';
+import ModelDetailModal from './components/mental-models/ModelDetailModal';
 import { Hero } from './components/Hero/Hero';
 import { ViewType } from './types/view';
 import type { MentalModel } from './models/mentalModels';
@@ -41,6 +42,7 @@ function App() {
   const [mentalModels, setMentalModels] = useState<MentalModel[]>([]);
   const [isLoading, setIsLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
+  const [selectedModel, setSelectedModel] = useState<MentalModel | null>(null);
 
   // State for mental models UI state
   const [mentalModelsState] = useState<MentalModelsState>(() => {
@@ -86,8 +88,7 @@ function App() {
 
   // Handle model selection
   const handleModelSelect = (model: MentalModel) => {
-    // TODO: Implement model detail view or navigation
-    console.log('Selected model:', model);
+    setSelectedModel(model);
   };
 
   // Handle mental models state updates (inline where used)
@@ -177,6 +178,14 @@ function App() {
         <p>HUMMBL Cognitive Framework v1.0</p>
         <p>Production Certified - 2025-10-17</p>
       </footer>
+
+      {/* Model Detail Modal */}
+      {selectedModel && (
+        <ModelDetailModal
+          model={selectedModel}
+          onClose={() => setSelectedModel(null)}
+        />
+      )}
     </div>
   );
 }
