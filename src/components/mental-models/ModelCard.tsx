@@ -21,9 +21,6 @@ const ModelCard = ({ model, onSelect }: ModelCardProps) => {
         <span className="model-code">{model.code}</span>
       </div>
 
-      {/* Category */}
-      <div className="model-category">{model.category}</div>
-
       {/* Title */}
       <h3 className="model-name" data-testid="model-name">{model.name}</h3>
 
