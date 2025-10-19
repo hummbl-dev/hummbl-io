@@ -102,6 +102,7 @@ export function NarrativeList() {
           resultCount={resultCount}
           totalCount={totalCount}
           categories={categories}
+          narratives={filteredNarratives}
         />
 
         {/* Narrative Grid */}

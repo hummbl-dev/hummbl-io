@@ -2,6 +2,8 @@
 
 import { useState, useEffect } from 'react';
 import type { FilterOptions } from '../../hooks/useNarrativeFilters';
+import type { Narrative } from '../../types/narrative';
+import { exportToJSON, exportToCSV, exportToMarkdown, getExportFilename } from '../../utils/exportNarratives';
 import './NarrativeFilters.css';
 
 interface NarrativeFiltersProps {
@@ -10,6 +12,7 @@ interface NarrativeFiltersProps {
   resultCount: number;
   totalCount: number;
   categories: string[];
+  narratives: Narrative[];
 }
 
 export function NarrativeFilters({
@@ -18,8 +21,10 @@ export function NarrativeFilters({
   resultCount,
   totalCount,
   categories,
+  narratives,
 }: NarrativeFiltersProps) {
   const [searchInput, setSearchInput] = useState(filters.searchTerm);
+  const [showExportMenu, setShowExportMenu] = useState(false);
 
   // Debounce search input
   useEffect(() => {
@@ -75,6 +80,24 @@ export function NarrativeFilters({
       sortBy: 'default',
       sortDirection: 'desc',
     });
+  };
+
+  const handleExport = (format: 'json' | 'csv' | 'md') => {
+    const filename = getExportFilename(format);
+    
+    switch (format) {
+      case 'json':
+        exportToJSON(narratives, filename);
+        break;
+      case 'csv':
+        exportToCSV(narratives, filename);
+        break;
+      case 'md':
+        exportToMarkdown(narratives, filename);
+        break;
+    }
+    
+    setShowExportMenu(false);
   };
 
   const hasActiveFilters =
@@ -194,6 +217,58 @@ export function NarrativeFilters({
           <span className="results-count">
             Showing <strong>{resultCount}</strong> of <strong>{totalCount}</strong> narratives
           </span>
+          
+          {/* Export Button */}
+          <div className="export-dropdown">
+            <button
+              className="export-button"
+              onClick={() => setShowExportMenu(!showExportMenu)}
+              aria-label="Export narratives"
+              aria-expanded={showExportMenu}
+            >
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
+                <polyline points="7 10 12 15 17 10"/>
+                <line x1="12" y1="15" x2="12" y2="3"/>
+              </svg>
+              Export
+            </button>
+            
+            {showExportMenu && (
+              <div className="export-menu">
+                <button
+                  className="export-menu-item"
+                  onClick={() => handleExport('json')}
+                >
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                    <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
+                    <polyline points="14 2 14 8 20 8"/>
+                  </svg>
+                  JSON Format
+                </button>
+                <button
+                  className="export-menu-item"
+                  onClick={() => handleExport('csv')}
+                >
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                    <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
+                    <polyline points="14 2 14 8 20 8"/>
+                  </svg>
+                  CSV Format
+                </button>
+                <button
+                  className="export-menu-item"
+                  onClick={() => handleExport('md')}
+                >
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                    <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
+                    <polyline points="14 2 14 8 20 8"/>
+                  </svg>
+                  Markdown Format
+                </button>
+              </div>
+            )}
+          </div>
         </div>
 
         {hasActiveFilters && (
