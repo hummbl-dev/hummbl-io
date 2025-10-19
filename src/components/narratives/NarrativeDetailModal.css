@@ -155,13 +155,15 @@
   padding: 1rem 1rem;
   background: #f8fafc;
   border-bottom: 2px solid #e2e8f0;
-  overflow-x: hidden;
+  overflow: hidden;
   flex-wrap: nowrap;
   position: sticky;
   top: 0;
   z-index: 100;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
   justify-content: space-between;
+  min-height: auto;
+  max-height: none;
 }
 
 .modal-tabs::-webkit-scrollbar {
