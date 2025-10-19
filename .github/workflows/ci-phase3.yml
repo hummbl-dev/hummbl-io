@@ -19,6 +19,7 @@ jobs:
       - run: npm run test -- --run
         env:
           CI: true
+          VITE_ADMIN_PASSWORD: test_password_for_ci
       - name: Upload test summary
         if: always()
         run: |
