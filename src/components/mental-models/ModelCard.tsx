@@ -16,10 +16,9 @@ const ModelCard = ({ model, onSelect }: ModelCardProps) => {
       onClick={() => onSelect(model)}
       className="model-card"
     >
-      {/* Header with code and transformations */}
+      {/* Header with code */}
       <div className="model-header">
         <span className="model-code">{model.code}</span>
-        <div className="model-badges">
       </div>
 
       {/* Category */}
