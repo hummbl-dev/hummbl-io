@@ -211,12 +211,13 @@
 .section-title {
   font-size: 1.5rem;
   font-weight: 800;
-  color: #000000;
+  color: #ffffff;
   margin: 0 0 var(--space-3) 0;
   text-transform: none;
   letter-spacing: 0;
   border-bottom: 4px solid #10b981;
   padding-bottom: 0.75rem;
+  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
 }
 
 .section-text {
