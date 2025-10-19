@@ -71,6 +71,32 @@
   opacity: 0.9;
 }
 
+.chat-header-actions {
+  display: flex;
+  gap: 0.25rem;
+  align-items: center;
+}
+
+.chat-icon-button {
+  background: transparent;
+  border: none;
+  color: white;
+  font-size: 1.125rem;
+  cursor: pointer;
+  padding: 0;
+  width: 32px;
+  height: 32px;
+  border-radius: 6px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background 0.2s;
+}
+
+.chat-icon-button:hover {
+  background: rgba(255, 255, 255, 0.1);
+}
+
 .chat-close-button {
   background: transparent;
   border: none;

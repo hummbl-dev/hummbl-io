@@ -13,6 +13,8 @@ interface ChatWindowProps {
   onSendMessage: (message: string) => void;
   isLoading: boolean;
   error: string | null;
+  onOpenSettings: () => void;
+  onOpenHistory: () => void;
 }
 
 export function ChatWindow({
@@ -22,6 +24,8 @@ export function ChatWindow({
   onSendMessage,
   isLoading,
   error,
+  onOpenSettings,
+  onOpenHistory,
 }: ChatWindowProps) {
   const messagesEndRef = useRef<HTMLDivElement>(null);
 
@@ -54,15 +58,32 @@ export function ChatWindow({
             <h3 className="chat-title">💬 HUMMBL AI Assistant</h3>
             <p className="chat-subtitle">Ask about mental models & narratives</p>
           </div>
-          <button
-            className="chat-close-button"
-            onClick={onClose}
-            aria-label="Close chat"
-          >
-            ✕
-          </button>
+          <div className="chat-header-actions">
+            <button
+              className="chat-icon-button"
+              onClick={onOpenHistory}
+              aria-label="View history"
+              title="View conversation history"
+            >
+              📜
+            </button>
+            <button
+              className="chat-icon-button"
+              onClick={onOpenSettings}
+              aria-label="Open settings"
+              title="Settings"
+            >
+              ⚙️
+            </button>
+            <button
+              className="chat-close-button"
+              onClick={onClose}
+              aria-label="Close chat"
+            >
+              ✕
+            </button>
+          </div>
         </div>
-
         {/* Messages */}
         <div className="chat-messages">
           {!conversation || conversation.messages.length === 0 ? (

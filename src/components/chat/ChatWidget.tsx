@@ -2,6 +2,8 @@
 
 import { useState, useEffect } from 'react';
 import { ChatWindow } from './ChatWindow';
+import { ConversationHistory } from './ConversationHistory';
+import { ChatSettings } from './ChatSettings';
 import { getOpenAIService } from '../../services/openaiService';
 import { chatStorage } from '../../services/chatStorageService';
 import type { ChatConversation } from '../../types/chat';
@@ -16,17 +18,22 @@ interface ChatWidgetProps {
 export function ChatWidget({ mentalModels, narratives, apiKey }: ChatWidgetProps) {
   const [isOpen, setIsOpen] = useState(false);
   const [conversation, setConversation] = useState<ChatConversation | null>(null);
+  const [conversations, setConversations] = useState<ChatConversation[]>([]);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [hasApiKey, setHasApiKey] = useState(false);
+  const [showHistory, setShowHistory] = useState(false);
+  const [showSettings, setShowSettings] = useState(false);
 
-  // Initialize conversation on mount
+  // Initialize conversations on mount
   useEffect(() => {
-    const conversations = chatStorage.loadConversations();
+    const loadedConversations = chatStorage.loadConversations();
+    setConversations(loadedConversations);
+    
     const currentId = chatStorage.loadCurrentConversationId();
     
     if (currentId) {
-      const existing = conversations.find(c => c.id === currentId);
+      const existing = loadedConversations.find(c => c.id === currentId);
       if (existing) {
         setConversation(existing);
         return;
@@ -36,7 +43,9 @@ export function ChatWidget({ mentalModels, narratives, apiKey }: ChatWidgetProps
     // Create new conversation
     const newConv = chatStorage.createConversation();
     setConversation(newConv);
+    setConversations([newConv]);
     chatStorage.saveCurrentConversationId(newConv.id);
+    chatStorage.saveConversations([newConv]);
   }, []);
 
   // Check for API key
@@ -46,6 +55,56 @@ export function ChatWidget({ mentalModels, narratives, apiKey }: ChatWidgetProps
       getOpenAIService(apiKey);
     }
   }, [apiKey]);
+
+  // Conversation management functions
+  const handleSelectConversation = (id: string) => {
+    const selected = conversations.find(c => c.id === id);
+    if (selected) {
+      setConversation(selected);
+      chatStorage.saveCurrentConversationId(id);
+      setShowHistory(false);
+      setIsOpen(true);
+    }
+  };
+
+  const handleDeleteConversation = (id: string) => {
+    const updated = conversations.filter(c => c.id !== id);
+    setConversations(updated);
+    chatStorage.saveConversations(updated);
+    
+    // If deleting current conversation, create a new one
+    if (conversation?.id === id) {
+      const newConv = chatStorage.createConversation();
+      setConversation(newConv);
+      setConversations([...updated, newConv]);
+      chatStorage.saveCurrentConversationId(newConv.id);
+      chatStorage.saveConversations([...updated, newConv]);
+    }
+  };
+
+  const handleNewConversation = () => {
+    const newConv = chatStorage.createConversation();
+    setConversation(newConv);
+    const updated = [...conversations, newConv];
+    setConversations(updated);
+    chatStorage.saveCurrentConversationId(newConv.id);
+    chatStorage.saveConversations(updated);
+    setShowHistory(false);
+    setIsOpen(true);
+  };
+
+  const handleClearAll = () => {
+    chatStorage.clearAll();
+    const newConv = chatStorage.createConversation();
+    setConversation(newConv);
+    setConversations([newConv]);
+    chatStorage.saveCurrentConversationId(newConv.id);
+    chatStorage.saveConversations([newConv]);
+  };
+
+  const getTotalMessageCount = () => {
+    return conversations.reduce((sum, conv) => sum + conv.messages.length, 0);
+  };
 
   const handleSendMessage = async (message: string) => {
     if (!conversation || !hasApiKey) {
@@ -79,17 +138,12 @@ export function ChatWidget({ mentalModels, narratives, apiKey }: ChatWidgetProps
       const finalConv = chatStorage.addMessage(updatedConv, 'assistant', response);
       setConversation(finalConv);
 
-      // Save to localStorage
-      const allConversations = chatStorage.loadConversations();
-      const existingIndex = allConversations.findIndex(c => c.id === finalConv.id);
-      
-      if (existingIndex >= 0) {
-        allConversations[existingIndex] = finalConv;
-      } else {
-        allConversations.push(finalConv);
-      }
-      
-      chatStorage.saveConversations(allConversations);
+      // Save to localStorage and update state
+      const updatedConversations = conversations.map(c => 
+        c.id === finalConv.id ? finalConv : c
+      );
+      setConversations(updatedConversations);
+      chatStorage.saveConversations(updatedConversations);
     } catch (err) {
       console.error('Chat error:', err);
       const errorMessage = err instanceof Error ? err.message : 'Failed to send message';
@@ -135,7 +189,36 @@ export function ChatWidget({ mentalModels, narratives, apiKey }: ChatWidgetProps
         onSendMessage={handleSendMessage}
         isLoading={isLoading}
         error={error}
+        onOpenSettings={() => setShowSettings(true)}
+        onOpenHistory={() => setShowHistory(true)}
       />
+
+      {/* Conversation History */}
+      {showHistory && (
+        <ConversationHistory
+          conversations={conversations}
+          currentConversationId={conversation?.id || null}
+          onSelectConversation={handleSelectConversation}
+          onDeleteConversation={handleDeleteConversation}
+          onNewConversation={handleNewConversation}
+          onClose={() => setShowHistory(false)}
+        />
+      )}
+
+      {/* Settings */}
+      {showSettings && (
+        <ChatSettings
+          isOpen={showSettings}
+          onClose={() => setShowSettings(false)}
+          onClearAll={handleClearAll}
+          onViewHistory={() => {
+            setShowSettings(false);
+            setShowHistory(true);
+          }}
+          messageCount={getTotalMessageCount()}
+          conversationCount={conversations.length}
+        />
+      )}
     </>
   );
 }
