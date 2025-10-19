@@ -4,9 +4,10 @@ import './Hero.css';
 
 interface HeroProps {
   onViewChange: (view: ViewType) => void;
+  currentView: ViewType;
 }
 
-export const Hero: React.FC<HeroProps> = ({ onViewChange }) => {
+export const Hero: React.FC<HeroProps> = ({ onViewChange, currentView }) => {
   return (
     <section className="hero">
       <div className="hero-content">
@@ -59,9 +60,10 @@ export const Hero: React.FC<HeroProps> = ({ onViewChange }) => {
 
         <div className="hero-cta">
           <button 
-            className="btn-primary"
+            className={`hero-cta-button ${currentView === 'models' ? 'active' : ''}`}
             onClick={() => onViewChange('models')}
             aria-label="Explore Mental Models"
+            aria-pressed={currentView === 'models'}
           >
             <span>Explore Mental Models</span>
             <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
@@ -69,9 +71,10 @@ export const Hero: React.FC<HeroProps> = ({ onViewChange }) => {
             </svg>
           </button>
           <button 
-            className="btn-secondary"
+            className={`hero-cta-button ${currentView === 'narratives' ? 'active' : ''}`}
             onClick={() => onViewChange('narratives')}
             aria-label="Learn About Transformations"
+            aria-pressed={currentView === 'narratives'}
           >
             <span>Discover Transformations</span>
             <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">

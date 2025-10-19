@@ -108,7 +108,7 @@ function App() {
       </header>
 
       {/* Hero Section */}
-      <Hero onViewChange={setCurrentView} />
+      <Hero onViewChange={setCurrentView} currentView={currentView} />
 
       <main className="main-content">
         {currentView === 'narratives' ? (
