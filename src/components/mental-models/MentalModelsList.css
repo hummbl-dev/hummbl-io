@@ -184,23 +184,15 @@
   border: 1px solid #d1d5db;
 }
 
-.model-name {
-  margin: 0 0 0.5rem 0;
-  color: #111827;
-  font-size: 1.3rem;
-  font-weight: 700;
-  line-height: 1.3;
-}
-
 .model-category {
   display: inline-block;
-  font-size: 0.7em;
+  font-size: 0.65em;
   color: #4299e1;
   background-color: #dbeafe;
-  padding: 0.2rem 0.5rem;
-  border-radius: 4px;
+  padding: 0.15rem 0.4rem;
+  border-radius: 3px;
   font-weight: 600;
-  margin-bottom: 0.5rem;
+  margin-bottom: 0.4rem;
   border: 1px solid #93c5fd;
   opacity: 0;
   transition: opacity 0.2s ease;
@@ -208,6 +200,14 @@
 
 .model-card:hover .model-category {
   opacity: 1;
+}
+
+.model-name {
+  margin: 0 0 0.75rem 0;
+  color: #111827;
+  font-size: 1.3rem;
+  font-weight: 700;
+  line-height: 1.3;
 }
 
 .model-tags {

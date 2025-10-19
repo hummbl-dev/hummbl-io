@@ -20,22 +20,13 @@ const ModelCard = ({ model, onSelect }: ModelCardProps) => {
       <div className="model-header">
         <span className="model-code">{model.code}</span>
         <div className="model-badges">
-          {model.transformations && model.transformations.slice(0, 3).map((t, i) => (
-            <span key={i} className="model-transformation">
-              {t}
-            </span>
-          ))}
-          {model.transformations && model.transformations.length > 3 && (
-            <span className="model-transformation-more">+{model.transformations.length - 3}</span>
-          )}
-        </div>
       </div>
-
-      {/* Title */}
-      <h3 className="model-name" data-testid="model-name">{model.name}</h3>
 
       {/* Category */}
       <div className="model-category">{model.category}</div>
+
+      {/* Title */}
+      <h3 className="model-name" data-testid="model-name">{model.name}</h3>
 
       {/* Description */}
       {model.description && (
