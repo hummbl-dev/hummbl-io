@@ -32,16 +32,68 @@ export function useMentalModelFilters(models: MentalModel[]) {
   const filteredModels = useMemo(() => {
     let result = [...models];
 
-    // Apply search filter
-    if (filters.searchTerm) {
+    // Apply search filter (minimum 2 characters for better accuracy)
+    if (filters.searchTerm && filters.searchTerm.length >= 2) {
       const searchLower = filters.searchTerm.toLowerCase();
-      result = result.filter(
-        (model) =>
-          model.name.toLowerCase().includes(searchLower) ||
-          model.description?.toLowerCase().includes(searchLower) ||
-          model.tags?.some((tag) => tag.toLowerCase().includes(searchLower)) ||
-          model.code?.toLowerCase().includes(searchLower)
-      );
+      const searchWords = searchLower.split(/\s+/).filter(w => w.length > 0);
+      
+      result = result
+        .map((model) => {
+          let score = 0;
+          const nameLower = model.name.toLowerCase();
+          const descLower = model.description?.toLowerCase() || '';
+          const codeLower = model.code?.toLowerCase() || '';
+          
+          // Exact name match (highest priority)
+          if (nameLower === searchLower) {
+            score += 1000;
+          }
+          // Name starts with search term
+          else if (nameLower.startsWith(searchLower)) {
+            score += 500;
+          }
+          // Name contains search at word boundary
+          else if (new RegExp(`\\b${searchLower.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')}`).test(nameLower)) {
+            score += 300;
+          }
+          // Name contains search anywhere
+          else if (nameLower.includes(searchLower)) {
+            score += 100;
+          }
+          
+          // Code exact match
+          if (codeLower === searchLower) {
+            score += 400;
+          } else if (codeLower.includes(searchLower)) {
+            score += 50;
+          }
+          
+          // Check if all search words match
+          const allWordsMatch = searchWords.every(word =>
+            nameLower.includes(word) || 
+            descLower.includes(word) ||
+            model.tags?.some(tag => tag.toLowerCase().includes(word))
+          );
+          
+          if (allWordsMatch) {
+            score += 200;
+          }
+          
+          // Description contains search
+          if (descLower.includes(searchLower)) {
+            score += 50;
+          }
+          
+          // Tags contain search
+          if (model.tags?.some((tag) => tag.toLowerCase().includes(searchLower))) {
+            score += 75;
+          }
+          
+          return { model, score };
+        })
+        .filter(({ score }) => score > 0)
+        .sort((a, b) => b.score - a.score)
+        .map(({ model }) => model);
     }
 
     // Apply category filter
