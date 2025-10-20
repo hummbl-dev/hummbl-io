@@ -1,24 +1,24 @@
 #!/usr/bin/env node
 // scripts/validate-models.mjs
-import fs from "fs";
-import path from "path";
-import Ajv from "ajv";
+import fs from 'fs';
+import path from 'path';
+import Ajv from 'ajv';
 
 const root = process.cwd();
-const schemaPath = path.join(root, "src", "models", "models.schema.json");
-const modelsPath = path.join(root, "public", "models.json"); // adjust if moved
+const schemaPath = path.join(root, 'src', 'models', 'models.schema.json');
+const modelsPath = path.join(root, 'public', 'models.json'); // adjust if moved
 
 if (!fs.existsSync(schemaPath)) {
-  console.error("[validate-models] Missing schema:", schemaPath);
+  console.error('[validate-models] Missing schema:', schemaPath);
   process.exit(1);
 }
 if (!fs.existsSync(modelsPath)) {
-  console.error("[validate-models] Missing models.json:", modelsPath);
+  console.error('[validate-models] Missing models.json:', modelsPath);
   process.exit(1);
 }
 
-const schema = JSON.parse(fs.readFileSync(schemaPath,'utf8'));
-const data = JSON.parse(fs.readFileSync(modelsPath,'utf8'));
+const schema = JSON.parse(fs.readFileSync(schemaPath, 'utf8'));
+const data = JSON.parse(fs.readFileSync(modelsPath, 'utf8'));
 
 // Validate structure
 if (!data.models || !Array.isArray(data.models)) {
@@ -31,17 +31,19 @@ const requiredFields = ['code', 'name', 'definition', 'example', 'transformation
 let hasErrors = false;
 
 data.models.forEach((model, idx) => {
-  requiredFields.forEach(field => {
+  requiredFields.forEach((field) => {
     if (!model[field]) {
       console.error(`[validate-models] Model at index ${idx} missing field: ${field}`);
       hasErrors = true;
     }
   });
-  
+
   // Validate transformation is valid
   const validTransformations = Object.keys(data.transformations || {});
   if (model.transformation && !validTransformations.includes(model.transformation)) {
-    console.error(`[validate-models] Model ${model.code} has invalid transformation: ${model.transformation}`);
+    console.error(
+      `[validate-models] Model ${model.code} has invalid transformation: ${model.transformation}`
+    );
     hasErrors = true;
   }
 });

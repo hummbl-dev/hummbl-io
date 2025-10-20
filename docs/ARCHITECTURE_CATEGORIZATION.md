@@ -10,15 +10,19 @@
 ## 📊 **COMPONENT TAXONOMY**
 
 ### **1. USER-FACING** (Public Interface)
+
 Components visible and accessible to all end users.
 
 ### **2. INTERNAL TOOLS** (Team Access)
+
 Components for product, analytics, and content teams. Requires authentication.
 
 ### **3. SHARED INFRASTRUCTURE** (Developer Library)
+
 Reusable utilities and abstractions used by both user-facing and internal components.
 
 ### **4. DEV TOOLS** (Development Workflow)
+
 CI/CD, testing, and deployment infrastructure for contributors.
 
 ---
@@ -26,12 +30,14 @@ CI/CD, testing, and deployment infrastructure for contributors.
 ## 🎨 **USER-FACING COMPONENTS**
 
 ### **Feedback System**
+
 - **`FeedbackButton.tsx`** - Floating feedback widget
 - **`NPSWidget.tsx`** - Net Promoter Score survey
 - **Access:** All users (no auth required)
 - **Value:** Direct communication channel
 
 ### **Data Management**
+
 - **`BackupSettings.tsx`** - Backup/restore UI
 - **`BACKUP_RECOVERY.md`** - User documentation
 - **Access:** All users
@@ -44,30 +50,35 @@ CI/CD, testing, and deployment infrastructure for contributors.
 ## 🔒 **INTERNAL TOOLS** (RBAC Required)
 
 ### **Admin Dashboards**
+
 - **`AdminDashboard.tsx`** - Content management
 - **`AnalyticsDashboard.tsx`** - User behavior metrics
 - **Access:** `admin` role
 - **Auth:** LoginModal + ProtectedRoute wrapper
 
 ### **Research Tools**
+
 - **`USER_INTERVIEW_SCRIPT.md`** - Interview guide
 - **`ANALYTICS_BASELINE.md`** - Metrics baseline
 - **Access:** Internal team
 - **Auth:** Repository access control
 
 ### **Operational Tools**
+
 - **`rollback.sh`** - Deployment rollback script
 - **`DEPLOYMENT.md`** - Deployment procedures
 - **Access:** DevOps team
 - **Auth:** Server access required
 
 ### **Content Management**
+
 - **`versionControl.ts`** - Version tracking
 - **`CONTENT_CHANGELOG.md`** - Change audit log
 - **Access:** `content_editor` role
 - **Auth:** LoginModal + role check
 
 ### **Telemetry Inspector**
+
 - **`TelemetrySettings.tsx`** - Event monitoring
 - **Access:** `admin` or `analyst` role
 - **Auth:** Role-based access control
@@ -79,24 +90,28 @@ CI/CD, testing, and deployment infrastructure for contributors.
 ## 🛠️ **SHARED INFRASTRUCTURE**
 
 ### **Analytics Layer**
+
 - **`analytics.ts`** - Event tracking abstraction
   - Supports Plausible + GA4
   - Development logging
   - Privacy-first design
 
 ### **Data Management**
+
 - **`backupManager.ts`** - Backup/restore logic
   - Checksum validation
   - Auto-backup scheduling
   - Import/export utilities
 
 ### **Authentication & Authorization**
+
 - **`auth.ts`** - RBAC system
   - Session management (24h expiry)
   - Role hierarchy (admin > analyst > content_editor > user)
   - Permission checks
 
 ### **Content Versioning**
+
 - **`content.ts`** - Type definitions
 - **`versionControl.ts`** - Version management
   - Change tracking
@@ -104,6 +119,7 @@ CI/CD, testing, and deployment infrastructure for contributors.
   - Rollback capability
 
 ### **UI Components**
+
 - **`LoginModal.tsx`** - Auth interface
 - **`ProtectedRoute.tsx`** - Route guard wrapper
 
@@ -114,6 +130,7 @@ CI/CD, testing, and deployment infrastructure for contributors.
 ## 🔧 **DEV TOOLS**
 
 ### **CI/CD Pipeline**
+
 - **`.github/workflows/ci.yml`** - Enhanced workflow
   - Test automation (398 tests)
   - Bundle size monitoring (500 KB limit)
@@ -122,12 +139,14 @@ CI/CD, testing, and deployment infrastructure for contributors.
   - Staging/production deployment
 
 ### **Quality Gates**
+
 - Automated testing
 - Build verification
 - Performance audits
 - Accessibility checks
 
 ### **Deployment**
+
 - **`rollback.sh`** - Emergency rollback
 - **`DEPLOYMENT.md`** - Procedures guide
 
@@ -172,6 +191,7 @@ admin          // Full access
 ## 📈 **TELEMETRY VISIBILITY**
 
 ### **Admin Inspector**
+
 - **Component:** `TelemetrySettings.tsx`
 - **Access:** `admin` or `analyst` roles
 - **Features:**
@@ -182,6 +202,7 @@ admin          // Full access
   - Export capabilities
 
 ### **Event Types Tracked**
+
 ```
 page_view
 mental_model_viewed
@@ -200,31 +221,31 @@ hero_cta_clicked
 
 ## 🎯 **COMPONENT DISTRIBUTION**
 
-| Category | Count | % of Total |
-|----------|-------|------------|
-| User-Facing | 4 | 19% |
-| Internal Tools | 8 | 38% |
-| Shared Infrastructure | 6 | 29% |
-| Dev Tools | 3 | 14% |
-| **Total** | **21** | **100%** |
+| Category              | Count  | % of Total |
+| --------------------- | ------ | ---------- |
+| User-Facing           | 4      | 19%        |
+| Internal Tools        | 8      | 38%        |
+| Shared Infrastructure | 6      | 29%        |
+| Dev Tools             | 3      | 14%        |
+| **Total**             | **21** | **100%**   |
 
 ---
 
 ## 🔍 **VISIBILITY MATRIX**
 
-| Component | Public Users | Authenticated Team | Contributors |
-|-----------|-------------|-------------------|--------------|
-| Feedback Widget | ✅ | ✅ | ✅ |
-| NPS Survey | ✅ | ✅ | ✅ |
-| Backup UI | ✅ | ✅ | ✅ |
-| Admin Dashboard | ❌ | ✅ (admin) | ❌ |
-| Analytics Dashboard | ❌ | ✅ (admin/analyst) | ❌ |
-| Telemetry Inspector | ❌ | ✅ (admin/analyst) | ❌ |
-| Interview Script | ❌ | ✅ | ⚠️ (in repo) |
-| Rollback Script | ❌ | ✅ (DevOps) | ⚠️ (in repo) |
-| CI/CD Pipeline | ❌ | ✅ | ✅ (uses it) |
-| Auth Utils | Hidden | Hidden | ✅ (can edit) |
-| Analytics Utils | Hidden | Hidden | ✅ (can edit) |
+| Component           | Public Users | Authenticated Team | Contributors  |
+| ------------------- | ------------ | ------------------ | ------------- |
+| Feedback Widget     | ✅           | ✅                 | ✅            |
+| NPS Survey          | ✅           | ✅                 | ✅            |
+| Backup UI           | ✅           | ✅                 | ✅            |
+| Admin Dashboard     | ❌           | ✅ (admin)         | ❌            |
+| Analytics Dashboard | ❌           | ✅ (admin/analyst) | ❌            |
+| Telemetry Inspector | ❌           | ✅ (admin/analyst) | ❌            |
+| Interview Script    | ❌           | ✅                 | ⚠️ (in repo)  |
+| Rollback Script     | ❌           | ✅ (DevOps)        | ⚠️ (in repo)  |
+| CI/CD Pipeline      | ❌           | ✅                 | ✅ (uses it)  |
+| Auth Utils          | Hidden       | Hidden             | ✅ (can edit) |
+| Analytics Utils     | Hidden       | Hidden             | ✅ (can edit) |
 
 ---
 
@@ -307,12 +328,14 @@ if (hasRole('content_editor')) {
 ## 🔒 **SECURITY CONSIDERATIONS**
 
 ### **Current Implementation**
+
 - Password-based auth (basic)
 - LocalStorage session (client-side)
 - 24-hour expiration
 - Role-based access control
 
 ### **Production Recommendations**
+
 1. **OAuth2/SSO** - Replace password with OAuth2
 2. **Backend Auth** - Validate tokens server-side
 3. **HTTPS Only** - Enforce secure connections
@@ -325,24 +348,28 @@ if (hasRole('content_editor')) {
 ## 📊 **IMPACT ASSESSMENT**
 
 ### **End Users**
+
 - ✅ Direct feedback channel (widget + NPS)
 - ✅ Data ownership (backup/restore)
 - ✅ Privacy-first analytics
 - ✅ No registration required
 
 ### **Product Team**
+
 - ✅ User behavior insights (analytics dashboard)
 - ✅ Structured user research (interview script)
 - ✅ Content performance metrics
 - ✅ Data-driven decision making
 
 ### **Engineering Team**
+
 - ✅ Faster deployments (enhanced CI/CD)
 - ✅ Quality gates (automated testing)
 - ✅ Safe rollbacks (< 5 minutes)
 - ✅ Clean architecture (shared infrastructure)
 
 ### **Content Team**
+
 - ✅ Version control (change tracking)
 - ✅ Audit trail (change log)
 - ✅ Rollback capability
@@ -357,6 +384,7 @@ if (hasRole('content_editor')) {
 **Status:** ✅ Approved with improvements implemented
 
 **Improvements Completed:**
+
 - [x] RBAC system (role hierarchy)
 - [x] LoginModal (professional UI)
 - [x] ProtectedRoute (route guards)

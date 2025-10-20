@@ -71,21 +71,21 @@ Go to Vercel Dashboard → Project Settings → Environment Variables
 
 Add these variables:
 
-| Variable | Value | Environment |
-|----------|-------|-------------|
-| `VITE_PLAUSIBLE_DOMAIN` | `hummbl.io` | Production |
-| `VITE_PLAUSIBLE_API_KEY` | `[your key]` | Production |
-| `VITE_ADMIN_PASSWORD` | `[generated password]` | Production |
+| Variable                 | Value                  | Environment |
+| ------------------------ | ---------------------- | ----------- |
+| `VITE_PLAUSIBLE_DOMAIN`  | `hummbl.io`            | Production  |
+| `VITE_PLAUSIBLE_API_KEY` | `[your key]`           | Production  |
+| `VITE_ADMIN_PASSWORD`    | `[generated password]` | Production  |
 
 ### **2. Separate Staging Variables**
 
 For staging environment:
 
-| Variable | Value | Environment |
-|----------|-------|-------------|
-| `VITE_PLAUSIBLE_DOMAIN` | `staging-hummbl.io` | Preview/Staging |
-| `VITE_PLAUSIBLE_API_KEY` | `[staging key]` | Preview/Staging |
-| `VITE_ADMIN_PASSWORD` | `[staging password]` | Preview/Staging |
+| Variable                 | Value                | Environment     |
+| ------------------------ | -------------------- | --------------- |
+| `VITE_PLAUSIBLE_DOMAIN`  | `staging-hummbl.io`  | Preview/Staging |
+| `VITE_PLAUSIBLE_API_KEY` | `[staging key]`      | Preview/Staging |
+| `VITE_ADMIN_PASSWORD`    | `[staging password]` | Preview/Staging |
 
 ---
 
@@ -112,7 +112,7 @@ npm test -- auth.test.ts
 4. Verify access granted
 5. Check browser localStorage for session:
    ```javascript
-   localStorage.getItem('hummbl_auth_session')
+   localStorage.getItem('hummbl_auth_session');
    ```
 6. Verify session contains:
    - `userId: "admin"`
@@ -162,6 +162,7 @@ npm test -- auth.test.ts
    <script defer data-domain="hummbl.io" src="https://plausible.io/js/script.js"></script>
    ```
 4. **Add to index.html:**
+
    ```html
    <!-- In public/index.html or index.html -->
    <head>
@@ -195,18 +196,21 @@ If using GA4 instead of or alongside Plausible:
 ### **1. Password Storage**
 
 **Use a Password Manager:**
+
 - 1Password
 - LastPass
 - Bitwarden
 - KeePass
 
 **Store:**
+
 - Admin password
 - Plausible API key
 - Vercel tokens
 - GitHub tokens
 
 **Never:**
+
 - ❌ Store in plain text files
 - ❌ Share via email/Slack
 - ❌ Commit to git
@@ -252,6 +256,7 @@ Verify in Vercel settings or `vercel.json`:
 ### **4. Rate Limiting**
 
 Consider adding rate limiting for admin endpoints:
+
 - Cloudflare (if using)
 - Vercel Edge Functions
 - Backend API rate limiting
@@ -293,11 +298,13 @@ lighthouse https://hummbl.io --view
 ### **Security Tests**
 
 1. **Check HTTPS:**
+
    ```bash
    curl -I https://hummbl.io | grep "strict-transport-security"
    ```
 
 2. **Check Headers:**
+
    ```bash
    curl -I https://hummbl.io | grep "x-content-type-options"
    curl -I https://hummbl.io | grep "x-frame-options"
@@ -315,6 +322,7 @@ lighthouse https://hummbl.io --view
 ### **1. Uptime Monitoring**
 
 Use UptimeRobot or similar:
+
 - Monitor `https://hummbl.io` every 5 minutes
 - Alert on downtime
 - Check from multiple locations
@@ -329,7 +337,7 @@ npm install @sentry/react
 
 ```typescript
 // src/main.tsx
-import * as Sentry from "@sentry/react";
+import * as Sentry from '@sentry/react';
 
 Sentry.init({
   dsn: import.meta.env.VITE_SENTRY_DSN,
@@ -402,14 +410,17 @@ Sentry.init({
 ## 📞 **Support Contacts**
 
 **Platform Issues:**
+
 - Vercel Support: support@vercel.com
 - Vercel Status: https://www.vercel-status.com
 
 **Analytics Issues:**
+
 - Plausible Support: support@plausible.io
 - Documentation: https://plausible.io/docs
 
 **Development Team:**
+
 - Primary: Chief Engineer (Reuben)
 - Repository: github.com/hummbl-dev/hummbl-io
 
@@ -418,21 +429,25 @@ Sentry.init({
 ## 🔄 **Maintenance Schedule**
 
 **Daily:**
+
 - Monitor uptime and errors
 - Check analytics for anomalies
 
 **Weekly:**
+
 - Review user feedback
 - Check backup system
 - Review performance metrics
 
 **Monthly:**
+
 - Dependency updates
 - Security audit
 - Performance optimization
 - Content updates
 
 **Quarterly:**
+
 - Major feature releases
 - Security review
 - Infrastructure audit

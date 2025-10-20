@@ -10,18 +10,21 @@
 ## 🚀 **Deployment Environments**
 
 ### **Production**
+
 - **URL:** https://hummbl.io
 - **Branch:** `main`
 - **Auto-deploy:** ✅ Yes (on push to main)
 - **Environment:** Vercel Production
 
 ### **Staging**
+
 - **URL:** https://staging-hummbl.vercel.app
 - **Branch:** `staging`
 - **Auto-deploy:** ✅ Yes (on push to staging)
 - **Environment:** Vercel Staging
 
 ### **Preview**
+
 - **URL:** Auto-generated per PR
 - **Branch:** Any feature branch
 - **Auto-deploy:** ✅ Yes (on PR creation)
@@ -56,6 +59,7 @@
 ### **Automatic Deployment (Recommended)**
 
 **To Staging:**
+
 ```bash
 # Merge your feature branch into staging
 git checkout staging
@@ -70,6 +74,7 @@ git push origin staging
 ```
 
 **To Production:**
+
 ```bash
 # After staging is verified, merge to main
 git checkout main
@@ -197,12 +202,14 @@ VITE_ADMIN_PASSWORD=<secure_password>
 ## 🎯 **Deployment Strategies**
 
 ### **Standard Deployment**
+
 - Merge to `staging` first
 - Test thoroughly
 - Merge to `main` for production
 - **Use for:** Normal feature releases
 
 ### **Hotfix Deployment**
+
 - Create `hotfix/` branch from `main`
 - Fix critical bug
 - Test locally
@@ -210,6 +217,7 @@ VITE_ADMIN_PASSWORD=<secure_password>
 - **Use for:** Critical production bugs only
 
 ### **Feature Flag Deployment**
+
 - Deploy code with feature disabled
 - Enable feature via config/flag
 - Gradually roll out to users
@@ -267,7 +275,7 @@ curl -I https://hummbl.io/assets/index.js
 - Site completely down (> 5 minutes)
 - Data loss detected
 - Security breach suspected
-- >50% error rate
+- > 50% error rate
 - Unable to rollback
 
 ---
@@ -296,15 +304,18 @@ curl -I https://hummbl.io/assets/index.js
 ### **Deployment Fails**
 
 **Problem:** "Build failed"
+
 - Check: `npm run build` works locally
 - Check: All dependencies installed
 - Check: No TypeScript errors
 
 **Problem:** "Tests failed"
+
 - Run: `npm test` locally
 - Fix: Failing tests before pushing
 
 **Problem:** "Bundle size too large"
+
 - Analyze: Run `npm run build` and check dist/
 - Solution: Code split, lazy load, remove unused code
 
@@ -336,26 +347,31 @@ curl -I https://hummbl.io/assets/index.js
 **Environment:** Production
 
 ### Changes
+
 - Feature: New analytics dashboard
 - Fix: Search bug on mobile
 - Update: Dependencies updated
 
 ### Verification
+
 - [x] Tests passed
 - [x] Bundle size: 238 KB (within limits)
 - [x] Staging tested
 - [x] Rollback plan ready
 
 ### Post-Deployment
+
 - [x] Site accessible (HTTP 200)
 - [x] No console errors
 - [x] Analytics working
 - [x] Performance normal
 
 ### Issues
+
 None
 
 ### Rollback (if needed)
+
 Deployment ID: dpl_abc123xyz
 ```
 
@@ -364,6 +380,7 @@ Deployment ID: dpl_abc123xyz
 ## 🎓 **Best Practices**
 
 ### **DO:**
+
 ✅ Deploy during low-traffic hours
 ✅ Test in staging first
 ✅ Have rollback plan ready
@@ -373,6 +390,7 @@ Deployment ID: dpl_abc123xyz
 ✅ Communicate with team
 
 ### **DON'T:**
+
 ❌ Deploy on Fridays (unless critical)
 ❌ Deploy without testing
 ❌ Deploy multiple features at once

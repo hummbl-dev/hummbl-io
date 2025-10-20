@@ -1,0 +1,16 @@
+#!/bin/sh
+. "$(dirname "$0")/_/husky.sh"
+
+# Prevent large files from being committed
+MAX_FILE_SIZE=10485760 # 10MB
+FILES_TOO_LARGE=$(find . -type f -size +${MAX_FILE_SIZE}c -not -path "./.git/*" -not -path "./node_modules/*" | wc -l)
+
+if [ "$FILES_TOO_LARGE" -gt 0 ]; then
+    echo "Error: The following files are larger than 10MB:"
+    find . -type f -size +${MAX_FILE_SIZE}c -not -path "./.git/*" -not -path "./node_modules/*"
+    echo "Please use Git LFS or remove these files before committing."
+    exit 1
+fi
+
+# Run lint-staged
+npx lint-staged

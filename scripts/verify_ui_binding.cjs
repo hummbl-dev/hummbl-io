@@ -63,7 +63,7 @@ function validateTypeScript() {
       'src/hooks/useNetwork.ts',
     ];
 
-    typeFiles.forEach(file => {
+    typeFiles.forEach((file) => {
       const filePath = path.join(CONFIG.projectRoot, file);
       if (fs.existsSync(filePath)) {
         addResult('typescript', file, 'PASS', 'File exists');
@@ -106,7 +106,7 @@ function testComponentRenders() {
       'src/components/narratives/NarrativeList.tsx',
     ];
 
-    components.forEach(file => {
+    components.forEach((file) => {
       const filePath = path.join(CONFIG.projectRoot, file);
       if (fs.existsSync(filePath)) {
         addResult('components', file, 'PASS', 'Component file exists');
@@ -173,73 +173,145 @@ function testDataBinding() {
     const narrativesPath = path.join(CONFIG.dataDir, 'narratives.yaml');
     if (fs.existsSync(narrativesPath)) {
       addResult('data_binding', 'narratives_file', 'PASS', 'Narratives file accessible');
-      
+
       // Validate data structure
       try {
         const yaml = require('js-yaml');
         const data = yaml.load(fs.readFileSync(narrativesPath, 'utf8'));
-        
+
         if (data.narratives && Array.isArray(data.narratives)) {
-          addResult('data_binding', 'narratives_structure', 'PASS', `${data.narratives.length} narratives loaded`);
-          
+          addResult(
+            'data_binding',
+            'narratives_structure',
+            'PASS',
+            `${data.narratives.length} narratives loaded`
+          );
+
           // Test binding to TypeScript interface
           const firstNarrative = data.narratives[0];
-          const requiredFields = ['narrative_id', 'title', 'summary', 'confidence', 'evidence_quality', 'provenance_hash'];
-          const hasAllFields = requiredFields.every(field => field in firstNarrative);
-          
+          const requiredFields = [
+            'narrative_id',
+            'title',
+            'summary',
+            'confidence',
+            'evidence_quality',
+            'provenance_hash',
+          ];
+          const hasAllFields = requiredFields.every((field) => field in firstNarrative);
+
           if (hasAllFields) {
-            addResult('data_binding', 'narrative_interface', 'PASS', 'Data matches TypeScript interface');
+            addResult(
+              'data_binding',
+              'narrative_interface',
+              'PASS',
+              'Data matches TypeScript interface'
+            );
           } else {
-            const missing = requiredFields.filter(f => !(f in firstNarrative));
-            addResult('data_binding', 'narrative_interface', 'FAIL', 'Missing fields in data', missing.join(', '));
+            const missing = requiredFields.filter((f) => !(f in firstNarrative));
+            addResult(
+              'data_binding',
+              'narrative_interface',
+              'FAIL',
+              'Missing fields in data',
+              missing.join(', ')
+            );
           }
         } else {
-          addResult('data_binding', 'narratives_structure', 'FAIL', 'Invalid narratives structure', 'Expected array');
+          addResult(
+            'data_binding',
+            'narratives_structure',
+            'FAIL',
+            'Invalid narratives structure',
+            'Expected array'
+          );
         }
       } catch (error) {
-        addResult('data_binding', 'narratives_parse', 'FAIL', 'Failed to parse narratives', error.message);
+        addResult(
+          'data_binding',
+          'narratives_parse',
+          'FAIL',
+          'Failed to parse narratives',
+          error.message
+        );
       }
     } else {
-      addResult('data_binding', 'narratives_file', 'FAIL', 'Narratives file not found', narrativesPath);
+      addResult(
+        'data_binding',
+        'narratives_file',
+        'FAIL',
+        'Narratives file not found',
+        narrativesPath
+      );
     }
 
     // Test 2: Load and validate network data
     const networkPath = path.join(CONFIG.dataDir, 'narrative_links.json');
     if (fs.existsSync(networkPath)) {
       addResult('data_binding', 'network_file', 'PASS', 'Network file accessible');
-      
+
       try {
         const networkData = JSON.parse(fs.readFileSync(networkPath, 'utf8'));
-        
+
         if (networkData.nodes && networkData.edges) {
-          addResult('data_binding', 'network_structure', 'PASS', `${networkData.nodes.length} nodes, ${networkData.edges.length} edges`);
-          
+          addResult(
+            'data_binding',
+            'network_structure',
+            'PASS',
+            `${networkData.nodes.length} nodes, ${networkData.edges.length} edges`
+          );
+
           // Test node interface
           const firstNode = networkData.nodes[0];
           const nodeFields = ['id', 'label', 'category', 'confidence', 'evidence_quality'];
-          const hasNodeFields = nodeFields.every(field => field in firstNode);
-          
+          const hasNodeFields = nodeFields.every((field) => field in firstNode);
+
           if (hasNodeFields) {
-            addResult('data_binding', 'network_node_interface', 'PASS', 'Node data matches interface');
+            addResult(
+              'data_binding',
+              'network_node_interface',
+              'PASS',
+              'Node data matches interface'
+            );
           } else {
-            addResult('data_binding', 'network_node_interface', 'FAIL', 'Node missing required fields');
+            addResult(
+              'data_binding',
+              'network_node_interface',
+              'FAIL',
+              'Node missing required fields'
+            );
           }
 
           // Test edge interface
           const firstEdge = networkData.edges[0];
           const edgeFields = ['source', 'target', 'type', 'weight'];
-          const hasEdgeFields = edgeFields.every(field => field in firstEdge);
-          
+          const hasEdgeFields = edgeFields.every((field) => field in firstEdge);
+
           if (hasEdgeFields) {
-            addResult('data_binding', 'network_edge_interface', 'PASS', 'Edge data matches interface');
+            addResult(
+              'data_binding',
+              'network_edge_interface',
+              'PASS',
+              'Edge data matches interface'
+            );
           } else {
-            addResult('data_binding', 'network_edge_interface', 'FAIL', 'Edge missing required fields');
+            addResult(
+              'data_binding',
+              'network_edge_interface',
+              'FAIL',
+              'Edge missing required fields'
+            );
           }
         } else {
           addResult('data_binding', 'network_structure', 'FAIL', 'Invalid network structure');
         }
       } catch (error) {
-        addResult('data_binding', 'network_parse', 'FAIL', 'Failed to parse network data', error.message);
+        addResult(
+          'data_binding',
+          'network_parse',
+          'FAIL',
+          'Failed to parse network data',
+          error.message
+        );
       }
     } else {
       addResult('data_binding', 'network_file', 'FAIL', 'Network file not found', networkPath);
@@ -249,28 +321,56 @@ function testDataBinding() {
     const integrityPath = path.join(CONFIG.dataDir, 'integrity_report.json');
     if (fs.existsSync(integrityPath)) {
       addResult('data_binding', 'integrity_file', 'PASS', 'Integrity report accessible');
-      
+
       try {
         const integrityData = JSON.parse(fs.readFileSync(integrityPath, 'utf8'));
-        
+
         if (integrityData.validation_results && integrityData.data_quality_metrics) {
-          addResult('data_binding', 'integrity_structure', 'PASS', 'Integrity report structure valid');
-          
+          addResult(
+            'data_binding',
+            'integrity_structure',
+            'PASS',
+            'Integrity report structure valid'
+          );
+
           // Check quality score
           const qualityScore = integrityData.data_quality_metrics?.overall_quality_score;
           if (qualityScore === 1.0) {
             addResult('data_binding', 'integrity_quality', 'PASS', 'Quality score: 1.0');
           } else {
-            addResult('data_binding', 'integrity_quality', 'WARN', `Quality score: ${qualityScore}`, 'Expected: 1.0');
+            addResult(
+              'data_binding',
+              'integrity_quality',
+              'WARN',
+              `Quality score: ${qualityScore}`,
+              'Expected: 1.0'
+            );
           }
         } else {
-          addResult('data_binding', 'integrity_structure', 'FAIL', 'Invalid integrity report structure');
+          addResult(
+            'data_binding',
+            'integrity_structure',
+            'FAIL',
+            'Invalid integrity report structure'
+          );
         }
       } catch (error) {
-        addResult('data_binding', 'integrity_parse', 'FAIL', 'Failed to parse integrity report', error.message);
+        addResult(
+          'data_binding',
+          'integrity_parse',
+          'FAIL',
+          'Failed to parse integrity report',
+          error.message
+        );
       }
     } else {
-      addResult('data_binding', 'integrity_file', 'FAIL', 'Integrity report not found', integrityPath);
+      addResult(
+        'data_binding',
+        'integrity_file',
+        'FAIL',
+        'Integrity report not found',
+        integrityPath
+      );
     }
 
     console.log('✓ Runtime data binding tests complete');
@@ -296,18 +396,20 @@ function generateUISnapshots() {
     const yaml = require('js-yaml');
     const narrativesPath = path.join(CONFIG.dataDir, 'narratives.yaml');
     const narrativesData = yaml.load(fs.readFileSync(narrativesPath, 'utf8'));
-    
+
     const narrativeSchema = {
       timestamp: new Date().toISOString(),
       version: narrativesData.metadata?.version,
       narrative_count: narrativesData.narratives?.length,
       required_fields: narrativesData.validation?.required_fields,
-      sample_narrative: narrativesData.narratives?.[0] ? {
-        narrative_id: narrativesData.narratives[0].narrative_id,
-        fields: Object.keys(narrativesData.narratives[0]),
-        signal_count: narrativesData.narratives[0].linked_signals?.length,
-        relationship_count: narrativesData.narratives[0].relationships?.length,
-      } : null,
+      sample_narrative: narrativesData.narratives?.[0]
+        ? {
+            narrative_id: narrativesData.narratives[0].narrative_id,
+            fields: Object.keys(narrativesData.narratives[0]),
+            signal_count: narrativesData.narratives[0].linked_signals?.length,
+            relationship_count: narrativesData.narratives[0].relationships?.length,
+          }
+        : null,
     };
 
     fs.writeFileSync(
@@ -319,18 +421,22 @@ function generateUISnapshots() {
     // Generate schema snapshot for network
     const networkPath = path.join(CONFIG.dataDir, 'narrative_links.json');
     const networkData = JSON.parse(fs.readFileSync(networkPath, 'utf8'));
-    
+
     const networkSchema = {
       timestamp: new Date().toISOString(),
       node_count: networkData.nodes?.length,
       edge_count: networkData.edges?.length,
-      sample_node: networkData.nodes?.[0] ? {
-        id: networkData.nodes[0].id,
-        fields: Object.keys(networkData.nodes[0]),
-      } : null,
-      sample_edge: networkData.edges?.[0] ? {
-        fields: Object.keys(networkData.edges[0]),
-      } : null,
+      sample_node: networkData.nodes?.[0]
+        ? {
+            id: networkData.nodes[0].id,
+            fields: Object.keys(networkData.nodes[0]),
+          }
+        : null,
+      sample_edge: networkData.edges?.[0]
+        ? {
+            fields: Object.keys(networkData.edges[0]),
+          }
+        : null,
     };
 
     fs.writeFileSync(
@@ -383,7 +489,7 @@ function generateReport() {
 
   // Generate CSV
   const csvLines = ['Suite,Test,Status,Details,Error'];
-  results.suites.forEach(result => {
+  results.suites.forEach((result) => {
     const line = [
       result.suite,
       result.test,
@@ -418,18 +524,26 @@ async function main() {
   testComponentRenders();
   testDataBinding();
   generateUISnapshots();
-  
+
   const csvPath = generateReport();
 
   console.log('\n╔════════════════════════════════════════════════════════╗');
   console.log('║              UI BINDING VERIFICATION SUMMARY           ║');
   console.log('╠════════════════════════════════════════════════════════╣');
-  console.log(`║  Total Tests:     ${results.summary.total.toString().padStart(4)}                                  ║`);
-  console.log(`║  Passed:          ${results.summary.passed.toString().padStart(4)}                                  ║`);
-  console.log(`║  Failed:          ${results.summary.failed.toString().padStart(4)}                                  ║`);
-  console.log(`║  Warnings:        ${results.summary.warnings.toString().padStart(4)}                                  ║`);
+  console.log(
+    `║  Total Tests:     ${results.summary.total.toString().padStart(4)}                                  ║`
+  );
+  console.log(
+    `║  Passed:          ${results.summary.passed.toString().padStart(4)}                                  ║`
+  );
+  console.log(
+    `║  Failed:          ${results.summary.failed.toString().padStart(4)}                                  ║`
+  );
+  console.log(
+    `║  Warnings:        ${results.summary.warnings.toString().padStart(4)}                                  ║`
+  );
   console.log('╠════════════════════════════════════════════════════════╣');
-  
+
   const passRate = ((results.summary.passed / results.summary.total) * 100).toFixed(1);
   console.log(`║  Pass Rate:       ${passRate}%                              ║`);
   console.log('╚════════════════════════════════════════════════════════╝');
@@ -453,7 +567,7 @@ async function main() {
 
 // Execute
 if (require.main === module) {
-  main().catch(err => {
+  main().catch((err) => {
     console.error('Fatal error:', err);
     process.exit(1);
   });

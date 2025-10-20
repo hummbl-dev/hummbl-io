@@ -61,7 +61,7 @@ const results = {
 };
 
 // Utility functions
-const sleep = (ms: number) => new Promise(resolve => setTimeout(resolve, ms));
+const sleep = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms));
 
 const log = (message: string, type: 'info' | 'warn' | 'error' = 'info') => {
   const timestamp = new Date().toISOString();
@@ -74,10 +74,10 @@ async function testTokenValidation() {
   // These will be used when we implement the actual API call
   // const token = process.env.AUTH_TEST_TOKEN || 'test-token';
   // const authUrl = process.env.AUTH_SERVICE_URL || 'http://localhost:3000';
-  
+
   const start = performance.now();
   let duration = 0;
-  
+
   try {
     // In a real implementation, this would be an actual API call
     // const response = await fetch(`${authUrl}/api/validate-token`, {
@@ -85,18 +85,18 @@ async function testTokenValidation() {
     //   headers: { 'Authorization': `Bearer ${token}` }
     // });
     // if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
-    
+
     // Simulate network latency (5ms ± 2ms) and processing time
     const latency = 5 + (Math.random() * 4 - 2); // 3-7ms
     await sleep(latency);
-    
+
     duration = performance.now() - start;
-    
+
     // Simulate occasional failures (0.1% of the time)
     if (Math.random() < 0.001) {
       throw new Error('Token validation failed');
     }
-    
+
     return duration;
   } catch (error) {
     duration = performance.now() - start;
@@ -118,7 +118,7 @@ function calculateBenchmarkResults(times: number[]) {
   const sorted = [...times].sort((a, b) => a - b);
   const sum = sorted.reduce((a, b) => a + b, 0);
   const count = sorted.length;
-  
+
   return {
     count,
     min: count > 0 ? Math.min(...sorted) : 0,
@@ -127,7 +127,7 @@ function calculateBenchmarkResults(times: number[]) {
     p50: percentile(50, sorted),
     p90: percentile(90, sorted),
     p95: percentile(95, sorted),
-    p99: percentile(99, sorted)
+    p99: percentile(99, sorted),
   };
 }
 
@@ -135,39 +135,39 @@ function calculateBenchmarkResults(times: number[]) {
 async function runTokenValidationBenchmark() {
   const BATCH_SIZE = 50;
   const TOTAL_REQUESTS = 1000;
-  
+
   // Track benchmark results
   const benchmarkData = {
     times: [] as number[],
     success: 0,
     errors: 0,
-    total: 0
+    total: 0,
   };
-  
+
   // Calculate statistics using the shared function
   const calculateStats = () => calculateBenchmarkResults(benchmarkData.times);
-  
+
   // Warmup phase
   log('Running warmup...');
   for (let i = 0; i < 10; i++) {
     await testTokenValidation().catch(() => {});
   }
   benchmarkData.times = []; // Reset after warmup
-  
+
   // Main test
   log('Running benchmark...');
   const startTime = performance.now();
-  
+
   while (benchmarkData.total < TOTAL_REQUESTS) {
     const batch = [];
     const remaining = TOTAL_REQUESTS - benchmarkData.total;
     const currentBatchSize = Math.min(BATCH_SIZE, remaining);
-    
+
     // Create batch of requests
     for (let i = 0; i < currentBatchSize; i++) {
       batch.push(
         testTokenValidation()
-          .then(time => {
+          .then((time) => {
             benchmarkData.success++;
             benchmarkData.times.push(time);
           })
@@ -175,20 +175,20 @@ async function runTokenValidationBenchmark() {
           .finally(() => benchmarkData.total++)
       );
     }
-    
+
     // Wait for batch to complete
     await Promise.all(batch);
-    
+
     // Log progress
     if (benchmarkData.total % 100 === 0) {
-      const progress = (benchmarkData.total / TOTAL_REQUESTS * 100).toFixed(1);
+      const progress = ((benchmarkData.total / TOTAL_REQUESTS) * 100).toFixed(1);
       log(`Progress: ${benchmarkData.total}/${TOTAL_REQUESTS} (${progress}%)`);
     }
   }
-  
+
   const totalTime = (performance.now() - startTime) / 1000; // seconds
   const stats = calculateStats();
-  
+
   // Log results
   log('\n=== Token Validation Benchmark Results ===');
   log(`Total requests: ${benchmarkData.total}`);
@@ -204,21 +204,22 @@ async function runTokenValidationBenchmark() {
   log(`  p95: ${stats.p95.toFixed(2)}`);
   log(`  p99: ${stats.p99.toFixed(2)}`);
   log(`  max: ${stats.max.toFixed(2)}`);
-  
+
   // Assert p95 < 50ms
   const p95Valid = stats.p95 < 50;
   log(`\nValidation: p95 < 50ms: ${p95Valid ? '✅' : '❌'} (${stats.p95.toFixed(2)}ms)`);
-  
+
   if (!p95Valid) {
-    throw new Error(`Token validation p95 latency (${stats.p95.toFixed(2)}ms) exceeds 50ms threshold`);
+    throw new Error(
+      `Token validation p95 latency (${stats.p95.toFixed(2)}ms) exceeds 50ms threshold`
+    );
   }
-  
+
   return {
     stats,
-    times: [...benchmarkData.times]
+    times: [...benchmarkData.times],
   };
 }
-
 
 async function testSessionPersistence() {
   results.sessionPersistence.total++;
@@ -272,10 +273,10 @@ async function runTests() {
     // Run token validation benchmark first
     log('\n=== Starting Token Validation Benchmark ===');
     const tokenStats = await runTokenValidationBenchmark();
-    
+
     // Update results with benchmark data
     results.tokenValidation.times = tokenStats.times;
-    
+
     // Run other tests if token validation passes
     log('\n=== Running Remaining Tests ===');
     log('Running warmup...');
@@ -354,10 +355,18 @@ async function runTests() {
 
   // Log summary
   log('\n=== Test Summary ===');
-  log(`Token Validation (p95): ${report.tokenValidation.p95.toFixed(2)}ms (threshold: ${report.tokenValidation.threshold}ms) - ${report.tokenValidation.passed ? '✅' : '❌'}`);
-  log(`Session Persistence: ${report.sessionPersistence.rate.toFixed(2)}% (threshold: ${report.sessionPersistence.threshold}%) - ${report.sessionPersistence.passed ? '✅' : '❌'}`);
-  log(`Rate Limiting Accuracy: ${report.rateLimiting.accuracy.toFixed(2)}% (threshold: ${report.rateLimiting.threshold}%) - ${report.rateLimiting.passed ? '✅' : '❌'}`);
-  log(`OAuth Success Rate: ${report.oauth.successRate.toFixed(2)}% (threshold: ${report.oauth.threshold}%) - ${report.oauth.passed ? '✅' : '❌'}`);
+  log(
+    `Token Validation (p95): ${report.tokenValidation.p95.toFixed(2)}ms (threshold: ${report.tokenValidation.threshold}ms) - ${report.tokenValidation.passed ? '✅' : '❌'}`
+  );
+  log(
+    `Session Persistence: ${report.sessionPersistence.rate.toFixed(2)}% (threshold: ${report.sessionPersistence.threshold}%) - ${report.sessionPersistence.passed ? '✅' : '❌'}`
+  );
+  log(
+    `Rate Limiting Accuracy: ${report.rateLimiting.accuracy.toFixed(2)}% (threshold: ${report.rateLimiting.threshold}%) - ${report.rateLimiting.passed ? '✅' : '❌'}`
+  );
+  log(
+    `OAuth Success Rate: ${report.oauth.successRate.toFixed(2)}% (threshold: ${report.oauth.threshold}%) - ${report.oauth.passed ? '✅' : '❌'}`
+  );
   log(`\nOverall: ${report.allTestsPassed ? '✅ All tests passed' : '❌ Some tests failed'}`);
 
   // Update baseline manifest if all tests passed
@@ -370,11 +379,11 @@ async function runTests() {
 
 async function updateBaselineManifest() {
   const manifestPath = path.join(__dirname, '..', 'docs', 'baseline-manifest.json');
-  
+
   try {
     // Read the current manifest
     const manifest = JSON.parse(await fs.promises.readFile(manifestPath, 'utf-8'));
-    
+
     // Ensure the reports directory exists
     const reportsDir = path.join(__dirname, '..', 'reports');
     await fs.promises.mkdir(reportsDir, { recursive: true });
@@ -389,18 +398,14 @@ async function updateBaselineManifest() {
         session_persistence_rate: results.sessionPersistence.rate,
         rate_limiting_accuracy: results.rateLimiting.accuracy,
         oauth_success_rate: results.oauth.successRate,
-        last_updated: new Date().toISOString()
+        last_updated: new Date().toISOString(),
       },
       documentation: '/docs/performance/auth.md',
     };
 
     // Write the updated manifest back to disk
-    await fs.promises.writeFile(
-      manifestPath,
-      JSON.stringify(manifest, null, 2) + '\n',
-      'utf8'
-    );
-    
+    await fs.promises.writeFile(manifestPath, JSON.stringify(manifest, null, 2) + '\n', 'utf8');
+
     log('Updated baseline manifest with test results', 'info');
   } catch (error) {
     log(`Failed to update baseline manifest: ${error}`, 'error');

@@ -8,7 +8,7 @@ async function sha256(content) {
 async function generateReport() {
   const now = new Date().toISOString();
   const nextCheck = new Date(Date.now() + 6 * 60 * 60 * 1000).toISOString(); // Default to 6 hours
-  
+
   try {
     // Read the verification log if it exists
     let verificationResults = [];
@@ -16,17 +16,17 @@ async function generateReport() {
       const logContent = await readFile('verification.log', 'utf8');
       verificationResults = logContent
         .split('\n')
-        .filter(line => line.includes('│'))
+        .filter((line) => line.includes('│'))
         .slice(2, -1) // Remove header and footer
-        .map(line => {
-          const parts = line.split('│').map(p => p.trim());
+        .map((line) => {
+          const parts = line.split('│').map((p) => p.trim());
           return {
             file: parts[1].replace(/'/g, ''),
             status: parts[2],
             localHash: parts[3],
             prodHash: parts[4],
             size: parseInt(parts[5]) || 0,
-            details: parts[6] || 'OK'
+            details: parts[6] || 'OK',
           };
         });
     } catch (error) {
@@ -44,18 +44,25 @@ async function generateReport() {
       },
       summary: {
         total_checks: verificationResults.length,
-        passed: verificationResults.filter(r => r.status === '✅ MATCH').length,
-        failed: verificationResults.filter(r => r.status === '❌ MISMATCH' || r.status === '❌ ERROR').length,
-        success_rate: verificationResults.length > 0 
-          ? (verificationResults.filter(r => r.status === '✅ MATCH').length / verificationResults.length * 100).toFixed(2) + '%'
-          : 'N/A'
+        passed: verificationResults.filter((r) => r.status === '✅ MATCH').length,
+        failed: verificationResults.filter(
+          (r) => r.status === '❌ MISMATCH' || r.status === '❌ ERROR'
+        ).length,
+        success_rate:
+          verificationResults.length > 0
+            ? (
+                (verificationResults.filter((r) => r.status === '✅ MATCH').length /
+                  verificationResults.length) *
+                100
+              ).toFixed(2) + '%'
+            : 'N/A',
       },
       checks: verificationResults,
       system: {
         node: process.version,
         platform: process.platform,
-        arch: process.arch
-      }
+        arch: process.arch,
+      },
     };
 
     console.log(JSON.stringify(report, null, 2));

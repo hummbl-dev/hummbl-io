@@ -39,12 +39,7 @@
     "context": {
       "status": "pending",
       "tier": "P1",
-      "validation_required": [
-        "context_persistence",
-        "versioning",
-        "migration",
-        "validation"
-      ]
+      "validation_required": ["context_persistence", "versioning", "migration", "validation"]
     },
     "cascade_router": {
       "status": "pending",
@@ -69,19 +64,11 @@
     },
     "P2": {
       "description": "Important components with standard SLAs",
-      "requirements": [
-        "<250ms p99 latency",
-        "99.5% availability",
-        "Semi-automated recovery"
-      ]
+      "requirements": ["<250ms p99 latency", "99.5% availability", "Semi-automated recovery"]
     },
     "P3": {
       "description": "Non-critical components",
-      "requirements": [
-        "<500ms p99 latency",
-        "99% availability",
-        "Manual recovery acceptable"
-      ]
+      "requirements": ["<500ms p99 latency", "99% availability", "Manual recovery acceptable"]
     }
   }
 }

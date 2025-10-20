@@ -18,11 +18,13 @@
 ## 💾 Creating a Backup
 
 ### Manual Backup
+
 1. Go to Settings → Backup & Recovery
 2. Click "Download Backup"
 3. Save the JSON file to a safe location
 
 ### Auto-Backup
+
 1. Enable in Settings → Backup & Recovery
 2. Backup downloads every 7 days automatically
 3. Save files to cloud storage manually
@@ -44,6 +46,7 @@
 ## 🔒 Backup Format
 
 JSON file with checksum for integrity verification:
+
 - Version number
 - Timestamp
 - All user data

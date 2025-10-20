@@ -1,18 +1,106 @@
 # Dependencies
-node_modules
+node_modules/
+.pnp
+.pnp.js
+pnpm-lock.yaml
+package-lock.json
+yarn.lock
 
 # Build output
-dist
-.DS_Store
+dist/
+build/
+coverage/
+.cache/
+.next/
+out/
+.serverless/
 
 # Logs
+logs/
 *.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+lerna-debug.log*
 
 # Environment
 .env
-.env.local
-.env.production
+.env.*
+!.env.example
+!.env.staging
 
-# IDE
-.vscode
-.idea
+# Editor directories and files
+.DS_Store
+.idea/
+.vscode/*
+!.vscode/extensions.json
+!.vscode/launch.json
+!.vscode/settings.json
+!.vscode/tasks.json
+*.sublime-workspace
+*.sublime-project
+
+# Testing
+/coverage
+/cypress/videos/
+/cypress/screenshots/
+/test-results/
+
+# Local development
+.temp/
+.tmp/
+.temp*
+.tmp*
+.vercel/
+.serverless/
+
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+build/
+develop-eggs/
+dist/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+wheels/
+*.egg-info/
+.installed.cfg
+*.egg
+MANIFEST
+
+# AWS Lambda
+lambda/package/
+lambda/venv/
+*.zip
+
+# Misc
+*.bak
+*.swp
+*~
+.project
+.vercel
+.netlify
+.cache
+.parcel-cache
+.parcel-*
+.vercel_build_output
+.vercel_output/
+.vercel_build_output/
+.vercel_deployment
+.vercel_project
+.vercel_state
+.vercel_*
+.settings/
+.tmproj
+*.esproj
+*.sublime-*
+Thumbs.db

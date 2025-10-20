@@ -17,7 +17,7 @@ async function fetchWithRetry(url, retries = 3) {
       return await res.text();
     } catch (error) {
       if (i === retries - 1) throw error;
-      await new Promise(resolve => setTimeout(resolve, 1000 * (i + 1)));
+      await new Promise((resolve) => setTimeout(resolve, 1000 * (i + 1)));
     }
   }
 }
@@ -38,51 +38,51 @@ async function verifyFile(relativePath) {
       localHash: localHash.slice(0, 8),
       prodHash: prodHash.slice(0, 8),
       size: localContent.length,
-      details: localHash === prodHash ? 'OK' : 'Content hash mismatch'
+      details: localHash === prodHash ? 'OK' : 'Content hash mismatch',
     };
   } catch (error) {
     return {
       file: relativePath,
       status: '❌ ERROR',
-      details: error.message
+      details: error.message,
     };
   }
 }
 
 async function verifyAll() {
   console.log('🔍 Starting HUMMBL Production Integrity Audit\n');
-  
+
   // Verify JSON files in root data directory
   const rootFiles = ['narratives.json', 'network.json', 'integrity_report.json'];
   const results = [];
-  
+
   // Check each file
   for (const file of rootFiles) {
     console.log(`Verifying ${file}...`);
     results.push(await verifyFile(file));
   }
-  
+
   // Check subdirectories
   const subdirs = ['ledger', 'qdm', 'sitrep', 'visualization'];
-  
+
   for (const dir of subdirs) {
-    const files = (await readdir(join(LOCAL_DATA_DIR, dir))).filter(f => f.endsWith('.json'));
+    const files = (await readdir(join(LOCAL_DATA_DIR, dir))).filter((f) => f.endsWith('.json'));
     for (const file of files) {
       const relPath = `${dir}/${file}`;
       console.log(`Verifying ${relPath}...`);
       results.push(await verifyFile(relPath));
     }
   }
-  
+
   // Display results
   console.log('\n📊 Integrity Audit Results:');
   console.table(results, ['file', 'status', 'localHash', 'prodHash', 'size', 'details']);
-  
+
   // Summary
   const total = results.length;
-  const passed = results.filter(r => r.status === '✅ MATCH').length;
+  const passed = results.filter((r) => r.status === '✅ MATCH').length;
   const failed = total - passed;
-  
+
   console.log(`\n🎯 Summary: ${passed}/${total} files passed integrity check`);
   if (failed > 0) {
     console.error('❌ Integrity check failed - mismatches detected in production data');

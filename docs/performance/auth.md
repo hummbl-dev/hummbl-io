@@ -3,6 +3,7 @@
 ## Status: ✅ P1-Validated (2025-10-19)
 
 ## Test Overview
+
 - **Date**: 2025-10-19
 - **Test Type**: Load and Latency Testing
 - **Environment**:
@@ -13,6 +14,7 @@
 - **Test Duration**: 5 minutes (configurable)
 
 ## Test Configuration
+
 ```json
 {
   "testDurationMs": 300000,
@@ -31,6 +33,7 @@
 ## Performance Metrics
 
 ### 1. Token Validation
+
 - **Test Description**: Measures the latency of JWT token validation
 - **Success Criteria**: p95 latency < 50ms
 - **Test Method**: 1000 sequential token validations
@@ -42,6 +45,7 @@
   - Error Rate: 0.1%
 
 ### 2. Session Persistence
+
 - **Test Description**: Validates session persistence across requests
 - **Success Criteria**: 100% success rate
 - **Test Method**: Session creation and validation across multiple requests
@@ -50,6 +54,7 @@
   - Average Operation Time: 3.2ms
 
 ### 3. Rate Limiting
+
 - **Test Description**: Validates rate limiting functionality
 - **Success Criteria**: 99% accuracy in rate limiting
 - **Test Method**: Sends requests exceeding rate limits
@@ -59,6 +64,7 @@
   - False Negatives: 0.3%
 
 ### 4. OAuth Handshake
+
 - **Test Description**: Measures OAuth authentication flow
 - **Success Criteria**: 99.9% success rate
 - **Test Method**: Full OAuth flow simulation
@@ -69,6 +75,7 @@
 ## Test Execution
 
 ### Local Development
+
 ```bash
 # Run all auth performance tests
 pnpm test:auth
@@ -81,13 +88,14 @@ TS_NODE_TRANSPILE_ONLY=true tsx scripts/testAuthPerf.ts --test=token
 ```
 
 ### CI/CD Integration
+
 ```yaml
 # .github/workflows/auth-perf.yml
 name: Auth Performance Tests
 
 on:
   schedule:
-    - cron: '0 4 * * *'  # Daily at 4 AM UTC
+    - cron: '0 4 * * *' # Daily at 4 AM UTC
   workflow_dispatch:
   push:
     branches: [main, staging]
@@ -123,16 +131,18 @@ jobs:
 ```
 
 ## Alert Thresholds
-| Metric | Warning | Critical | Status |
-|--------|---------|----------|--------|
-| Token Validation p95 | 40ms | 50ms | 🟢 OK (18.2ms) |
-| Session Persistence | 99.9% | 99% | 🟢 OK (100%) |
-| Rate Limiting Accuracy | 99.5% | 99% | 🟢 OK (99.2%) |
-| OAuth Success Rate | 99.95% | 99.9% | 🟢 OK (99.95%) |
+
+| Metric                 | Warning | Critical | Status         |
+| ---------------------- | ------- | -------- | -------------- |
+| Token Validation p95   | 40ms    | 50ms     | 🟢 OK (18.2ms) |
+| Session Persistence    | 99.9%   | 99%      | 🟢 OK (100%)   |
+| Rate Limiting Accuracy | 99.5%   | 99%      | 🟢 OK (99.2%)  |
+| OAuth Success Rate     | 99.95%  | 99.9%    | 🟢 OK (99.95%) |
 
 ## Test Results
 
 ### Latest Run (2025-10-19T21:58:00.000Z)
+
 ```json
 {
   "timestamp": "2025-10-19T21:58:00.000Z",
@@ -169,19 +179,23 @@ jobs:
 ```
 
 ## Analysis
+
 - **Token Validation**: Performing well within thresholds with p95 at 18.2ms (well below 50ms threshold)
 - **Session Persistence**: 100% success rate achieved
 - **Rate Limiting**: Slightly below warning threshold (99.2% vs 99.5%)
 - **OAuth Handshake**: Excellent success rate of 99.95%
 
 ## Recommendations
+
 1. **Rate Limiting**: Investigate the 0.8% inaccuracy in rate limiting
 2. **Token Validation**: Consider optimizing further to reduce p99 latency
 3. **Monitoring**: Set up alerts for all critical thresholds
 4. **Load Testing**: Increase load in staging to identify potential bottlenecks
 
 ## Historical Data
+
 Results are stored in `reports/auth-perf/` with timestamps for trend analysis.
+
 ```
 
 ## Troubleshooting
@@ -219,3 +233,4 @@ Results are stored in `reports/auth-perf/` with timestamps for trend analysis.
 
 ---
 *Last Updated: 2025-10-19*
+```

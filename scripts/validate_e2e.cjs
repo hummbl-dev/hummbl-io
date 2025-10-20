@@ -79,7 +79,7 @@ async function testAPIRoutes() {
     },
   ];
 
-  apiTests.forEach(test => {
+  apiTests.forEach((test) => {
     if (fs.existsSync(test.file)) {
       addResult('api_routes', test.name, 'PASS', test.description);
     } else {
@@ -91,14 +91,19 @@ async function testAPIRoutes() {
   const clientPath = path.join(CONFIG.projectRoot, 'src/api/client.ts');
   if (fs.existsSync(clientPath)) {
     const clientCode = fs.readFileSync(clientPath, 'utf8');
-    
+
     // Check for required methods
     const requiredMethods = ['get', 'post', 'put', 'delete'];
-    requiredMethods.forEach(method => {
+    requiredMethods.forEach((method) => {
       if (clientCode.includes(`async ${method}`) || clientCode.includes(`${method}:`)) {
         addResult('api_routes', `client_${method}`, 'PASS', `API client ${method} method exists`);
       } else {
-        addResult('api_routes', `client_${method}`, 'WARN', `API client ${method} method not found`);
+        addResult(
+          'api_routes',
+          `client_${method}`,
+          'WARN',
+          `API client ${method} method not found`
+        );
       }
     });
 
@@ -123,25 +128,39 @@ async function testUIAPIContracts() {
   try {
     // Test narratives API contract
     const yaml = require('js-yaml');
-    const narrativesData = yaml.load(fs.readFileSync(path.join(CONFIG.dataDir, 'narratives.yaml'), 'utf8'));
-    
+    const narrativesData = yaml.load(
+      fs.readFileSync(path.join(CONFIG.dataDir, 'narratives.yaml'), 'utf8')
+    );
+
     // Load TypeScript type definition
     const narrativeTypePath = path.join(CONFIG.projectRoot, 'src/types/narrative.ts');
     const narrativeTypeCode = fs.readFileSync(narrativeTypePath, 'utf8');
 
     // Check required fields match between data and types
     const requiredFields = narrativesData.validation?.required_fields || [];
-    
-    requiredFields.forEach(field => {
+
+    requiredFields.forEach((field) => {
       if (narrativeTypeCode.includes(`${field}:`)) {
-        addResult('ui_api_contract', `field_${field}`, 'PASS', `Field ${field} in TypeScript interface`);
+        addResult(
+          'ui_api_contract',
+          `field_${field}`,
+          'PASS',
+          `Field ${field} in TypeScript interface`
+        );
       } else {
-        addResult('ui_api_contract', `field_${field}`, 'FAIL', `Field ${field} missing in TypeScript interface`);
+        addResult(
+          'ui_api_contract',
+          `field_${field}`,
+          'FAIL',
+          `Field ${field} missing in TypeScript interface`
+        );
       }
     });
 
     // Test network API contract
-    const networkData = JSON.parse(fs.readFileSync(path.join(CONFIG.dataDir, 'narrative_links.json'), 'utf8'));
+    const networkData = JSON.parse(
+      fs.readFileSync(path.join(CONFIG.dataDir, 'narrative_links.json'), 'utf8')
+    );
     const networkTypePath = path.join(CONFIG.projectRoot, 'src/types/network.ts');
     const networkTypeCode = fs.readFileSync(networkTypePath, 'utf8');
 
@@ -149,13 +168,23 @@ async function testUIAPIContracts() {
     if (networkData.nodes && networkData.nodes.length > 0) {
       const sampleNode = networkData.nodes[0];
       const nodeFields = Object.keys(sampleNode);
-      
+
       const criticalFields = ['id', 'label', 'confidence', 'evidence_quality'];
-      criticalFields.forEach(field => {
+      criticalFields.forEach((field) => {
         if (nodeFields.includes(field) && networkTypeCode.includes(`${field}:`)) {
-          addResult('ui_api_contract', `node_${field}`, 'PASS', `Node field ${field} contract valid`);
+          addResult(
+            'ui_api_contract',
+            `node_${field}`,
+            'PASS',
+            `Node field ${field} contract valid`
+          );
         } else {
-          addResult('ui_api_contract', `node_${field}`, 'FAIL', `Node field ${field} contract broken`);
+          addResult(
+            'ui_api_contract',
+            `node_${field}`,
+            'FAIL',
+            `Node field ${field} contract broken`
+          );
         }
       });
     }
@@ -164,13 +193,23 @@ async function testUIAPIContracts() {
     if (networkData.edges && networkData.edges.length > 0) {
       const sampleEdge = networkData.edges[0];
       const edgeFields = Object.keys(sampleEdge);
-      
+
       const criticalFields = ['source', 'target', 'type', 'weight'];
-      criticalFields.forEach(field => {
+      criticalFields.forEach((field) => {
         if (edgeFields.includes(field) && networkTypeCode.includes(`${field}:`)) {
-          addResult('ui_api_contract', `edge_${field}`, 'PASS', `Edge field ${field} contract valid`);
+          addResult(
+            'ui_api_contract',
+            `edge_${field}`,
+            'PASS',
+            `Edge field ${field} contract valid`
+          );
         } else {
-          addResult('ui_api_contract', `edge_${field}`, 'FAIL', `Edge field ${field} contract broken`);
+          addResult(
+            'ui_api_contract',
+            `edge_${field}`,
+            'FAIL',
+            `Edge field ${field} contract broken`
+          );
         }
       });
     }
@@ -179,14 +218,24 @@ async function testUIAPIContracts() {
     const useNarrativesPath = path.join(CONFIG.projectRoot, 'src/hooks/useNarratives.ts');
     if (fs.existsSync(useNarrativesPath)) {
       const hookCode = fs.readFileSync(useNarrativesPath, 'utf8');
-      
+
       // Check return values
       const expectedReturns = ['narratives', 'loading', 'error', 'refetch'];
-      expectedReturns.forEach(returnVal => {
+      expectedReturns.forEach((returnVal) => {
         if (hookCode.includes(returnVal)) {
-          addResult('ui_api_contract', `hook_return_${returnVal}`, 'PASS', `Hook returns ${returnVal}`);
+          addResult(
+            'ui_api_contract',
+            `hook_return_${returnVal}`,
+            'PASS',
+            `Hook returns ${returnVal}`
+          );
         } else {
-          addResult('ui_api_contract', `hook_return_${returnVal}`, 'WARN', `Hook may not return ${returnVal}`);
+          addResult(
+            'ui_api_contract',
+            `hook_return_${returnVal}`,
+            'WARN',
+            `Hook may not return ${returnVal}`
+          );
         }
       });
     }
@@ -208,7 +257,7 @@ async function testDOMEventPropagation() {
     const cardPath = path.join(CONFIG.projectRoot, 'src/components/narratives/NarrativeCard.tsx');
     if (fs.existsSync(cardPath)) {
       const cardCode = fs.readFileSync(cardPath, 'utf8');
-      
+
       // Check for onClick handler
       if (cardCode.includes('onClick')) {
         addResult('dom_events', 'card_onclick', 'PASS', 'NarrativeCard has onClick handler');
@@ -230,7 +279,7 @@ async function testDOMEventPropagation() {
     const listPath = path.join(CONFIG.projectRoot, 'src/components/narratives/NarrativeList.tsx');
     if (fs.existsSync(listPath)) {
       const listCode = fs.readFileSync(listPath, 'utf8');
-      
+
       // Check for hook usage
       if (listCode.includes('useNarratives')) {
         addResult('dom_events', 'list_hook', 'PASS', 'NarrativeList uses useNarratives hook');
@@ -242,14 +291,24 @@ async function testDOMEventPropagation() {
       if (listCode.includes('error') && (listCode.includes('if') || listCode.includes('?'))) {
         addResult('dom_events', 'list_error_handling', 'PASS', 'NarrativeList has error handling');
       } else {
-        addResult('dom_events', 'list_error_handling', 'WARN', 'NarrativeList error handling unclear');
+        addResult(
+          'dom_events',
+          'list_error_handling',
+          'WARN',
+          'NarrativeList error handling unclear'
+        );
       }
 
       // Check for loading state
       if (listCode.includes('loading') && (listCode.includes('if') || listCode.includes('?'))) {
         addResult('dom_events', 'list_loading_state', 'PASS', 'NarrativeList has loading state');
       } else {
-        addResult('dom_events', 'list_loading_state', 'WARN', 'NarrativeList loading state unclear');
+        addResult(
+          'dom_events',
+          'list_loading_state',
+          'WARN',
+          'NarrativeList loading state unclear'
+        );
       }
     } else {
       addResult('dom_events', 'list_exists', 'FAIL', 'NarrativeList component not found');
@@ -260,7 +319,12 @@ async function testDOMEventPropagation() {
     if (fs.existsSync(appPath)) {
       addResult('dom_events', 'app_exists', 'PASS', 'App.tsx exists for integration');
     } else {
-      addResult('dom_events', 'app_exists', 'WARN', 'App.tsx not found - create for component integration');
+      addResult(
+        'dom_events',
+        'app_exists',
+        'WARN',
+        'App.tsx not found - create for component integration'
+      );
     }
 
     console.log('✓ DOM event propagation tests complete');
@@ -284,20 +348,40 @@ async function testBuildScriptIntegration() {
       'build_sitrep.js',
     ];
 
-    buildScripts.forEach(script => {
+    buildScripts.forEach((script) => {
       const scriptPath = path.join(CONFIG.buildScriptsDir, script);
       if (fs.existsSync(scriptPath)) {
-        addResult('build_integration', `script_${script}`, 'PASS', `Build script exists: ${script}`);
-        
+        addResult(
+          'build_integration',
+          `script_${script}`,
+          'PASS',
+          `Build script exists: ${script}`
+        );
+
         // Check script is executable
         const scriptCode = fs.readFileSync(scriptPath, 'utf8');
         if (scriptCode.includes('#!/usr/bin/env node')) {
-          addResult('build_integration', `executable_${script}`, 'PASS', `Script has shebang: ${script}`);
+          addResult(
+            'build_integration',
+            `executable_${script}`,
+            'PASS',
+            `Script has shebang: ${script}`
+          );
         } else {
-          addResult('build_integration', `executable_${script}`, 'WARN', `Script missing shebang: ${script}`);
+          addResult(
+            'build_integration',
+            `executable_${script}`,
+            'WARN',
+            `Script missing shebang: ${script}`
+          );
         }
       } else {
-        addResult('build_integration', `script_${script}`, 'FAIL', `Build script missing: ${script}`);
+        addResult(
+          'build_integration',
+          `script_${script}`,
+          'FAIL',
+          `Build script missing: ${script}`
+        );
       }
     });
 
@@ -305,7 +389,7 @@ async function testBuildScriptIntegration() {
     const orchestratorPath = path.join(CONFIG.buildScriptsDir, 'orchestrate_build.sh');
     if (fs.existsSync(orchestratorPath)) {
       addResult('build_integration', 'orchestrator', 'PASS', 'Build orchestrator exists');
-      
+
       // Check if executable
       try {
         const stats = fs.statSync(orchestratorPath);
@@ -313,10 +397,20 @@ async function testBuildScriptIntegration() {
         if (isExecutable) {
           addResult('build_integration', 'orchestrator_exec', 'PASS', 'Orchestrator is executable');
         } else {
-          addResult('build_integration', 'orchestrator_exec', 'WARN', 'Orchestrator not executable (run: chmod +x)');
+          addResult(
+            'build_integration',
+            'orchestrator_exec',
+            'WARN',
+            'Orchestrator not executable (run: chmod +x)'
+          );
         }
       } catch (error) {
-        addResult('build_integration', 'orchestrator_exec', 'WARN', 'Could not check executable status');
+        addResult(
+          'build_integration',
+          'orchestrator_exec',
+          'WARN',
+          'Could not check executable status'
+        );
       }
     } else {
       addResult('build_integration', 'orchestrator', 'FAIL', 'Build orchestrator missing');
@@ -326,19 +420,39 @@ async function testBuildScriptIntegration() {
     const ledgerScriptPath = path.join(CONFIG.buildScriptsDir, 'build_ledger.js');
     if (fs.existsSync(ledgerScriptPath)) {
       const ledgerCode = fs.readFileSync(ledgerScriptPath, 'utf8');
-      
+
       // Check for provenance hash usage
       if (ledgerCode.includes('provenance_hash')) {
-        addResult('build_integration', 'ledger_provenance', 'PASS', 'Ledger uses provenance hashes');
+        addResult(
+          'build_integration',
+          'ledger_provenance',
+          'PASS',
+          'Ledger uses provenance hashes'
+        );
       } else {
-        addResult('build_integration', 'ledger_provenance', 'FAIL', 'Ledger missing provenance hash integration');
+        addResult(
+          'build_integration',
+          'ledger_provenance',
+          'FAIL',
+          'Ledger missing provenance hash integration'
+        );
       }
 
       // Check for blockchain structure
       if (ledgerCode.includes('block') && ledgerCode.includes('previous_hash')) {
-        addResult('build_integration', 'ledger_blockchain', 'PASS', 'Ledger has blockchain structure');
+        addResult(
+          'build_integration',
+          'ledger_blockchain',
+          'PASS',
+          'Ledger has blockchain structure'
+        );
       } else {
-        addResult('build_integration', 'ledger_blockchain', 'WARN', 'Ledger blockchain structure unclear');
+        addResult(
+          'build_integration',
+          'ledger_blockchain',
+          'WARN',
+          'Ledger blockchain structure unclear'
+        );
       }
 
       // Check for file write
@@ -350,41 +464,57 @@ async function testBuildScriptIntegration() {
     }
 
     // Test build output directories
-    const expectedOutputs = [
-      'dist/visualization',
-      'dist/qdm',
-      'dist/ledger',
-      'dist/sitrep',
-    ];
+    const expectedOutputs = ['dist/visualization', 'dist/qdm', 'dist/ledger', 'dist/sitrep'];
 
     const distDir = path.join(CONFIG.dataDir, 'dist');
     if (fs.existsSync(distDir)) {
       addResult('build_integration', 'dist_dir', 'PASS', 'Build output directory exists');
     } else {
-      addResult('build_integration', 'dist_dir', 'WARN', 'Build output directory not created yet (run build first)');
+      addResult(
+        'build_integration',
+        'dist_dir',
+        'WARN',
+        'Build output directory not created yet (run build first)'
+      );
     }
 
     // Test data integrity for build inputs
     const narrativesPath = path.join(CONFIG.dataDir, 'narratives.yaml');
     const networkPath = path.join(CONFIG.dataDir, 'narrative_links.json');
-    
+
     if (fs.existsSync(narrativesPath) && fs.existsSync(networkPath)) {
       try {
         const yaml = require('js-yaml');
         const narrativesData = yaml.load(fs.readFileSync(narrativesPath, 'utf8'));
         const networkData = JSON.parse(fs.readFileSync(networkPath, 'utf8'));
-        
+
         // Check data consistency
         const yamlNarrativeCount = narrativesData.narratives?.length || 0;
         const jsonNodeCount = networkData.nodes?.length || 0;
-        
+
         if (yamlNarrativeCount === jsonNodeCount) {
-          addResult('build_integration', 'data_consistency', 'PASS', `Data consistent: ${yamlNarrativeCount} narratives`);
+          addResult(
+            'build_integration',
+            'data_consistency',
+            'PASS',
+            `Data consistent: ${yamlNarrativeCount} narratives`
+          );
         } else {
-          addResult('build_integration', 'data_consistency', 'FAIL', `Data mismatch: YAML=${yamlNarrativeCount}, JSON=${jsonNodeCount}`);
+          addResult(
+            'build_integration',
+            'data_consistency',
+            'FAIL',
+            `Data mismatch: YAML=${yamlNarrativeCount}, JSON=${jsonNodeCount}`
+          );
         }
       } catch (error) {
-        addResult('build_integration', 'data_consistency', 'FAIL', 'Failed to verify data consistency', error.message);
+        addResult(
+          'build_integration',
+          'data_consistency',
+          'FAIL',
+          'Failed to verify data consistency',
+          error.message
+        );
       }
     }
 
@@ -407,7 +537,7 @@ function generateReport() {
 
   // Generate CSV
   const csvLines = ['Suite,Test,Status,Details,Error'];
-  results.suites.forEach(result => {
+  results.suites.forEach((result) => {
     const line = [
       result.suite,
       result.test,
@@ -442,18 +572,26 @@ async function main() {
   await testUIAPIContracts();
   await testDOMEventPropagation();
   await testBuildScriptIntegration();
-  
+
   const csvPath = generateReport();
 
   console.log('\n╔════════════════════════════════════════════════════════╗');
   console.log('║           E2E FUNCTIONAL VALIDATION SUMMARY            ║');
   console.log('╠════════════════════════════════════════════════════════╣');
-  console.log(`║  Total Tests:     ${results.summary.total.toString().padStart(4)}                                  ║`);
-  console.log(`║  Passed:          ${results.summary.passed.toString().padStart(4)}                                  ║`);
-  console.log(`║  Failed:          ${results.summary.failed.toString().padStart(4)}                                  ║`);
-  console.log(`║  Warnings:        ${results.summary.warnings.toString().padStart(4)}                                  ║`);
+  console.log(
+    `║  Total Tests:     ${results.summary.total.toString().padStart(4)}                                  ║`
+  );
+  console.log(
+    `║  Passed:          ${results.summary.passed.toString().padStart(4)}                                  ║`
+  );
+  console.log(
+    `║  Failed:          ${results.summary.failed.toString().padStart(4)}                                  ║`
+  );
+  console.log(
+    `║  Warnings:        ${results.summary.warnings.toString().padStart(4)}                                  ║`
+  );
   console.log('╠════════════════════════════════════════════════════════╣');
-  
+
   const passRate = ((results.summary.passed / results.summary.total) * 100).toFixed(1);
   console.log(`║  Pass Rate:       ${passRate}%                              ║`);
   console.log('╚════════════════════════════════════════════════════════╝');
@@ -477,7 +615,7 @@ async function main() {
 
 // Execute
 if (require.main === module) {
-  main().catch(err => {
+  main().catch((err) => {
     console.error('Fatal error:', err);
     process.exit(1);
   });

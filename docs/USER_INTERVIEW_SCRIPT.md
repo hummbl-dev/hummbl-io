@@ -11,6 +11,7 @@
 ## 📋 Interview Structure
 
 ### Introduction (2 minutes)
+
 > "Hi [Name], thank you for taking the time to speak with me today. I'm [Your Name] from the HUMMBL team. We're working on improving our platform and your feedback is incredibly valuable to us.
 >
 > This will take about 20-30 minutes. There are no right or wrong answers – I'm just interested in hearing about your honest experience. Everything you share will be used to make HUMMBL better.
@@ -24,12 +25,14 @@
 ### 1. Discovery & Motivation
 
 **How did you first discover HUMMBL?**
+
 - Prompts:
   - Search engine? Social media? Referral?
   - What were you searching for?
   - What made you click through?
 
 **What problem were you trying to solve when you came to HUMMBL?**
+
 - Prompts:
   - Learning something specific?
   - Research for work/school?
@@ -43,6 +46,7 @@
 ### 2. Usage Patterns
 
 **Which features do you use most often?**
+
 - Mental models browser
 - Narratives
 - Search
@@ -52,13 +56,16 @@
 - Export
 
 **Walk me through a recent session – what did you do?**
+
 - Let them narrate their actions
 - Ask follow-up questions about specific steps
 
 **How often do you use HUMMBL?**
+
 - Daily? Weekly? Monthly? Occasionally?
 
 **What time of day do you typically use it?**
+
 - Morning? Afternoon? Evening?
 - Context: Work? Home? Commute?
 
@@ -67,6 +74,7 @@
 ### 3. Pain Points & Frustrations
 
 **What's the most frustrating or confusing part of using HUMMBL?**
+
 - Prompts:
   - Navigation issues?
   - Search not working well?
@@ -84,15 +92,18 @@
 ### 4. Value & Content
 
 **Which mental model or narrative has been most valuable to you?**
+
 - Why that one specifically?
 - How have you applied it?
 
 **Is there a topic or mental model you wish we covered?**
 
 **How would you describe HUMMBL to a friend?**
+
 - This reveals their mental model of the product
 
 **What makes HUMMBL different from other learning resources you use?**
+
 - Alternatives: Books? YouTube? Courses? Wikipedia?
 
 ---
@@ -100,6 +111,7 @@
 ### 5. Missing Features
 
 **What features are you wishing existed?**
+
 - Don't lead, let them think
 
 **If you could add one thing to HUMMBL, what would it be?**
@@ -111,10 +123,12 @@
 ### 6. Monetization & Premium
 
 **Would you consider paying for HUMMBL?**
+
 - If yes: How much? What would you expect for that price?
 - If no: Why not? What would change your mind?
 
 **What features would be worth paying for?**
+
 - Prompts:
   - More content?
   - Advanced search?
@@ -125,6 +139,7 @@
   - Certificates?
 
 **How much would you pay per month?**
+
 - Show pricing tiers: $4.99, $9.99, $14.99
 - Which feels right? Too cheap? Too expensive?
 
@@ -175,12 +190,14 @@
 ## 📊 Post-Interview
 
 ### Immediate Notes (5 minutes)
+
 - What were the 3 biggest insights?
 - What surprised you?
 - Exact quotes (if memorable)
 - User category/persona
 
 ### Synthesis (weekly)
+
 - Group feedback by theme
 - Prioritize by frequency and impact
 - Create action items
@@ -191,12 +208,14 @@
 ## 🎯 Success Criteria
 
 **Good Interview:**
+
 - User talks 80% of the time
 - You learn something new
 - You uncover unexpected pain points
 - You get specific examples and stories
 
 **Bad Interview:**
+
 - You're doing most of the talking
 - Getting only yes/no answers
 - Leading questions that bias responses
@@ -207,6 +226,7 @@
 ## 📞 Recruiting Participants
 
 **Where to find users:**
+
 - In-app feedback widget respondents
 - High-engagement users (analytics)
 - Newsletter subscribers
@@ -215,6 +235,7 @@
 - Reddit/forum participants
 
 **Outreach email template:**
+
 ```
 Subject: 20 minutes for your feedback? $25 Amazon gift card
 
@@ -238,6 +259,7 @@ HUMMBL Team
 ## 📈 Target: 10-15 interviews per month
 
 **Aim for diversity:**
+
 - Different usage frequencies (daily, weekly, monthly)
 - Different use cases (work, school, personal)
 - Different demographics (age, profession, background)

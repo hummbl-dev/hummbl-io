@@ -41,9 +41,9 @@ async function main() {
   // Set up event listeners
   watcher
     .on('validation', (result) => {
-      const status = result.valid ? 
-        `${COLORS.green}✓ VALID${COLORS.reset}` : 
-        `${COLORS.red}✗ INVALID${COLORS.reset}`;
+      const status = result.valid
+        ? `${COLORS.green}✓ VALID${COLORS.reset}`
+        : `${COLORS.red}✗ INVALID${COLORS.reset}`;
       console.log(`[${formatTimestamp()}] ${status} Context validated`);
     })
     .on('valid', (result) => {
@@ -52,14 +52,18 @@ async function main() {
       // TODO: Add notification logic for reasoning agents
     })
     .on('invalid', (result) => {
-      console.error(`\n${COLORS.red}${formatTimestamp()} [ERROR] Context validation failed:${COLORS.reset}`);
+      console.error(
+        `\n${COLORS.red}${formatTimestamp()} [ERROR] Context validation failed:${COLORS.reset}`
+      );
       result.errors.forEach((error, index) => {
         console.error(`${COLORS.red}  ${index + 1}. ${error}${COLORS.reset}`);
       });
       console.log(''); // Add empty line after errors
     })
     .on('error', (error) => {
-      console.error(`\n${COLORS.red}${formatTimestamp()} [FATAL] ${error.message}${COLORS.reset}\n`);
+      console.error(
+        `\n${COLORS.red}${formatTimestamp()} [FATAL] ${error.message}${COLORS.reset}\n`
+      );
       if (process.env.NODE_ENV === 'development') {
         console.error(error.stack);
       }
@@ -68,22 +72,32 @@ async function main() {
   // Start watching
   try {
     await watcher.start();
-    console.log(`${COLORS.green}${formatTimestamp()} [INFO] Watcher started successfully${COLORS.reset}`);
+    console.log(
+      `${COLORS.green}${formatTimestamp()} [INFO] Watcher started successfully${COLORS.reset}`
+    );
   } catch (error) {
-    console.error(`${COLORS.red}${formatTimestamp()} [FATAL] Failed to start watcher:${COLORS.reset}`);
+    console.error(
+      `${COLORS.red}${formatTimestamp()} [FATAL] Failed to start watcher:${COLORS.reset}`
+    );
     console.error(error);
     process.exit(1);
   }
 
   // Handle process termination
   const shutdown = async (signal: string) => {
-    console.log(`\n${COLORS.yellow}${formatTimestamp()} [INFO] Received ${signal}, shutting down...${COLORS.reset}`);
+    console.log(
+      `\n${COLORS.yellow}${formatTimestamp()} [INFO] Received ${signal}, shutting down...${COLORS.reset}`
+    );
     try {
       await watcher.stop();
-      console.log(`${COLORS.green}${formatTimestamp()} [INFO] Watcher stopped gracefully${COLORS.reset}`);
+      console.log(
+        `${COLORS.green}${formatTimestamp()} [INFO] Watcher stopped gracefully${COLORS.reset}`
+      );
       process.exit(0);
     } catch (error) {
-      console.error(`${COLORS.red}${formatTimestamp()} [ERROR] Error during shutdown:${COLORS.reset}`);
+      console.error(
+        `${COLORS.red}${formatTimestamp()} [ERROR] Error during shutdown:${COLORS.reset}`
+      );
       console.error(error);
       process.exit(1);
     }
@@ -95,7 +109,7 @@ async function main() {
 }
 
 // Run the main function
-main().catch(error => {
+main().catch((error) => {
   console.error(`${COLORS.red}${formatTimestamp()} [UNHANDLED ERROR]${COLORS.reset}`, error);
   process.exit(1);
 });
