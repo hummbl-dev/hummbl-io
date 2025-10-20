@@ -1,7 +1,109 @@
 // Scalable content import pipeline for narratives and mental models
 
-import type { Narrative } from '../types/narrative';
-import type { MentalModel } from '../types/mental-model';
+// Core types
+export type Complexity = {
+  cognitive_load: string;
+  time_to_elicit: string;
+  expertise_required: string;
+};
+
+export type Signal = {
+  signal_id: string;
+  signal_type: string;
+  weight: number;
+  context: string;
+};
+
+export type Relationship = {
+  type: string;
+  target: string;
+  description: string;
+};
+
+export type Citation = {
+  author: string;
+  year: number | string;
+  title: string;
+  source: string;
+};
+
+export type ElicitationMethod = {
+  method: string;
+  duration: string;
+  difficulty: string;
+};
+
+export type Example = {
+  scenario: string;
+  application: string;
+  outcome: string;
+};
+
+export type ChangelogEntry = {
+  version: string;
+  date: string;
+  changes: string;
+};
+
+export interface Narrative {
+  // Core identification
+  id: string;
+  narrative_id: string;
+  version: string;
+  provenance_hash: string;
+  
+  // Core content
+  title: string;
+  content: string;
+  summary: string;
+  category: string;
+  
+  // Classification
+  tags: string[];
+  domain: string[];
+  evidence_quality: 'A' | 'B' | 'C';
+  confidence: number;
+  complexity: Complexity;
+  examples: Array<Example | string>;
+  linked_signals: Signal[];
+  relationships: Relationship[];
+  related_frameworks: string[];
+  citations: Citation[];
+  elicitation_methods: ElicitationMethod[];
+  methods?: Array<{
+    method: string;
+    description: string;
+    duration: string;
+    difficulty: 'Beginner' | 'Intermediate' | 'Advanced';
+  }>;
+  changelog: ChangelogEntry[];
+  lastUpdated?: string;
+  approved?: boolean;
+}
+
+export interface MentalModel {
+  id: string;
+  name: string;
+  code: string;
+  definition?: string;
+  description?: string;
+  category: string;
+  tags: string[];
+  transformations: string[];
+  sources: Array<{
+    name: string;
+    reference: string;
+  }>;
+  example?: string;
+  meta: {
+    added: string;
+    updated: string;
+    difficulty: number;
+    isCore: boolean;
+  };
+}
+
+export type TransformationKey = string;
 
 export interface ImportResult<T> {
   success: boolean;
@@ -48,47 +150,64 @@ export class ContentImportPipeline {
   async importNarratives(data: unknown[]): Promise<ImportResult<Narrative>> {
     const startTime = Date.now();
     this.errors = [];
-
-    const stats: ImportStats = {
-      total: data.length,
-      imported: 0,
-      skipped: 0,
-      failed: 0,
-      duration: 0,
+    
+    const result: ImportResult<Narrative> = {
+      success: true,
+      data: [],
+      errors: [],
+      stats: {
+        total: data.length,
+        imported: 0,
+        skipped: 0,
+        failed: 0,
+        duration: 0,
+      },
     };
 
-    const validNarratives: Narrative[] = [];
-
-    for (let i = 0; i < data.length; i++) {
-      const item = data[i];
-
-      try {
-        const validated = this.validateNarrative(item, i);
-        
-        if (validated) {
-          validNarratives.push(validated);
-          stats.imported++;
-        } else {
-          stats.skipped++;
+    try {
+      for (let i = 0; i < data.length; i++) {
+        try {
+          const narrative = this.validateNarrative(data[i], i);
+          if (narrative) {
+            result.data?.push(narrative);
+            result.stats.imported++;
+          } else {
+            result.stats.skipped++;
+          }
+        } catch (error) {
+          result.stats.failed++;
+          if (error instanceof Error) {
+            this.errors.push({
+              line: i + 1,
+              message: error.message,
+              severity: 'error',
+            });
+          }
         }
-      } catch (error) {
-        stats.failed++;
-        this.errors.push({
-          line: i + 1,
-          message: error instanceof Error ? error.message : 'Validation failed',
-          severity: 'error',
-        });
       }
+
+      result.errors = this.errors;
+      result.success = this.errors.length === 0;
+      result.stats.duration = Date.now() - startTime;
+      return result;
+    } catch (error) {
+      return {
+        success: false,
+        errors: [
+          {
+            message: error instanceof Error ? error.message : 'Unknown error',
+            severity: 'error',
+          },
+        ],
+        stats: {
+          total: data.length,
+          imported: 0,
+          skipped: 0,
+          failed: data.length,
+          duration: Date.now() - startTime,
+        },
+      };
     }
-
-    stats.duration = Date.now() - startTime;
-
-    return {
-      success: stats.failed === 0,
-      data: validNarratives,
-      errors: this.errors,
-      stats,
-    };
   }
 
   /**
@@ -97,47 +216,64 @@ export class ContentImportPipeline {
   async importMentalModels(data: unknown[]): Promise<ImportResult<MentalModel>> {
     const startTime = Date.now();
     this.errors = [];
-
-    const stats: ImportStats = {
-      total: data.length,
-      imported: 0,
-      skipped: 0,
-      failed: 0,
-      duration: 0,
+    
+    const result: ImportResult<MentalModel> = {
+      success: true,
+      data: [],
+      errors: [],
+      stats: {
+        total: data.length,
+        imported: 0,
+        skipped: 0,
+        failed: 0,
+        duration: 0,
+      },
     };
 
-    const validModels: MentalModel[] = [];
-
-    for (let i = 0; i < data.length; i++) {
-      const item = data[i];
-
-      try {
-        const validated = this.validateMentalModel(item, i);
-        
-        if (validated) {
-          validModels.push(validated);
-          stats.imported++;
-        } else {
-          stats.skipped++;
+    try {
+      for (let i = 0; i < data.length; i++) {
+        try {
+          const model = this.validateMentalModel(data[i], i);
+          if (model) {
+            result.data?.push(model);
+            result.stats.imported++;
+          } else {
+            result.stats.skipped++;
+          }
+        } catch (error) {
+          result.stats.failed++;
+          if (error instanceof Error) {
+            this.errors.push({
+              line: i + 1,
+              message: error.message,
+              severity: 'error',
+            });
+          }
         }
-      } catch (error) {
-        stats.failed++;
-        this.errors.push({
-          line: i + 1,
-          message: error instanceof Error ? error.message : 'Validation failed',
-          severity: 'error',
-        });
       }
+
+      result.errors = this.errors;
+      result.success = this.errors.length === 0;
+      result.stats.duration = Date.now() - startTime;
+      return result;
+    } catch (error) {
+      return {
+        success: false,
+        errors: [
+          {
+            message: error instanceof Error ? error.message : 'Unknown error',
+            severity: 'error',
+          },
+        ],
+        stats: {
+          total: data.length,
+          imported: 0,
+          skipped: 0,
+          failed: data.length,
+          duration: Date.now() - startTime,
+        },
+      };
     }
-
-    stats.duration = Date.now() - startTime;
-
-    return {
-      success: stats.failed === 0,
-      data: validModels,
-      errors: this.errors,
-      stats,
-    };
   }
 
   /**
@@ -145,26 +281,50 @@ export class ContentImportPipeline {
    */
   private validateNarrative(data: unknown, index: number): Narrative | null {
     if (!data || typeof data !== 'object') {
-      throw new Error('Invalid narrative object');
+      this.errors.push({
+        line: index + 1,
+        message: 'Invalid narrative data: expected an object',
+        severity: 'error',
+      });
+      return null;
     }
 
-    const item = data as Record<string, unknown>;
+    // Define a type for the raw input data
+    type RawNarrative = Partial<{
+      id: unknown;
+      narrative_id: unknown;
+      version: unknown;
+      provenance_hash: unknown;
+      title: unknown;
+      content: unknown;
+      summary: unknown;
+      category: unknown;
+      tags: unknown;
+      domain: unknown;
+      evidence_quality: unknown;
+      confidence: unknown;
+      complexity: unknown;
+      examples: unknown;
+      linked_signals: unknown;
+      relationships: unknown;
+      related_frameworks: unknown;
+      citations: unknown;
+      elicitation_methods: unknown;
+      methods: unknown;
+      changelog: unknown;
+      lastUpdated: unknown;
+      approved: unknown;
+    }>;
 
-    // Required fields
-    const required = [
-      'narrative_id',
-      'title',
-      'summary',
-      'category',
-      'evidence_quality',
-      'confidence_level',
-    ];
+    const item = data as RawNarrative;
+    const required = ['id', 'title', 'content', 'category'] as const;
 
+    // Check required fields
     for (const field of required) {
       if (!item[field]) {
         this.errors.push({
           line: index + 1,
-          field,
+          field: field as string,
           message: `Missing required field: ${field}`,
           severity: 'error',
         });
@@ -172,65 +332,113 @@ export class ContentImportPipeline {
       }
     }
 
-    // Type validation
-    if (typeof item.narrative_id !== 'string') {
-      throw new Error('narrative_id must be string');
+    // Type validation for required fields
+    if (typeof item.id !== 'string') {
+      throw new Error('id must be a string');
     }
 
     if (typeof item.title !== 'string') {
-      throw new Error('title must be string');
+      throw new Error('title must be a string');
     }
 
-    if (typeof item.summary !== 'string') {
-      throw new Error('summary must be string');
-    }
-
-    // Validate evidence_quality enum
-    const validQualities = ['High', 'Medium', 'Low', 'Preliminary'];
-    if (!validQualities.includes(item.evidence_quality as string)) {
-      this.errors.push({
-        line: index + 1,
-        field: 'evidence_quality',
-        message: `Invalid evidence_quality. Must be one of: ${validQualities.join(', ')}`,
-        severity: 'warning',
-      });
-    }
-
-    // Optional fields with validation
-    if (item.tags && !Array.isArray(item.tags)) {
-      this.errors.push({
-        line: index + 1,
-        field: 'tags',
-        message: 'tags must be an array',
-        severity: 'warning',
-      });
+    if (typeof item.content !== 'string') {
+      throw new Error('content must be a string');
     }
 
     // Construct proper Narrative object with all required fields
-    return {
-      narrative_id: item.narrative_id as string,
-      version: item.version as string || '1.0',
-      provenance_hash: item.provenance_hash as string || '',
-      evidence_quality: (item.evidence_quality as 'A' | 'B' | 'C') || 'C',
-      title: item.title as string,
-      summary: item.summary as string,
-      category: item.category as string || 'General',
-      tags: Array.isArray(item.tags) ? item.tags : [],
-      domain: Array.isArray(item.domain) ? item.domain : [],
-      confidence: typeof item.confidence === 'number' ? item.confidence : 0.5,
-      complexity: item.complexity as any || {
+    const narrative: Narrative = {
+      // Core identification
+      id: String(item.id || ''),
+      narrative_id: String(item.narrative_id || ''),
+      version: String(item.version || '1.0.0'),
+      provenance_hash: String(item.provenance_hash || ''),
+      
+      // Core content
+      title: String(item.title || ''),
+      content: String(item.content || ''),
+      summary: String(item.summary || ''),
+      category: String(item.category || ''),
+      
+      // Classification
+      tags: Array.isArray(item.tags) 
+        ? (item.tags as unknown[]).filter((t): t is string => typeof t === 'string')
+        : [],
+      domain: Array.isArray(item.domain)
+        ? (item.domain as unknown[]).filter((d): d is string => typeof d === 'string')
+        : [],
+      evidence_quality: (['A', 'B', 'C'] as const).includes(item.evidence_quality as any)
+        ? item.evidence_quality as 'A' | 'B' | 'C'
+        : 'C',
+      confidence: typeof item.confidence === 'number' ? Math.min(100, Math.max(0, item.confidence)) : 0,
+      complexity: {
         cognitive_load: 'medium',
         time_to_elicit: 'medium',
-        expertise_required: 'medium'
+        expertise_required: 'intermediate',
+        ...(typeof item.complexity === 'object' ? item.complexity : {})
       },
-      linked_signals: Array.isArray(item.linked_signals) ? item.linked_signals : [],
-      relationships: Array.isArray(item.relationships) ? item.relationships : [],
-      citations: Array.isArray(item.citations) ? item.citations : [],
-      elicitation_methods: Array.isArray(item.elicitation_methods) ? item.elicitation_methods : [],
-      examples: Array.isArray(item.examples) ? item.examples : [],
-      related_frameworks: Array.isArray(item.related_frameworks) ? item.related_frameworks : [],
-      changelog: Array.isArray(item.changelog) ? item.changelog : []
-    } as Narrative;
+      examples: (() => {
+        if (!Array.isArray(item.examples)) return [];
+        return (item.examples as Array<unknown>)
+          .map(ex => {
+            if (typeof ex === 'string') return ex;
+            if (ex && typeof ex === 'object' && 
+                'scenario' in ex && 'application' in ex && 'outcome' in ex) {
+              return {
+                scenario: String((ex as any).scenario || ''),
+                application: String((ex as any).application || ''),
+                outcome: String((ex as any).outcome || '')
+              } as Example;
+            }
+            return null;
+          })
+          .filter((ex): ex is Example | string => ex !== null);
+      })(),
+      linked_signals: Array.isArray(item.linked_signals) 
+        ? item.linked_signals as Signal[] 
+        : [],
+      relationships: Array.isArray(item.relationships) 
+        ? item.relationships as Relationship[] 
+        : [],
+      related_frameworks: Array.isArray(item.related_frameworks)
+        ? (item.related_frameworks as unknown[]).filter((f): f is string => typeof f === 'string')
+        : [],
+      citations: Array.isArray(item.citations) 
+        ? (item.citations as Array<Record<string, unknown>>).map(c => ({
+            author: String(c.author || ''),
+            year: String(c.year || ''),
+            title: String(c.title || ''),
+            source: String(c.source || '')
+          }))
+        : [],
+      elicitation_methods: Array.isArray(item.elicitation_methods)
+        ? item.elicitation_methods as ElicitationMethod[]
+        : [],
+      methods: Array.isArray(item.methods)
+        ? (item.methods as Array<unknown>).map(method => ({
+            method: String((method as any)?.method || ''),
+            description: String((method as any)?.description || ''),
+            duration: String((method as any)?.duration || ''),
+            difficulty: ['Beginner', 'Intermediate', 'Advanced'].includes((method as any)?.difficulty)
+              ? (method as any).difficulty as 'Beginner' | 'Intermediate' | 'Advanced'
+              : 'Intermediate'
+          }))
+        : [],
+      changelog: Array.isArray(item.changelog)
+        ? (item.changelog as Array<unknown>).map(entry => ({
+            version: String((entry as any)?.version || '0.0.1'),
+            date: String((entry as any)?.date || new Date().toISOString()),
+            changes: String((entry as any)?.changes || 'Initial version')
+          }))
+        : [],
+      lastUpdated: typeof item.lastUpdated === 'string' 
+        ? item.lastUpdated 
+        : new Date().toISOString(),
+      approved: typeof item.approved === 'boolean' 
+        ? item.approved 
+        : false,
+    };
+
+    return narrative;
   }
 
   /**
@@ -238,19 +446,41 @@ export class ContentImportPipeline {
    */
   private validateMentalModel(data: unknown, index: number): MentalModel | null {
     if (!data || typeof data !== 'object') {
-      throw new Error('Invalid mental model object');
+      this.errors.push({
+        line: index + 1,
+        message: 'Invalid mental model data: expected an object',
+        severity: 'error',
+      });
+      return null;
     }
 
-    const item = data as Record<string, unknown>;
+    // Define a type for the raw input data
+    type RawMentalModel = Partial<{
+      id: unknown;
+      name: unknown;
+      code: unknown;
+      definition: unknown;
+      description: unknown;
+      category: unknown;
+      tags: unknown;
+      transformations: unknown;
+      transformation: unknown;
+      sources: unknown;
+      example: unknown;
+      complexity: unknown;
+      difficulty: unknown;
+      lastUpdated: unknown;
+    }>;
 
-    // Required fields
-    const required = ['id', 'name', 'category'];
+    const item = data as RawMentalModel;
+    const required = ['id', 'name', 'code', 'category'] as const;
 
+    // Check required fields
     for (const field of required) {
       if (!item[field]) {
         this.errors.push({
           line: index + 1,
-          field,
+          field: field as string,
           message: `Missing required field: ${field}`,
           severity: 'error',
         });
@@ -258,51 +488,67 @@ export class ContentImportPipeline {
       }
     }
 
-    // Type validation
+    // Type validation for required fields
     if (typeof item.id !== 'string') {
-      throw new Error('id must be string');
+      throw new Error('id must be a string');
     }
 
     if (typeof item.name !== 'string') {
-      throw new Error('name must be string');
+      throw new Error('name must be a string');
     }
 
-    // Optional fields with validation
-    if (item.tags && !Array.isArray(item.tags)) {
-      this.errors.push({
-        line: index + 1,
-        field: 'tags',
-        message: 'tags must be an array',
-        severity: 'warning',
-      });
+    if (typeof item.code !== 'string') {
+      throw new Error('code must be a string');
     }
 
-    if (item.difficulty) {
-      const validDifficulties = ['Beginner', 'Intermediate', 'Advanced'];
-      if (!validDifficulties.includes(item.difficulty as string)) {
-        this.errors.push({
-          line: index + 1,
-          field: 'difficulty',
-          message: `Invalid difficulty. Must be one of: ${validDifficulties.join(', ')}`,
-          severity: 'warning',
-        });
-      }
+    // Handle transformations - support both 'transformation' and 'transformations' properties
+    let transformations: string[] = [];
+    
+    if (Array.isArray(item.transformations)) {
+      transformations = (item.transformations as unknown[])
+        .filter((t): t is string => typeof t === 'string' && t.length > 0);
+    } else if (item.transformation && typeof item.transformation === 'string') {
+      transformations = [item.transformation as string];
     }
 
     // Construct proper MentalModel object with all required fields
-    return {
-      code: item.code as string,
+    const mentalModel: MentalModel = {
+      id: item.id as string,
       name: item.name as string,
-      definition: item.definition as string,
-      example: item.example as string,
-      transformation: item.transformation as any,
-      tags: Array.isArray(item.tags) ? item.tags : [],
-      relatedModels: Array.isArray(item.relatedModels) ? item.relatedModels : [],
-      complexity: item.complexity as any || 'medium',
-      confidence: typeof item.confidence === 'number' ? item.confidence : 0.5,
-      lastUpdated: item.lastUpdated as string,
-      sources: Array.isArray(item.sources) ? item.sources : []
-    } as MentalModel;
+      code: item.code as string,
+      ...(item.definition ? { definition: String(item.definition) } : {}),
+      ...(item.description ? { description: String(item.description) } : {}),
+      category: item.category as string,
+      tags: Array.isArray(item.tags) 
+        ? (item.tags as unknown[]).filter((t): t is string => typeof t === 'string')
+        : [],
+      transformations,
+      sources: Array.isArray(item.sources)
+        ? (item.sources as Array<unknown>)
+            .filter(s => s !== null && s !== undefined)
+            .map(s => ({
+              name: (s as any)?.name ? String((s as any).name) : 'Unknown',
+              reference: (s as any)?.reference ? String((s as any).reference) : ''
+            }))
+        : [],
+      ...(item.example ? { example: String(item.example) } : {}),
+      meta: {
+        added: new Date().toISOString(),
+        updated: typeof item.lastUpdated === 'string' 
+          ? item.lastUpdated 
+          : new Date().toISOString(),
+        difficulty: typeof item.difficulty === 'number' 
+          ? Math.min(5, Math.max(1, item.difficulty))
+          : item.complexity === 'high' 
+            ? 5 
+            : item.complexity === 'medium' 
+              ? 3 
+              : 1,
+        isCore: false
+      }
+    };
+
+    return mentalModel;
   }
 
   /**
@@ -314,21 +560,25 @@ export class ContentImportPipeline {
 
       reader.onload = async (event) => {
         try {
-          const content = event.target?.result as string;
-          const data = JSON.parse(content);
-
+          if (!event.target?.result) {
+            throw new Error('No content in file');
+          }
+          
+          const content = event.target.result as string;
+          const data = JSON.parse(content) as unknown[];
+          
           if (!Array.isArray(data)) {
-            reject(new Error('File must contain an array of items'));
-            return;
+            throw new Error('Expected an array of items in the file');
           }
 
-          const result = type === 'narratives'
+          // Use the appropriate import method based on type
+          const result = type === 'narratives' 
             ? await this.importNarratives(data)
             : await this.importMentalModels(data);
 
-          resolve(result as ImportResult<Narrative | MentalModel>);
+          resolve(result);
         } catch (error) {
-          reject(error);
+          reject(new Error(`Failed to process file: ${error instanceof Error ? error.message : String(error)}`));
         }
       };
 
@@ -341,82 +591,88 @@ export class ContentImportPipeline {
   }
 
   /**
-   * Batch import from multiple files
+   * Batch import multiple files
    */
   async batchImport(
     files: File[],
     type: 'narratives' | 'mentalModels'
   ): Promise<ImportResult<Narrative | MentalModel>> {
-    const allData: (Narrative | MentalModel)[] = [];
+    const allData: Array<Narrative | MentalModel> = [];
     const allErrors: ImportError[] = [];
-    const combinedStats: ImportStats = {
-      total: 0,
-      imported: 0,
-      skipped: 0,
-      failed: 0,
-      duration: 0,
-    };
-
+    let totalImported = 0;
+    let totalSkipped = 0;
+    let totalFailed = 0;
     const startTime = Date.now();
 
     for (const file of files) {
       try {
         const result = await this.importFromFile(file, type);
-
         if (result.data) {
           allData.push(...result.data);
         }
-
-        allErrors.push(...result.errors.map(err => ({ ...err, file: file.name })));
-        
-        combinedStats.total += result.stats.total;
-        combinedStats.imported += result.stats.imported;
-        combinedStats.skipped += result.stats.skipped;
-        combinedStats.failed += result.stats.failed;
+        if (result.errors.length > 0) {
+          allErrors.push(...result.errors);
+        }
+        totalImported += result.stats.imported;
+        totalSkipped += result.stats.skipped;
+        totalFailed += result.stats.failed;
       } catch (error) {
         allErrors.push({
           file: file.name,
-          message: error instanceof Error ? error.message : 'Import failed',
-          severity: 'error',
+          message: error instanceof Error ? error.message : 'Unknown error',
+          severity: 'error'
         });
-        combinedStats.failed++;
+        totalFailed++;
       }
     }
 
-    combinedStats.duration = Date.now() - startTime;
-
     return {
-      success: combinedStats.failed === 0,
+      success: allErrors.length === 0,
       data: allData,
       errors: allErrors,
-      stats: combinedStats,
+      stats: {
+        total: files.length,
+        imported: totalImported,
+        skipped: totalSkipped,
+        failed: totalFailed,
+        duration: Date.now() - startTime
+      }
     };
   }
 
   /**
-   * Export content to JSON
+   * Export data to JSON file
    */
-  exportToJSON(data: Narrative[] | MentalModel[], filename: string): void {
-    const json = JSON.stringify(data, null, 2);
-    const blob = new Blob([json], { type: 'application/json' });
-    const url = URL.createObjectURL(blob);
-    const link = document.createElement('a');
-    link.href = url;
-    link.download = filename;
-    link.click();
-    URL.revokeObjectURL(url);
+  exportToJSON(data: Array<Narrative | MentalModel>, filename: string): void {
+    try {
+      const json = JSON.stringify(data, null, 2);
+      const blob = new Blob([json], { type: 'application/json' });
+      const url = URL.createObjectURL(blob);
+      const link = document.createElement('a');
+      link.href = url;
+      link.download = filename.endsWith('.json') ? filename : `${filename}.json`;
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+      URL.revokeObjectURL(url);
+    } catch (error) {
+      console.error('Error exporting to JSON:', error);
+      throw new Error(`Failed to export data: ${error instanceof Error ? error.message : 'Unknown error'}`);
+    }
   }
 
   /**
-   * Merge imported content with existing
+   * Merge content with existing data
    */
   mergeContent<T extends { id?: string; narrative_id?: string }>(
     existing: T[],
     imported: T[],
     strategy: 'replace' | 'skip' | 'merge' = 'replace'
   ): T[] {
+    const merged = [...existing];
     const existingMap = new Map<string, T>();
 
+    // Create a map of existing items by ID for quick lookup
     existing.forEach((item) => {
       const id = 'id' in item ? item.id : item.narrative_id;
       if (id) {
@@ -424,15 +680,15 @@ export class ContentImportPipeline {
       }
     });
 
-    const merged: T[] = [...existing];
-
+    // Process imported items
     imported.forEach((item) => {
       const id = 'id' in item ? item.id : item.narrative_id;
       if (!id) return;
 
       if (existingMap.has(id)) {
+        // Item exists, handle based on strategy
         switch (strategy) {
-          case 'replace':
+          case 'replace': {
             // Replace existing item
             const index = merged.findIndex((m) => {
               const mId = 'id' in m ? m.id : m.narrative_id;
@@ -442,21 +698,21 @@ export class ContentImportPipeline {
               merged[index] = item;
             }
             break;
-
+          }
           case 'skip':
             // Skip, keep existing
             break;
-
-          case 'merge':
+          case 'merge': {
             // Merge properties
-            const index2 = merged.findIndex((m) => {
+            const index = merged.findIndex((m) => {
               const mId = 'id' in m ? m.id : m.narrative_id;
               return mId === id;
             });
-            if (index2 !== -1) {
-              merged[index2] = { ...merged[index2], ...item };
+            if (index !== -1) {
+              merged[index] = { ...merged[index], ...item };
             }
             break;
+          }
         }
       } else {
         // New item, add it
@@ -468,32 +724,16 @@ export class ContentImportPipeline {
   }
 
   /**
-   * Get import errors
+   * Get all import errors
    */
   getErrors(): ImportError[] {
-    return this.errors;
+    return [...this.errors];
   }
 
   /**
-   * Clear errors
+   * Clear all errors
    */
   clearErrors(): void {
     this.errors = [];
   }
-}
-
-/**
- * Singleton instance
- */
-let pipelineInstance: ContentImportPipeline | null = null;
-
-export function getImportPipeline(): ContentImportPipeline {
-  if (!pipelineInstance) {
-    pipelineInstance = new ContentImportPipeline();
-  }
-  return pipelineInstance;
-}
-
-export function resetImportPipeline(): void {
-  pipelineInstance = null;
 }
