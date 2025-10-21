@@ -15,24 +15,50 @@ export default defineConfig({
     setupFiles: './vitest.setup.ts',
     testTimeout: 30000,
     hookTimeout: 30000,
-    maxConcurrency: 2,
+    maxConcurrency: 1, // Reduced from 2 to 1 to limit parallel test execution
     logHeapUsage: true,
+    clearMocks: true, // Clear mocks between tests to free memory
+    mockReset: true, // Reset mocks between tests
+    restoreMocks: true, // Restore original implementations between tests
+    
+    // Optimized pool configuration for better memory management
     poolOptions: {
       threads: {
         minThreads: 1,
-        maxThreads: 2,
-        useAtomics: true,
+        maxThreads: 1, // Reduced to 1 thread to minimize memory usage
+        useAtomics: false, // Can cause memory leaks in some cases
         isolate: true,
-        singleThread: false,
-        execArgv: ['--max-old-space-size=8192'],
+        singleThread: true, // Run tests in a single thread
+        execArgv: [
+          '--max-old-space-size=4096', // Reduced memory per worker
+          '--gc-interval=100', // More frequent garbage collection
+          '--expose-gc' // Enable manual garbage collection
+        ],
+      },
+      forks: {
+        // Fork mode can be more memory efficient for some test suites
+        singleFork: true,
+        isolate: true,
       },
     },
+    
+    // Optimize coverage settings
     coverage: {
       provider: 'v8',
       reporter: ['text', 'json', 'html', 'json-summary'],
-      // Enable per-test coverage to identify memory hogs
-      all: false,
-      // Thresholds temporarily disabled for CI troubleshooting
+      all: false, // Only instrument files that are tested
+      clean: true, // Clean coverage results before running
+      cleanOnRerun: true, // Clean coverage results on watch mode
+      exclude: [
+        '**/node_modules/**',
+        '**/dist/**',
+        '**/coverage/**',
+        '**/*.d.ts',
+        '**/*.test.{js,jsx,ts,tsx}',
+        '**/__tests__/**',
+        '**/test-utils/**',
+      ],
+      // Thresholds disabled for now
       // thresholds: {
       //   lines: 7,
       //   functions: 55,
@@ -40,10 +66,16 @@ export default defineConfig({
       //   statements: 7
       // }
     },
+    
     // Run tests in sequence to reduce memory pressure
     sequence: {
       shuffle: false,
       concurrent: false,
+      // Run the slowest tests first to identify memory issues early
+      sort: (a, b) => (a.speed || 0) - (b.speed || 0),
     },
+    
+    // Enable test isolation
+    isolate: true,
   },
 });
