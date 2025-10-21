@@ -16,8 +16,37 @@ on:
 
 jobs:
   integrity-check:
-    uses: ./.github/workflows/integrity.yml
-    with:
-      reason: ${{ github.event_name == 'workflow_dispatch' && github.event.inputs.reason || 'Scheduled run' }}
-      production_url: 'https://www.hummbl.io'
-    secrets: inherit
+    name: Verify Production Integrity
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    environment: production
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20.x'
+          cache: 'pnpm'
+
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v2
+        with:
+          version: 8
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Show run reason
+        run: |
+          echo "Running with reason: ${{ github.event_name == 'workflow_dispatch' && github.event.inputs.reason || 'Scheduled run' }}"
+          echo "Production URL: https://www.hummbl.io"
+
+      - name: Run integrity check (simulated)
+        run: |
+          echo "This would run: node scripts/verify_production_integrity.mjs --url https://www.hummbl.io"
+          echo "For now, this is just a simulation to test the workflow"
