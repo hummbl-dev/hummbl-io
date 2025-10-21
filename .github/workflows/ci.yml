@@ -35,8 +35,13 @@ jobs:
         continue-on-error: false
         timeout-minutes: 10
         run: |
-          echo "Running tests with increased memory..."
-          NODE_OPTIONS='--max-old-space-size=2048' npm test -- --verbose
+          echo "=== Environment Information ==="
+          node --version
+          npm --version
+          echo "============================="
+
+          echo "Running tests with memory optimization..."
+          npm run test:memory-optimized -- --verbose
         env:
           NODE_ENV: test
           CI: true
