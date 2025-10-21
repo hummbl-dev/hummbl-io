@@ -94,6 +94,17 @@ jobs:
           VITE_API_URL: https://api.hummbl.io
           VITE_ENVIRONMENT: ci
 
+      - name: Check for compliance report
+        id: check_compliance
+        continue-on-error: true
+        run: |
+          if [ -f "compliance-report.json" ]; then
+            echo "compliance_report_exists=true" >> $GITHUB_OUTPUT
+          else
+            echo "compliance_report_exists=false" >> $GITHUB_OUTPUT
+            echo "Warning: compliance-report.json not found, continuing without it"
+          fi
+
       - name: Upload test results and artifacts
         if: always()
         uses: actions/upload-artifact@v4
@@ -103,6 +114,7 @@ jobs:
             coverage/
             test-results/
             .next/logs/
+            ${{ steps.check_compliance.outputs.compliance_report_exists == 'true' && 'compliance-report.json' || '' }}
           retention-days: 7
           if-no-files-found: warn
 
