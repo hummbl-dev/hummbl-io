@@ -27,6 +27,12 @@ jobs:
         uses: actions/checkout@v4
         with:
           fetch-depth: 0
+          # Ensure all files are checked out
+          fetch-tags: true
+          # Don't use sparse checkout
+          sparse-checkout: ''
+          # Show all tracked files for debugging
+          show-progress: true
 
       - name: Setup pnpm
         uses: pnpm/action-setup@v2
@@ -42,11 +48,25 @@ jobs:
       - name: Install dependencies
         run: pnpm install --frozen-lockfile
 
+      - name: Debug - List files
+        run: |
+          ls -la
+          echo "Current directory: $(pwd)"
+          echo "pnpm-lock exists: $(ls pnpm-lock.yaml 2>/dev/null && echo 'yes' || echo 'no')"
+          echo "Script exists: $(ls scripts/verify_production_integrity.mjs 2>/dev/null && echo 'yes' || echo 'no')"
+
       - name: Run integrity check
         id: integrity
         run: |
-          echo "Running integrity check against: ${{ inputs.production_url }}"
-          node scripts/verify_production_integrity.mjs --url "${{ inputs.production_url }}" || echo "Integrity check failed"
+          # Ensure URL has a default if not provided
+          PROD_URL="${1:-https://www.hummbl.io}"
+          echo "Running integrity check against: $PROD_URL"
+          if [ ! -f "scripts/verify_production_integrity.mjs" ]; then
+            echo "Error: verify_production_integrity.mjs not found!"
+            ls -la scripts/
+            exit 1
+          fi
+          node scripts/verify_production_integrity.mjs --url "$PROD_URL" || echo "Integrity check failed"
         env:
           NODE_OPTIONS: --max-old-space-size=2048
 
