@@ -5,7 +5,10 @@
       "src": "package.json",
       "use": "@vercel/static-build",
       "config": {
-        "distDir": "dist"
+        "distDir": "dist",
+        "env": {
+          "NODE_OPTIONS": "--max_old_space_size=8192"
+        }
       }
     }
   ],
@@ -14,13 +17,5 @@
       "src": "/(.*)",
       "dest": "/dist/$1"
     }
-  ],
-  "build": {
-    "env": {
-      "NODE_VERSION": "20",
-      "NPM_ONLY_PRODUCTION": "false"
-    }
-  },
-  "installCommand": "pnpm install --no-frozen-lockfile",
-  "buildCommand": "pnpm run build"
+  ]
 }
