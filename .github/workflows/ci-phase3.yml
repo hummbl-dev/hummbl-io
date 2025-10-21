@@ -8,20 +8,50 @@ on:
 
 jobs:
   test:
+    name: Run Tests (Phase 3)
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      - name: Setup Node
+
+      - name: Use Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: 20
-      - run: npm ci
-      - name: Run tests with increased memory
-        run: NODE_OPTIONS='--max-old-space-size=2048' npm test -- --run
-        continue-on-error: true
+          node-version: '20.x'
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: |
+          npm ci
+          npm list --depth=0
+
+      - name: Check Node.js version
+        run: node --version
+
+      - name: Run type checking
+        run: npm run typecheck
+
+      - name: Run tests with detailed output
+        continue-on-error: false
+        timeout-minutes: 10
+        run: |
+          echo "Running tests with increased memory..."
+          NODE_OPTIONS='--max-old-space-size=2048' npm test -- --run --verbose
         env:
+          NODE_ENV: test
           CI: true
           VITE_ADMIN_PASSWORD: test_password_for_ci
+          VITE_API_URL: https://api.hummbl.io
+          VITE_ENVIRONMENT: ci
+
+      - name: Upload test results
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: test-results-phase3
+          path: |
+            coverage/
+            test-results/
+          retention-days: 7
       - name: Upload test summary
         if: always()
         run: |
