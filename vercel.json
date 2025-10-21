@@ -9,13 +9,18 @@
       }
     }
   ],
+  "routes": [
+    {
+      "src": "/(.*)",
+      "dest": "/dist/$1"
+    }
+  ],
   "build": {
     "env": {
+      "NODE_VERSION": "20",
       "NPM_ONLY_PRODUCTION": "false"
     }
   },
   "installCommand": "pnpm install --no-frozen-lockfile",
-  "buildCommand": "pnpm run build",
-  "outputDirectory": "dist",
-  "framework": "vite"
+  "buildCommand": "pnpm run build"
 }
