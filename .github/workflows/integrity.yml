@@ -91,9 +91,27 @@ jobs:
             exit 1
           fi
 
+      - name: Cache pnpm modules
+        uses: actions/cache@v3
+        id: pnpm-cache
+        with:
+          path: |
+            ~/.pnpm-store
+            node_modules
+          key: ${{ runner.os }}-pnpm-${{ hashFiles('**/pnpm-lock.yaml') }}
+          restore-keys: |
+            ${{ runner.os }}-pnpm-
+
       - name: Install dependencies
         run: |
           echo "🔧 Installing dependencies using pnpm..."
+          
+          # Check if we have a cache hit
+          if [[ "${{ steps.pnpm-cache.outputs.cache-hit }}" == 'true' ]]; then
+            echo "💾 Using cached dependencies"
+          else
+            echo "🔄 Cache miss or invalid, performing fresh install..."
+          fi
           
           # First, check if pnpm-lock.yaml exists and is valid
           if [ ! -f "pnpm-lock.yaml" ]; then
