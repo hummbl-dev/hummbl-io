@@ -93,17 +93,51 @@ jobs:
       - name: Run integrity check
         id: integrity
         run: |
-          # Ensure URL has a default if not provided
+          # Set default URL if not provided
           PROD_URL="${1:-https://www.hummbl.io}"
-          echo "Running integrity check against: $PROD_URL"
-          if [ ! -f "scripts/verify_production_integrity.mjs" ]; then
-            echo "Error: verify_production_integrity.mjs not found!"
-            ls -la scripts/
+          echo "🔍 Running integrity check against: $PROD_URL"
+          
+          # Verify script exists and is executable
+          SCRIPT_PATH="scripts/verify_production_integrity.mjs"
+          if [ ! -f "$SCRIPT_PATH" ]; then
+            echo "❌ Error: $SCRIPT_PATH not found!"
+            echo "Current directory: $(pwd)"
+            echo "Contents of scripts/ directory:"
+            ls -la scripts/ 2>/dev/null || echo "scripts/ directory not found"
             exit 1
           fi
-          node scripts/verify_production_integrity.mjs --url "$PROD_URL" || echo "Integrity check failed"
+          
+          # Make sure the script is executable
+          chmod +x "$SCRIPT_PATH"
+          
+          # Run the script with error handling
+          echo "🚀 Starting integrity check..."
+          set +e  # Don't exit on error
+          NODE_DEBUG=* node "$SCRIPT_PATH" --url "$PROD_URL"
+          EXIT_CODE=$?
+          set -e  # Re-enable exit on error
+          
+          if [ $EXIT_CODE -ne 0 ]; then
+            echo "❌ Integrity check failed with exit code: $EXIT_CODE"
+            # Set an output to indicate failure
+            echo "status=failure" >> $GITHUB_OUTPUT
+            exit 0  # Don't fail the workflow, we'll handle the failure in the next step
+          else
+            echo "✅ Integrity check passed successfully"
+            echo "status=success" >> $GITHUB_OUTPUT
+          fi
         env:
           NODE_OPTIONS: --max-old-space-size=2048
+          NODE_DEBUG: '*'  # Enable Node.js debug output
+          DEBUG: '*'       # Enable debug output for modules that use debug
+          
+      - name: Check integrity check result
+        if: steps.integrity.outputs.status != 'success'
+        run: |
+          echo "❌ Integrity check failed. See the logs above for details."
+          echo "This is a non-blocking error. The workflow will continue but will be marked as failed."
+          # Exit with a non-zero code to mark the job as failed
+          exit 1
 
       - name: Send alert on failure
         if: failure() && github.event_name != 'pull_request'
