@@ -49,11 +49,27 @@ jobs:
 
       - name: Send Alert on Failure
         if: failure()
+        id: alert
         continue-on-error: true
         run: |
-          node scripts/alert_integrity_failure.mjs
+          # Set a default value for ALERT_WEBHOOK_URL if not set
+          if [ -z "$ALERT_WEBHOOK_URL" ]; then
+            echo "ALERT_WEBHOOK_URL is not set, using dummy value"
+            export ALERT_WEBHOOK_URL="https://example.com/webhook"
+          fi
+          
+          # Run the alert script and capture its output
+          output=$(node scripts/alert_integrity_failure.mjs 2>&1 || true)
+          echo "$output"
+          
+          # Check if the alert was sent successfully
+          if [[ "$output" == *"alert_sent=true"* ]]; then
+            echo "✅ Alert sent successfully"
+          else
+            echo "⚠️ Failed to send alert"
+          fi
         env:
-          ALERT_WEBHOOK_URL: ${{ secrets.ALERT_WEBHOOK_URL }}
+          ALERT_WEBHOOK_URL: ${{ secrets.ALERT_WEBHOOK_URL || '' }}
 
       - name: Log check completion
         if: always()

@@ -44,4 +44,33 @@ module.exports = {
       },
     ],
   },
+  overrides: [
+    {
+      files: ['vercel-build.js'],
+      parser: '@babel/eslint-parser',
+      parserOptions: {
+        sourceType: 'script',
+        requireConfigFile: false,
+        babelOptions: {
+          presets: ['@babel/preset-env']
+        }
+      },
+      env: {
+        node: true,
+        es2021: true
+      },
+      rules: {
+        '@typescript-eslint/no-var-requires': 'off',
+        '@typescript-eslint/explicit-function-return-type': 'off',
+        'no-undef': 'off',
+        '@typescript-eslint/no-unsafe-assignment': 'off',
+        '@typescript-eslint/no-unsafe-call': 'off',
+        '@typescript-eslint/no-unsafe-member-access': 'off',
+        '@typescript-eslint/restrict-template-expressions': 'off',
+        '@typescript-eslint/no-unsafe-return': 'off',
+        '@typescript-eslint/no-unsafe-argument': 'off'
+      }
+    }
+  ],
+  ignorePatterns: ['dist', 'build', 'node_modules'],
 };

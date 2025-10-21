@@ -88,9 +88,16 @@ async function main() {
 
     const success = await sendAlert(webhookUrl, message);
 
-    // For GitHub Actions, set an output
+    // For GitHub Actions, set an output using the new GITHUB_OUTPUT syntax
     if (process.env.GITHUB_ACTIONS) {
-      console.log(`::set-output name=alert_sent::${success}`);
+      const outputFile = process.env.GITHUB_OUTPUT || process.env.GITHUB_ENV;
+      if (outputFile) {
+        const fs = await import('fs/promises');
+        await fs.appendFile(outputFile, `alert_sent=${success}\n`);
+      } else {
+        console.log('GITHUB_OUTPUT not set, falling back to legacy output');
+        console.log(`::set-output name=alert_sent::${success}`);
+      }
     }
 
     process.exit(success ? 0 : 1);
