@@ -45,16 +45,33 @@ jobs:
           node-version: '20.x'
           cache: 'pnpm'
 
-      - name: Verify pnpm-lock.yaml
+      - name: Verify repository state
         run: |
-          if [ ! -f "pnpm-lock.yaml" ]; then
-            echo "Error: pnpm-lock.yaml not found!"
-            echo "Current directory: $(pwd)"
-            echo "Files in current directory:"
-            ls -la
+          echo "Current directory: $(pwd)"
+          echo "Files in current directory:"
+          ls -la
+          
+          # Check for pnpm-lock.yaml in common locations
+          if [ -f "pnpm-lock.yaml" ]; then
+            echo "✅ pnpm-lock.yaml found in root directory"
+            echo "File size: $(wc -l < pnpm-lock.yaml) lines"
+          elif [ -f "../pnpm-lock.yaml" ]; then
+            echo "ℹ️  pnpm-lock.yaml found in parent directory"
+            echo "File size: $(wc -l < ../pnpm-lock.yaml) lines"
+            # Copy to expected location
+            cp ../pnpm-lock.yaml .
+          else
+            echo "❌ Error: pnpm-lock.yaml not found in expected locations"
+            echo "Searching for pnpm-lock.yaml in repository..."
+            find . -name "pnpm-lock.yaml" -type f -exec echo "Found: {}" \;
             exit 1
           fi
-          echo "pnpm-lock.yaml exists and is valid"
+          
+          # Verify pnpm-lock.yaml is not empty
+          if [ ! -s "pnpm-lock.yaml" ]; then
+            echo "❌ Error: pnpm-lock.yaml is empty"
+            exit 1
+          fi
 
       - name: Install dependencies
         run: |
@@ -94,26 +111,49 @@ jobs:
         with:
           script: |
             const webhookUrl = process.env.ALERT_WEBHOOK_URL;
-            if (!webhookUrl) {
+            
+            // Skip if no webhook URL is provided
+            if (!webhookUrl || webhookUrl === '') {
               console.log('No ALERT_WEBHOOK_URL provided, skipping alert');
               return;
             }
             
-            const { data } = await github.rest.actions.getWorkflowRun({
-              owner: context.repo.owner,
-              repo: context.repo.repo,
-              run_id: context.runId
-            });
+            // Validate the webhook URL
+            try {
+              new URL(webhookUrl);
+            } catch (e) {
+              console.error('Invalid webhook URL:', e.message);
+              console.log('Skipping alert due to invalid webhook URL');
+              return;
+            }
             
-            await fetch(webhookUrl, {
-              method: 'POST',
-              headers: { 'Content-Type': 'application/json' },
-              body: JSON.stringify({
-                text: `❌ Integrity check failed for ${context.repo.repo}`,
-                run_url: data.html_url,
-                run_number: data.run_number,
-                reason: '${{ inputs.reason }}'
-              })
-            });
+            try {
+              const { data } = await github.rest.actions.getWorkflowRun({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                run_id: context.runId
+              });
+              
+              const response = await fetch(webhookUrl, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                  text: `❌ Integrity check failed for ${context.repo.repo}`,
+                  run_url: data.html_url,
+                  run_number: data.run_number,
+                  reason: '${{ inputs.reason || 'No reason provided' }}',
+                  timestamp: new Date().toISOString()
+                })
+              });
+              
+              if (!response.ok) {
+                console.error('Failed to send alert:', await response.text());
+              } else {
+                console.log('Alert sent successfully');
+              }
+            } catch (error) {
+              console.error('Error sending alert:', error);
+              // Don't fail the workflow if alerting fails
+            }
         env:
-          ALERT_WEBHOOK_URL: ${{ secrets.ALERT_WEBHOOK_URL }}
+          ALERT_WEBHOOK_URL: ${{ secrets.ALERT_WEBHOOK_URL || '' }}
