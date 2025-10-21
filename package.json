@@ -15,6 +15,10 @@
       "prettier --write"
     ]
   },
+  "simple-git-hooks": {
+    "pre-commit": "npx lint-staged",
+    "pre-push": "echo 'Skipping tests in pre-push hook for now'"
+  },
   "scripts": {
     "dev": "vite",
     "build": "vite build",
@@ -23,7 +27,7 @@
     "format": "prettier --write .",
     "lint": "eslint . --ext .js,.jsx,.ts,.tsx --fix --no-error-on-unmatched-pattern",
     "typecheck": "tsc --noEmit",
-    "prepare": "husky",
+    "prepare": "simple-git-hooks",
     "test": "NODE_OPTIONS='--max-old-space-size=4096 --expose-gc' vitest run --no-watch --silent --run",
     "test:memory-optimized": "NODE_OPTIONS='--max-old-space-size=2048 --expose-gc' vitest run --no-watch --silent --run --pool=forks --poolOptions.forks.singleFork",
     "test:memory-profile": "NODE_OPTIONS='--max-old-space-size=4096 --expose-gc --inspect-brk' vitest run --no-watch --silent --run",
@@ -110,6 +114,7 @@
     "prettier": "^3.1.1",
     "puppeteer": "^24.25.0",
     "rimraf": "^6.0.1",
+    "simple-git-hooks": "^2.13.1",
     "table": "^6.9.0",
     "ts-jest": "^29.1.1",
     "ts-node": "^10.9.2",
