@@ -16,7 +16,8 @@ jobs:
         with:
           node-version: 20
       - run: npm ci
-      - run: npm run test -- --run
+      - name: Run tests (memory optimized)
+        run: npm run test:memory-optimized
         continue-on-error: true
         env:
           CI: true

@@ -23,9 +23,9 @@ jobs:
       - name: Install dependencies
         run: npm ci
 
-      - name: Run tests
+      - name: Run tests (memory optimized)
         continue-on-error: true
-        run: npm test -- --run
+        run: npm run test:memory-optimized
         env:
           CI: true
           VITE_ADMIN_PASSWORD: test_password_for_ci
