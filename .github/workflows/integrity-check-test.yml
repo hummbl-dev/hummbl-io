@@ -7,6 +7,10 @@ on:
         description: 'Reason for running'
         required: true
         default: 'Manual trigger'
+  push:
+    branches: [main, develop, feature/ci-workflow-enhancements]
+  pull_request:
+    branches: [main, develop]
 
 jobs:
   test-integrity:
