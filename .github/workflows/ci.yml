@@ -23,9 +23,9 @@ jobs:
       - name: Install dependencies
         run: npm ci
 
-      - name: Run tests (memory optimized)
+      - name: Run tests with increased memory
         continue-on-error: true
-        run: npm run test:memory-optimized
+        run: NODE_OPTIONS='--max-old-space-size=2048' npm test -- --run
         env:
           CI: true
           VITE_ADMIN_PASSWORD: test_password_for_ci

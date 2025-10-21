@@ -16,8 +16,8 @@ jobs:
         with:
           node-version: 20
       - run: npm ci
-      - name: Run tests (memory optimized)
-        run: npm run test:memory-optimized
+      - name: Run tests with increased memory
+        run: NODE_OPTIONS='--max-old-space-size=2048' npm test -- --run
         continue-on-error: true
         env:
           CI: true
