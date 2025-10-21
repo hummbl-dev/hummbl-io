@@ -35,7 +35,7 @@ jobs:
         timeout-minutes: 10
         run: |
           echo "Running tests with increased memory..."
-          NODE_OPTIONS='--max-old-space-size=2048' npm test -- --run --verbose
+          NODE_OPTIONS='--max-old-space-size=2048' npm test -- --verbose
         env:
           NODE_ENV: test
           CI: true
