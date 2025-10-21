@@ -12,7 +12,7 @@ export default defineConfig({
   test: {
     globals: true,
     environment: 'happy-dom',
-    setupFiles: './vitest.setup.ts',
+    setupFiles: ['./vitest.setup.ts', './src/__mocks__/compliance-report.json'],
     testTimeout: 30000,
     hookTimeout: 30000,
     maxConcurrency: 1, // Reduced from 2 to 1 to limit parallel test execution
@@ -20,7 +20,7 @@ export default defineConfig({
     clearMocks: true, // Clear mocks between tests to free memory
     mockReset: true, // Reset mocks between tests
     restoreMocks: true, // Restore original implementations between tests
-    
+
     // Optimized pool configuration for better memory management
     poolOptions: {
       threads: {
@@ -32,7 +32,7 @@ export default defineConfig({
         execArgv: [
           '--max-old-space-size=4096', // Reduced memory per worker
           '--gc-interval=100', // More frequent garbage collection
-          '--expose-gc' // Enable manual garbage collection
+          '--expose-gc', // Enable manual garbage collection
         ],
       },
       forks: {
@@ -41,7 +41,7 @@ export default defineConfig({
         isolate: true,
       },
     },
-    
+
     // Optimize coverage settings
     coverage: {
       provider: 'v8',
@@ -66,15 +66,13 @@ export default defineConfig({
       //   statements: 7
       // }
     },
-    
+
     // Run tests in sequence to reduce memory pressure
     sequence: {
       shuffle: false,
       concurrent: false,
-      // Run the slowest tests first to identify memory issues early
-      sort: (a, b) => (a.speed || 0) - (b.speed || 0),
     },
-    
+
     // Enable test isolation
     isolate: true,
   },

@@ -22,46 +22,118 @@ concurrency:
   cancel-in-progress: true
 
 jobs:
-  test:
-    name: Run Tests
+  # Test jobs configuration
+  test-base:
+    name: Setup Test Environment
     runs-on: ubuntu-latest
-    timeout-minutes: 15
-
-    # Cache node_modules for faster builds
-    env:
-      NODE_OPTIONS: '--max-old-space-size=2048'
-
-    strategy:
-      matrix:
-        node-version: [20.x]
-        os: [ubuntu-latest]
+    timeout-minutes: 5
+    outputs:
+      cache-key: ${{ steps.cache-deps.outputs.cache-key }}
 
     steps:
       - uses: actions/checkout@v4
 
-      - name: Use Node.js
+      - name: Use Node.js 20.x
         uses: actions/setup-node@v4
         with:
           node-version: '20.x'
           cache: 'npm'
 
-      - name: Initialize compliance report
-        run: |
-          mkdir -p test-results
-          echo '{"metadata":{"generated_at":"'$(date -u +'%Y-%m-%dT%H:%M:%SZ')\
-          '","next_check":"'$(date -u -d '+6 hours' +'%Y-%m-%dT%H:%M:%SZ')\
-          '","environment":"ci","commit_sha":"'${{ github.sha }}'","run_id":"'${{ github.run_id }}"'\
-          '},"summary":{"total_checks":0,"passed":0,"failed":0,"success_rate":1.0},"checks":[]}' > compliance-report.json
-
-      - name: Cache node_modules
-        uses: actions/cache@v3
+      - name: Cache node modules
+        id: cache-deps
+        uses: actions/cache@v4
         with:
           path: |
             node_modules
             .next/cache
           key: ${{ runner.os }}-node-${{ hashFiles('**/package-lock.json') }}
-          restore-keys: |
-            ${{ runner.os }}-node-
+
+      - name: Install dependencies
+        run: npm ci --prefer-offline
+
+      - name: Ensure test directories exist
+        run: |
+          mkdir -p src/__mocks__
+          mkdir -p test-results
+          echo '{}' > src/__mocks__/compliance-report.json
+
+  test-analytics:
+    name: Test - Analytics
+    needs: test-base
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    env:
+      NODE_OPTIONS: '--max-old-space-size=4096'
+
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20.x'
+          cache: 'npm'
+
+      - name: Restore cached dependencies
+        uses: actions/cache@v4
+        with:
+          path: |
+            node_modules
+            .next/cache
+          key: ${{ needs.test-base.outputs.cache-key }}
+
+      - name: Run Analytics Tests
+        run: npx vitest run src/utils/__tests__/analytics*.test.ts --no-watch --silent --run --sourcemap=false
+
+  test-code-quality:
+    name: Test - Code Quality
+    needs: test-base
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    env:
+      NODE_OPTIONS: '--max-old-space-size=4096'
+
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20.x'
+          cache: 'npm'
+
+      - name: Restore cached dependencies
+        uses: actions/cache@v4
+        with:
+          path: |
+            node_modules
+            .next/cache
+          key: ${{ needs.test-base.outputs.cache-key }}
+
+      - name: Run Code Quality Tests
+        run: npx vitest run src/utils/__tests__/codeQualityMetrics.test.ts --no-watch --silent --run --sourcemap=false
+
+  test-agent:
+    name: Test - Agent
+    needs: test-base
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    env:
+      NODE_OPTIONS: '--max-old-space-size=4096'
+
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20.x'
+          cache: 'npm'
+
+      - name: Restore cached dependencies
+        uses: actions/cache@v4
+        with:
+          path: |
+            node_modules
+            .next/cache
+          key: ${{ needs.test-base.outputs.cache-key }}
+
+      - name: Run Agent Tests
+        run: npx vitest run src/utils/__tests__/agentEffectiveness.test.ts --no-watch --silent --run --sourcemap=false
 
       - name: Install dependencies
         run: |
