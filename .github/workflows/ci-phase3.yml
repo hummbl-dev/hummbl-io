@@ -3,13 +3,38 @@ name: CI - Phase3 Enhanced
 on:
   push:
     branches: [main]
+    paths-ignore:
+      - '**/*.md'
+      - '**/*.mdx'
+      - '**/docs/**'
+      - '**/.github/**'
   pull_request:
     branches: [main]
+    paths-ignore:
+      - '**/*.md'
+      - '**/*.mdx'
+      - '**/docs/**'
+      - '**/.github/**'
+
+# Prevent concurrent workflow runs for the same branch/PR
+concurrency:
+  group: phase3-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
 
 jobs:
   test:
     name: Run Tests (Phase 3)
     runs-on: ubuntu-latest
+    timeout-minutes: 20
+
+    env:
+      NODE_OPTIONS: '--max-old-space-size=2048'
+
+    strategy:
+      matrix:
+        node-version: [20.x]
+        os: [ubuntu-latest]
+
     steps:
       - uses: actions/checkout@v4
 
@@ -19,9 +44,19 @@ jobs:
           node-version: '20.x'
           cache: 'npm'
 
+      - name: Cache node_modules
+        uses: actions/cache@v3
+        with:
+          path: |
+            node_modules
+            .next/cache
+          key: ${{ runner.os }}-node-${{ hashFiles('**/package-lock.json') }}
+          restore-keys: |
+            ${{ runner.os }}-node-
+
       - name: Install dependencies
         run: |
-          npm ci
+          npm ci --prefer-offline
           npm list --depth=0
 
       - name: Check Node.js version
@@ -31,16 +66,26 @@ jobs:
         run: npm run typecheck
 
       - name: Run tests with detailed output
+        id: tests
         continue-on-error: false
-        timeout-minutes: 10
+        timeout-minutes: 15
         run: |
           echo "=== Environment Information ==="
           node --version
           npm --version
           echo "============================="
 
-          echo "Running tests with memory optimization..."
-          npm run test:memory-optimized -- --verbose
+          echo "Running Phase 3 tests with memory optimization..."
+          mkdir -p test-results
+
+          # Run tests with JUnit reporter for better CI integration
+          npm run test:memory-optimized -- --reporter=junit --reporter-options="outputFile=test-results/junit-phase3.xml" --verbose || {
+            echo "Tests failed with exit code $?"
+            # Don't fail here, we'll handle it after collecting artifacts
+            echo "::set-output name=status::failure"
+            exit 0
+          }
+          echo "::set-output name=status::success"
         env:
           NODE_ENV: test
           CI: true
@@ -48,15 +93,32 @@ jobs:
           VITE_API_URL: https://api.hummbl.io
           VITE_ENVIRONMENT: ci
 
-      - name: Upload test results
+      - name: Upload test results and artifacts
         if: always()
         uses: actions/upload-artifact@v4
         with:
-          name: test-results-phase3
+          name: test-results-phase3-${{ github.run_id }}
           path: |
             coverage/
             test-results/
+            .next/logs/
           retention-days: 7
+          if-no-files-found: warn
+
+      - name: Upload coverage to Codecov (Phase 3)
+        if: steps.tests.outputs.status == 'success'
+        uses: codecov/codecov-action@v4
+        with:
+          token: ${{ secrets.CODECOV_TOKEN || 'none' }}
+          files: ./coverage/coverage-final.json
+          directory: ./coverage/
+          fail_ci_if_error: false
+          verbose: true
+          name: ${{ github.workflow }}-${{ github.ref_name }}
+
+      - name: Set test status
+        if: steps.tests.outputs.status == 'failure'
+        run: exit 1
       - name: Upload test summary
         if: always()
         run: |
