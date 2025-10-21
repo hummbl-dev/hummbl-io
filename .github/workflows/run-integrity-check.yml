@@ -1,0 +1,23 @@
+name: Run Integrity Check
+
+on:
+  workflow_dispatch:
+    inputs:
+      reason:
+        description: 'Reason for running'
+        required: false
+        default: 'Manual trigger'
+  schedule:
+    - cron: '0 * * * *'  # Every hour
+  push:
+    branches: [main, develop]
+  pull_request:
+    branches: [main, develop]
+
+jobs:
+  integrity-check:
+    uses: ./.github/workflows/integrity.yml
+    with:
+      reason: ${{ github.event_name == 'workflow_dispatch' && github.event.inputs.reason || 'Scheduled run' }}
+      production_url: 'https://www.hummbl.io'
+    secrets: inherit
