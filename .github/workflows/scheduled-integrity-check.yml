@@ -21,8 +21,13 @@ jobs:
           node-version: '20.x'
           cache: 'npm'
 
+      - name: Install pnpm
+        uses: pnpm/action-setup@v2
+        with:
+          version: 8
+
       - name: Install dependencies
-        run: npm ci
+        run: pnpm install --frozen-lockfile
 
       - name: Verify production deployment
         run: |
@@ -57,11 +62,11 @@ jobs:
             echo "ALERT_WEBHOOK_URL is not set, using dummy value"
             export ALERT_WEBHOOK_URL="https://example.com/webhook"
           fi
-          
+
           # Run the alert script and capture its output
           output=$(node scripts/alert_integrity_failure.mjs 2>&1 || true)
           echo "$output"
-          
+
           # Check if the alert was sent successfully
           if [[ "$output" == *"alert_sent=true"* ]]; then
             echo "✅ Alert sent successfully"
