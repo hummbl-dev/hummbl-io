@@ -93,6 +93,21 @@ pnpm preview
 
 ### Testing
 
+#### Test Environment Setup
+
+1. Copy the test environment configuration:
+   ```bash
+   cp .env.test.example .env.test
+   ```
+
+2. The test environment includes these default settings:
+   - Node.js memory management for test stability
+   - Vitest configuration for parallel test execution
+   - Mock authentication enabled
+   - Caching disabled for consistent test results
+
+#### Running Tests
+
 Run unit tests:
 
 ```bash
