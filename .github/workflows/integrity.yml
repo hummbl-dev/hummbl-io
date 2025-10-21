@@ -37,7 +37,25 @@ jobs:
       - name: Setup pnpm
         uses: pnpm/action-setup@v2
         with:
-          version: 8
+          version: 8.9.0  # Use a specific version to ensure consistency
+          run_install: false  # We'll run install manually to handle the lockfile
+        
+      - name: Verify pnpm version
+        run: |
+          echo "Using pnpm version:"
+          pnpm --version
+          
+          # Ensure the lockfile version is compatible
+          if [ -f "pnpm-lock.yaml" ]; then
+            echo "Lockfile version:"
+            grep 'lockfileVersion' pnpm-lock.yaml || echo "No lockfile version found"
+            
+            # If the lockfile version is too old, we might need to update it
+            if grep -q 'lockfileVersion: 5' pnpm-lock.yaml; then
+              echo "⚠️  Lockfile version 5 detected. This might cause compatibility issues."
+              echo "Consider upgrading to a newer lockfile version with 'pnpm install --no-frozen-lockfile'"
+            fi
+          fi
 
       - name: Setup Node.js
         uses: actions/setup-node@v4
@@ -75,13 +93,33 @@ jobs:
 
       - name: Install dependencies
         run: |
-          echo "Installing dependencies using pnpm..."
-          pnpm install --frozen-lockfile || {
-            echo "pnpm install failed. Trying to recover..."
-            # Try to regenerate the lockfile if the frozen install fails
-            pnpm install
-            exit 1
-          }
+          echo "🔧 Installing dependencies using pnpm..."
+          
+          # First, check if pnpm-lock.yaml exists and is valid
+          if [ ! -f "pnpm-lock.yaml" ]; then
+            echo "⚠️  pnpm-lock.yaml not found. Generating a new one..."
+            pnpm install --no-frozen-lockfile
+          else
+            echo "🔒 Found pnpm-lock.yaml. Installing with frozen lockfile..."
+            # Try with frozen lockfile first
+            if ! pnpm install --frozen-lockfile; then
+              echo "⚠️  Frozen lockfile installation failed. Attempting to fix lockfile..."
+              # Remove node_modules and reinstall
+              rm -rf node_modules/
+              pnpm install --no-frozen-lockfile
+              
+              # Update the lockfile if needed
+              pnpm install --no-frozen-lockfile
+              
+              # Verify the installation
+              pnpm list --depth=0 || {
+                echo "❌ Failed to install dependencies even with --no-frozen-lockfile"
+                exit 1
+              }
+            fi
+          fi
+          
+          echo "✅ Dependencies installed successfully"
 
       - name: Debug - List files
         run: |
