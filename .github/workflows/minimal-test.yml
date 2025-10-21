@@ -1,0 +1,15 @@
+name: Minimal Test Workflow
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [feature/ci-workflow-enhancements]
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+      - name: Run test command
+        run: echo "Minimal workflow is working!"
