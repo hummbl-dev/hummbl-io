@@ -1,0 +1,48 @@
+name: Test Integrity Check
+
+on:
+  workflow_dispatch:
+
+jobs:
+  test-verify:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v2
+        with:
+          version: 8
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Run integrity check
+        run: |
+          echo "Running test integrity check..."
+          node scripts/verify_production_integrity.mjs || true
+
+          if [ -f compliance-report.json ]; then
+            echo "Compliance report generated successfully"
+            cat compliance-report.json
+          else
+            echo "No compliance report generated"
+          fi
+        env:
+          NODE_OPTIONS: --max-old-space-size=4096
+          PRODUCTION_URL: https://www.hummbl.io
+
+      - name: Test alert script
+        run: |
+          echo "Testing alert script..."
+          node scripts/alert_integrity_failure.mjs || echo "Alert script completed with status $?"
+        env:
+          ALERT_WEBHOOK_URL: 'https://example.com/webhook'
+          GITHUB_ACTIONS: true
+          GITHUB_RUN_ID: 12345
+          GITHUB_REPOSITORY: hummbl-dev/hummbl-io
+          GITHUB_SHA: $(git rev-parse HEAD)
