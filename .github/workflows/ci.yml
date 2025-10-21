@@ -45,6 +45,14 @@ jobs:
           node-version: '20.x'
           cache: 'npm'
 
+      - name: Initialize compliance report
+        run: |
+          mkdir -p test-results
+          echo '{"metadata":{"generated_at":"'$(date -u +'%Y-%m-%dT%H:%M:%SZ')\
+          '","next_check":"'$(date -u -d '+6 hours' +'%Y-%m-%dT%H:%M:%SZ')\
+          '","environment":"ci","commit_sha":"'${{ github.sha }}'","run_id":"'${{ github.run_id }}"'\
+          '},"summary":{"total_checks":0,"passed":0,"failed":0,"success_rate":1.0},"checks":[]}' > compliance-report.json
+
       - name: Cache node_modules
         uses: actions/cache@v3
         with:
@@ -109,38 +117,28 @@ jobs:
         run: |
           npm run build
 
-          # Create a minimal compliance report first
-          cat > compliance-report.json << 'EOL'
-          {
-            "metadata": {
-              "generated_at": "$(date -u +'%Y-%m-%dT%H:%M:%SZ')",
-              "next_check": "$(date -u -d '+6 hours' +'%Y-%m-%dT%H:%M:%SZ')",
-              "environment": "ci",
-              "commit_sha": "${{ github.sha }}",
-              "run_id": "${{ github.run_id }}"
-            },
-            "summary": {
-              "total_checks": 0,
-              "passed": 0,
-              "failed": 0,
-              "success_rate": 1.0
-            },
-            "checks": []
-          }
-          EOL
+          # Ensure compliance-report.json exists
+          if [ ! -f "compliance-report.json" ]; then
+            echo '{"metadata":{"generated_at":"'$(date -u +'%Y-%m-%dT%H:%M:%SZ')\
+            '","next_check":"'$(date -u -d '+6 hours' +'%Y-%m-%dT%H:%M:%SZ')\
+            '","environment":"ci","commit_sha":"'${{ github.sha }}'","run_id":"'${{ github.run_id }}"'\
+            '},"summary":{"total_checks":0,"passed":0,"failed":0,"success_rate":1.0},"checks":[]}' > compliance-report.json
+          fi
 
           # Run verification if the script exists
           if [ -f "scripts/verify_production_integrity.mjs" ]; then
+            echo "Running verification..."
             if ! node scripts/verify_production_integrity.mjs > verification.log 2>&1; then
               echo "Verification had issues, but continuing..."
             fi
-            
-            # Try to generate a real report, but don't fail if it doesn't work
-            if [ -f "scripts/generate_compliance_report.mjs" ]; then
-              node scripts/generate_compliance_report.mjs > compliance-report.json.tmp 2>/dev/null && \
-                mv compliance-report.json.tmp compliance-report.json || \
-                echo "Using minimal compliance report"
-            fi
+          fi
+
+          # Try to generate an updated compliance report if the script exists
+          if [ -f "scripts/generate_compliance_report.mjs" ]; then
+            echo "Generating compliance report..."
+            node scripts/generate_compliance_report.mjs > compliance-report.tmp 2>/dev/null && \
+              mv compliance-report.tmp compliance-report.json || \
+              echo "Using existing compliance report"
           fi
 
       - name: Upload test results and artifacts
