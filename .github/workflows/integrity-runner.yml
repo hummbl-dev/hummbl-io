@@ -18,6 +18,6 @@ jobs:
   integrity-check:
     uses: ./.github/workflows/integrity.yml
     with:
-      reason: ${{ github.event_name == 'workflow_dispatch' && inputs.reason || 'Scheduled run' }}
+      reason: ${{ github.event_name == 'workflow_dispatch' && github.event.inputs.reason || 'Scheduled run' }}
       production_url: 'https://www.hummbl.io'
     secrets: inherit
