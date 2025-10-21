@@ -97,31 +97,34 @@ export function useBookmarks() {
   /**
    * Add a bookmark
    */
-  const addBookmark = useCallback((
-    type: 'narrative' | 'mentalModel',
-    itemId: string,
-    title: string,
-    options?: { tags?: string[]; notes?: string; category?: string }
-  ) => {
-    const bookmark: Bookmark = {
-      id: `bookmark_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`,
-      type,
-      itemId,
-      title,
-      addedAt: Date.now(),
-      ...options,
-    };
+  const addBookmark = useCallback(
+    (
+      type: 'narrative' | 'mentalModel',
+      itemId: string,
+      title: string,
+      options?: { tags?: string[]; notes?: string; category?: string }
+    ) => {
+      const bookmark: Bookmark = {
+        id: `bookmark_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`,
+        type,
+        itemId,
+        title,
+        addedAt: Date.now(),
+        ...options,
+      };
 
-    setBookmarks((prev) => [bookmark, ...prev]);
-    return bookmark;
-  }, []);
+      setBookmarks((prev) => [bookmark, ...prev]);
+      return bookmark;
+    },
+    []
+  );
 
   /**
    * Remove a bookmark
    */
   const removeBookmark = useCallback((bookmarkId: string) => {
     setBookmarks((prev) => prev.filter((b) => b.id !== bookmarkId));
-    
+
     // Remove from collections
     setCollections((prev) =>
       prev.map((col) => ({
@@ -156,9 +159,7 @@ export function useBookmarks() {
    * Update bookmark
    */
   const updateBookmark = useCallback((bookmarkId: string, updates: Partial<Bookmark>) => {
-    setBookmarks((prev) =>
-      prev.map((b) => (b.id === bookmarkId ? { ...b, ...updates } : b))
-    );
+    setBookmarks((prev) => prev.map((b) => (b.id === bookmarkId ? { ...b, ...updates } : b)));
   }, []);
 
   /**
@@ -167,7 +168,7 @@ export function useBookmarks() {
   const toggleBookmark = useCallback(
     (type: 'narrative' | 'mentalModel', itemId: string, title: string) => {
       const existing = bookmarks.find((b) => b.itemId === itemId);
-      
+
       if (existing) {
         removeBookmark(existing.id);
         return false;
@@ -194,9 +195,7 @@ export function useBookmarks() {
    */
   const getBookmarksByTags = useCallback(
     (tags: string[]): Bookmark[] => {
-      return bookmarks.filter((b) =>
-        b.tags?.some((tag) => tags.includes(tag))
-      );
+      return bookmarks.filter((b) => b.tags?.some((tag) => tags.includes(tag)));
     },
     [bookmarks]
   );
@@ -295,9 +294,7 @@ export function useBookmarks() {
     (collectionId: string, updates: Partial<BookmarkCollection>) => {
       setCollections((prev) =>
         prev.map((col) =>
-          col.id === collectionId
-            ? { ...col, ...updates, updatedAt: Date.now() }
-            : col
+          col.id === collectionId ? { ...col, ...updates, updatedAt: Date.now() } : col
         )
       );
     },
@@ -344,7 +341,7 @@ export function useBookmarks() {
   const importBookmarks = useCallback((json: string, merge = false) => {
     try {
       const imported = JSON.parse(json);
-      
+
       if (merge) {
         setBookmarks((prev) => [...prev, ...imported.bookmarks]);
         setCollections((prev) => [...prev, ...imported.collections]);

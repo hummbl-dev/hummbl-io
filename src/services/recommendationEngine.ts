@@ -133,8 +133,7 @@ export class RecommendationEngine {
 
     if (activity.tags) {
       activity.tags.forEach((tag) => {
-        this.profile.preferences.tags[tag] =
-          (this.profile.preferences.tags[tag] || 0) + 1;
+        this.profile.preferences.tags[tag] = (this.profile.preferences.tags[tag] || 0) + 1;
       });
     }
 
@@ -166,8 +165,11 @@ export class RecommendationEngine {
       case 'hybrid':
       default:
         const semantic = await this.getSemanticRecommendations(corpus, Math.floor(limit * 0.6));
-        const collaborative = await this.getCollaborativeRecommendations(corpus, Math.ceil(limit * 0.4));
-        
+        const collaborative = await this.getCollaborativeRecommendations(
+          corpus,
+          Math.ceil(limit * 0.4)
+        );
+
         // Merge and deduplicate
         const seen = new Set<string>();
         const merged: RecommendationResult[] = [];
@@ -291,9 +293,7 @@ export class RecommendationEngine {
       }
     }
 
-    return recommendations
-      .sort((a, b) => b.score - a.score)
-      .slice(0, limit);
+    return recommendations.sort((a, b) => b.score - a.score).slice(0, limit);
   }
 
   /**
@@ -339,14 +339,9 @@ export class RecommendationEngine {
   /**
    * Get fallback recommendations (trending/popular)
    */
-  private getFallbackRecommendations(
-    corpus: ContentItem[],
-    limit: number
-  ): RecommendationResult[] {
+  private getFallbackRecommendations(corpus: ContentItem[], limit: number): RecommendationResult[] {
     // Simple fallback: return random items
-    const available = corpus.filter(
-      (item) => !this.profile.viewedItems.includes(item.id)
-    );
+    const available = corpus.filter((item) => !this.profile.viewedItems.includes(item.id));
 
     const shuffled = [...available].sort(() => Math.random() - 0.5);
 

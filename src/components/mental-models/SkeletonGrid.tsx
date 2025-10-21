@@ -1,4 +1,3 @@
-
 type SkeletonGridProps = {
   isLoading: boolean;
   count?: number;
@@ -13,11 +12,7 @@ const SkeletonGrid = ({ isLoading, count = 6 }: SkeletonGridProps) => {
       data-testid="skeleton-grid"
     >
       {Array.from({ length: count }).map((_, i) => (
-        <div
-          key={i}
-          data-testid="skeleton-card"
-          className="bg-muted rounded-2xl h-32"
-        />
+        <div key={i} data-testid="skeleton-card" className="bg-muted rounded-2xl h-32" />
       ))}
     </div>
   );

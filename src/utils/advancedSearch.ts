@@ -1,6 +1,6 @@
 // Advanced search engine with fuzzy matching and multi-field support
 
-import type { Narrative } from '../types/narrative';
+import type { Narrative } from '@cascade/types/narrative';
 import type { MentalModel } from '../types/mental-model';
 
 export interface SearchOptions {
@@ -162,7 +162,7 @@ export function searchNarratives(
     // Search each field
     for (const field of fields) {
       let fieldValue = '';
-      
+
       if (field === 'tags' && narrative.tags) {
         fieldValue = narrative.tags.join(' ');
       } else if (field === 'domain' && narrative.domain) {
@@ -196,8 +196,8 @@ export function searchNarratives(
             match.field === 'tags' && narrative.tags
               ? narrative.tags.join(', ')
               : match.field === 'domain' && narrative.domain
-              ? narrative.domain.join(', ')
-              : String(narrative[match.field as keyof Narrative] || '');
+                ? narrative.domain.join(', ')
+                : String(narrative[match.field as keyof Narrative] || '');
 
           result.highlights[match.field] = highlightMatches(fieldValue, match.indices);
         }

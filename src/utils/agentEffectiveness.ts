@@ -108,15 +108,9 @@ export function calculateAgentMetrics(): AgentMetrics {
   const successfulTasks = tasks.filter((t) => t.success).length;
   const buildPasses = tasks.filter((t) => t.buildPassed).length;
 
-  const totalTime = completedTasks.reduce(
-    (sum, t) => sum + ((t.endTime || 0) - t.startTime),
-    0
-  );
+  const totalTime = completedTasks.reduce((sum, t) => sum + ((t.endTime || 0) - t.startTime), 0);
 
-  const totalLines = tasks.reduce(
-    (sum, t) => sum + t.linesAdded + t.linesModified,
-    0
-  );
+  const totalLines = tasks.reduce((sum, t) => sum + t.linesAdded + t.linesModified, 0);
 
   const totalTests = tasks.reduce((sum, t) => sum + t.testsAdded, 0);
 
@@ -131,16 +125,14 @@ export function calculateAgentMetrics(): AgentMetrics {
 
   const successRate = successfulTasks / tasks.length;
   const buildSuccessRate = buildPasses / tasks.length;
-  const avgTaskTime =
-    completedTasks.length > 0 ? totalTime / completedTasks.length : 0;
+  const avgTaskTime = completedTasks.length > 0 ? totalTime / completedTasks.length : 0;
 
   // Productivity: lines per hour
   const totalHours = totalTime / (1000 * 60 * 60);
   const productivity = totalHours > 0 ? totalLines / totalHours : 0;
 
   // Quality score (0-100)
-  const quality =
-    successRate * 40 + buildSuccessRate * 30 + (avgFeedback / 5) * 30;
+  const quality = successRate * 40 + buildSuccessRate * 30 + (avgFeedback / 5) * 30;
 
   return {
     totalTasks: tasks.length,
@@ -252,14 +244,8 @@ export function getProductivityTrend(): 'improving' | 'declining' | 'stable' {
   const secondHalf = tasks.slice(mid);
 
   const calcProductivity = (taskList: AgentTask[]) => {
-    const lines = taskList.reduce(
-      (sum, t) => sum + t.linesAdded + t.linesModified,
-      0
-    );
-    const time = taskList.reduce(
-      (sum, t) => sum + ((t.endTime || t.startTime) - t.startTime),
-      0
-    );
+    const lines = taskList.reduce((sum, t) => sum + t.linesAdded + t.linesModified, 0);
+    const time = taskList.reduce((sum, t) => sum + ((t.endTime || t.startTime) - t.startTime), 0);
     return time > 0 ? lines / (time / (1000 * 60 * 60)) : 0;
   };
 

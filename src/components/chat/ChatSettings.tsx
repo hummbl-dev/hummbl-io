@@ -22,9 +22,11 @@ export function ChatSettings({
   if (!isOpen) return null;
 
   const handleClearAll = () => {
-    if (window.confirm(
-      `Are you sure you want to delete all ${conversationCount} conversations? This cannot be undone.`
-    )) {
+    if (
+      window.confirm(
+        `Are you sure you want to delete all ${conversationCount} conversations? This cannot be undone.`
+      )
+    ) {
       onClearAll();
       onClose();
     }
@@ -36,11 +38,7 @@ export function ChatSettings({
         {/* Header */}
         <div className="settings-header">
           <h3>Chat Settings</h3>
-          <button
-            className="settings-close-button"
-            onClick={onClose}
-            aria-label="Close settings"
-          >
+          <button className="settings-close-button" onClick={onClose} aria-label="Close settings">
             ✕
           </button>
         </div>

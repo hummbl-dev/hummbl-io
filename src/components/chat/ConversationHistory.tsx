@@ -1,6 +1,6 @@
 // Conversation history sidebar component
 
-import type { ChatConversation } from '../../types/chat';
+import type { ChatConversation } from '../../../cascade/types/chat';
 import './ConversationHistory.css';
 
 interface ConversationHistoryProps {
@@ -39,7 +39,7 @@ export function ConversationHistory({
     if (conversation.messages.length === 0) {
       return 'New conversation';
     }
-    const firstUserMessage = conversation.messages.find(m => m.role === 'user');
+    const firstUserMessage = conversation.messages.find((m) => m.role === 'user');
     return firstUserMessage?.content.substring(0, 50) || 'Empty conversation';
   };
 
@@ -51,11 +51,7 @@ export function ConversationHistory({
         {/* Header */}
         <div className="history-header">
           <h3>Chat History</h3>
-          <button
-            className="history-close-button"
-            onClick={onClose}
-            aria-label="Close history"
-          >
+          <button className="history-close-button" onClick={onClose} aria-label="Close history">
             ✕
           </button>
         </div>
@@ -83,13 +79,9 @@ export function ConversationHistory({
                 onClick={() => onSelectConversation(conversation.id)}
               >
                 <div className="conversation-content">
-                  <div className="conversation-preview">
-                    {getConversationPreview(conversation)}
-                  </div>
+                  <div className="conversation-preview">{getConversationPreview(conversation)}</div>
                   <div className="conversation-meta">
-                    <span className="conversation-date">
-                      {formatDate(conversation.updatedAt)}
-                    </span>
+                    <span className="conversation-date">{formatDate(conversation.updatedAt)}</span>
                     <span className="conversation-count">
                       {conversation.messages.length} messages
                     </span>

@@ -1,7 +1,7 @@
 // Import parsers for exported data
 
-import type { Narrative } from '../types/narrative';
-import { validateJSONExport, validateMarkdownExport } from './exportValidation';
+import type { Narrative } from '../../cascade/types/narrative';
+import { validateJSONExport } from './exportValidation';
 
 export interface ParseResult<T> {
   success: boolean;
@@ -15,7 +15,7 @@ export interface ParseResult<T> {
 export function parseJSONImport(jsonContent: string): ParseResult<Narrative[]> {
   try {
     const parsed = JSON.parse(jsonContent);
-    
+
     // Validate structure
     const validation = validateJSONExport(parsed);
     if (!validation.isValid) {
@@ -43,7 +43,7 @@ export function parseJSONImport(jsonContent: string): ParseResult<Narrative[]> {
 export function parseCSVImport(csvContent: string): ParseResult<Narrative[]> {
   try {
     const lines = csvContent.split('\n').filter((line) => line.trim().length > 0);
-    
+
     if (lines.length < 1) {
       return {
         success: false,
@@ -71,20 +71,34 @@ export function parseCSVImport(csvContent: string): ParseResult<Narrative[]> {
     // Parse data rows
     for (let i = 1; i < lines.length; i++) {
       const row = parseCSVRow(lines[i]);
-      
+
       const narrative: Partial<Narrative> = {
         narrative_id: indices.id >= 0 ? cleanCSVValue(row[indices.id] || '') : '',
         title: indices.title >= 0 ? cleanCSVValue(row[indices.title] || '') : '',
         category: indices.category >= 0 ? cleanCSVValue(row[indices.category] || '') : '',
-        evidence_quality: (indices.grade >= 0 ? cleanCSVValue(row[indices.grade] || '') : 'B') as 'A' | 'B' | 'C',
-        confidence: indices.confidence >= 0 ? parseFloat(cleanCSVValue(row[indices.confidence] || '0')) / 100 : 0,
+        evidence_quality: (indices.grade >= 0 ? cleanCSVValue(row[indices.grade] || '') : 'B') as
+          | 'A'
+          | 'B'
+          | 'C',
+        confidence:
+          indices.confidence >= 0
+            ? parseFloat(cleanCSVValue(row[indices.confidence] || '0')) / 100
+            : 0,
         summary: indices.summary >= 0 ? cleanCSVValue(row[indices.summary] || '') : '',
-        domain: indices.domains >= 0
-          ? cleanCSVValue(row[indices.domains] || '').split(',').map((s) => s.trim()).filter(Boolean)
-          : [],
-        tags: indices.tags >= 0
-          ? cleanCSVValue(row[indices.tags] || '').split(',').map((s) => s.trim()).filter(Boolean)
-          : [],
+        domain:
+          indices.domains >= 0
+            ? cleanCSVValue(row[indices.domains] || '')
+                .split(',')
+                .map((s) => s.trim())
+                .filter(Boolean)
+            : [],
+        tags:
+          indices.tags >= 0
+            ? cleanCSVValue(row[indices.tags] || '')
+                .split(',')
+                .map((s) => s.trim())
+                .filter(Boolean)
+            : [],
       };
 
       narratives.push(narrative);
@@ -112,7 +126,7 @@ function parseCSVRow(row: string): string[] {
 
   for (let i = 0; i < row.length; i++) {
     const char = row[i];
-    
+
     if (char === '"') {
       if (inQuotes && row[i + 1] === '"') {
         // Escaped quote
@@ -129,7 +143,7 @@ function parseCSVRow(row: string): string[] {
       current += char;
     }
   }
-  
+
   result.push(current);
   return result;
 }
@@ -138,7 +152,10 @@ function parseCSVRow(row: string): string[] {
  * Clean CSV value (remove quotes, trim)
  */
 function cleanCSVValue(value: string): string {
-  return value.replace(/^"(.*)"$/, '$1').replace(/""/g, '"').trim();
+  return value
+    .replace(/^"(.*)"$/, '$1')
+    .replace(/""/g, '"')
+    .trim();
 }
 
 /**
@@ -148,11 +165,11 @@ function cleanCSVValue(value: string): string {
 export function parseMarkdownImport(markdownContent: string): ParseResult<Narrative[]> {
   try {
     const narratives: Partial<Narrative>[] = [];
-    
+
     // Match all h1 headers that are NOT "HUMMBL Narratives Export"
     const headerRegex = /^#\s+(?!HUMMBL)(.+)$/gm;
     const headers: Array<{ title: string; index: number }> = [];
-    
+
     let match;
     while ((match = headerRegex.exec(markdownContent)) !== null) {
       headers.push({
@@ -166,7 +183,7 @@ export function parseMarkdownImport(markdownContent: string): ParseResult<Narrat
       const start = headers[i].index;
       const end = i < headers.length - 1 ? headers[i + 1].index : markdownContent.length;
       const section = markdownContent.slice(start, end);
-      
+
       const narrative = parseMarkdownSection(section);
       if (narrative) {
         narratives.push(narrative);
@@ -198,7 +215,7 @@ export function parseMarkdownImport(markdownContent: string): ParseResult<Narrat
 function parseMarkdownSection(section: string): Partial<Narrative> | null {
   const lines = section.split('\n');
   const titleLine = lines[0]?.trim();
-  
+
   if (!titleLine) return null;
 
   // Remove "# " prefix from title
@@ -263,7 +280,9 @@ export function compareNarratives(original: Narrative, parsed: Narrative): strin
     differences.push(`Category mismatch: ${original.category} !== ${parsed.category}`);
   }
   if (original.evidence_quality !== parsed.evidence_quality) {
-    differences.push(`Evidence quality mismatch: ${original.evidence_quality} !== ${parsed.evidence_quality}`);
+    differences.push(
+      `Evidence quality mismatch: ${original.evidence_quality} !== ${parsed.evidence_quality}`
+    );
   }
 
   // Summary (may have whitespace differences)

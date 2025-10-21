@@ -79,7 +79,7 @@ describe('E2E: Complete Application Flow', () => {
   beforeEach(() => {
     vi.clearAllMocks();
     localStorageMock.clear();
-    
+
     // Default successful responses
     mockFetch.mockImplementation((url: string) => {
       if (url.includes('narratives.json')) {
@@ -111,25 +111,30 @@ describe('E2E: Complete Application Flow', () => {
 
       // Application should render
       await waitFor(() => {
-        expect(screen.getByRole('main') || document.querySelector('main') || document.body).toBeTruthy();
+        expect(
+          screen.getByRole('main') || document.querySelector('main') || document.body
+        ).toBeTruthy();
       });
     });
 
     it('fetches initial data from static files', async () => {
       render(<App />);
 
-      await waitFor(() => {
-        // Check that fetch was called for data files
-        const fetchCalls = mockFetch.mock.calls.map(call => call[0]);
-        const hasNarrativesCall = fetchCalls.some(url => 
-          typeof url === 'string' && url.includes('narratives')
-        );
-        const hasMentalModelsCall = fetchCalls.some(url => 
-          typeof url === 'string' && url.includes('mental-models')
-        );
-        
-        expect(hasNarrativesCall || hasMentalModelsCall).toBe(true);
-      }, { timeout: 3000 });
+      await waitFor(
+        () => {
+          // Check that fetch was called for data files
+          const fetchCalls = mockFetch.mock.calls.map((call) => call[0]);
+          const hasNarrativesCall = fetchCalls.some(
+            (url) => typeof url === 'string' && url.includes('narratives')
+          );
+          const hasMentalModelsCall = fetchCalls.some(
+            (url) => typeof url === 'string' && url.includes('mental-models')
+          );
+
+          expect(hasNarrativesCall || hasMentalModelsCall).toBe(true);
+        },
+        { timeout: 3000 }
+      );
     });
 
     it('handles initial loading states correctly', async () => {
@@ -137,7 +142,7 @@ describe('E2E: Complete Application Flow', () => {
 
       // Should show loading state initially
       // omitted unused loadingElements
-      
+
       // App may render loading states
       expect(container).toBeTruthy();
     });
@@ -146,15 +151,19 @@ describe('E2E: Complete Application Flow', () => {
       render(<App />);
 
       // Wait for data to load
-      await waitFor(() => {
-        const hasContent = screen.queryByText(/Climate Change Impact/i) ||
-                          screen.queryByText(/First Principles/i) ||
-                          screen.queryByText(/Mental Model/i) ||
-                          screen.queryByText(/Narrative/i);
-        
-        // Either content loads or app renders successfully
-        expect(hasContent || document.body.textContent).toBeTruthy();
-      }, { timeout: 5000 });
+      await waitFor(
+        () => {
+          const hasContent =
+            screen.queryByText(/Climate Change Impact/i) ||
+            screen.queryByText(/First Principles/i) ||
+            screen.queryByText(/Mental Model/i) ||
+            screen.queryByText(/Narrative/i);
+
+          // Either content loads or app renders successfully
+          expect(hasContent || document.body.textContent).toBeTruthy();
+        },
+        { timeout: 5000 }
+      );
     });
   });
 
@@ -168,11 +177,11 @@ describe('E2E: Complete Application Flow', () => {
 
       // Look for view switching buttons/tabs
       const buttons = screen.queryAllByRole('button');
-      
+
       if (buttons.length > 0) {
         // Try clicking the first button
         await userEvent.click(buttons[0]);
-        
+
         // App should still be rendered
         expect(container).toBeTruthy();
       }
@@ -201,22 +210,25 @@ describe('E2E: Complete Application Flow', () => {
     it('caches fetched data in localStorage', async () => {
       render(<App />);
 
-      await waitFor(() => {
-        // Check if any data was cached
-        const setItemCalls = localStorageMock.setItem.mock.calls;
-        const hasCacheWrite = setItemCalls.some(call => 
-          call[0].includes('cache') || call[0].includes('hummbl')
-        );
-        
-        // App may cache data
-        expect(hasCacheWrite || setItemCalls.length >= 0).toBe(true);
-      }, { timeout: 3000 });
+      await waitFor(
+        () => {
+          // Check if any data was cached
+          const setItemCalls = localStorageMock.setItem.mock.calls;
+          const hasCacheWrite = setItemCalls.some(
+            (call) => call[0].includes('cache') || call[0].includes('hummbl')
+          );
+
+          // App may cache data
+          expect(hasCacheWrite || setItemCalls.length >= 0).toBe(true);
+        },
+        { timeout: 3000 }
+      );
     });
 
     it('retrieves cached data on subsequent render', async () => {
       // First render - populate cache
       const { unmount } = render(<App />);
-      
+
       await waitFor(() => {
         expect(mockFetch).toHaveBeenCalled();
       });
@@ -247,7 +259,7 @@ describe('E2E: Complete Application Flow', () => {
       }
 
       // Check localStorage for any persisted state
-      const storageKeys = Object.keys(localStorageMock.setItem.mock.calls.map(call => call[0]));
+      const storageKeys = Object.keys(localStorageMock.setItem.mock.calls.map((call) => call[0]));
       expect(storageKeys.length >= 0).toBe(true);
     });
   });
@@ -273,23 +285,26 @@ describe('E2E: Complete Application Flow', () => {
 
       render(<App />);
 
-      await waitFor(() => {
-        // Look for error indicators
-        const errorText = screen.queryByText(/error/i) ||
-                         screen.queryByText(/failed/i) ||
-                         screen.queryByText(/retry/i);
-        
-        // App may show errors or handle silently
-        expect(errorText || document.body).toBeTruthy();
-      }, { timeout: 3000 });
+      await waitFor(
+        () => {
+          // Look for error indicators
+          const errorText =
+            screen.queryByText(/error/i) ||
+            screen.queryByText(/failed/i) ||
+            screen.queryByText(/retry/i);
+
+          // App may show errors or handle silently
+          expect(errorText || document.body).toBeTruthy();
+        },
+        { timeout: 3000 }
+      );
     });
 
     it('allows user to retry after failure', async () => {
-      mockFetch.mockRejectedValueOnce(new Error('Network error'))
-                .mockResolvedValueOnce({
-                  ok: true,
-                  json: async () => mockMentalModelsData,
-                });
+      mockFetch.mockRejectedValueOnce(new Error('Network error')).mockResolvedValueOnce({
+        ok: true,
+        json: async () => mockMentalModelsData,
+      });
 
       const { container } = render(<App />);
 
@@ -309,8 +324,8 @@ describe('E2E: Complete Application Flow', () => {
 
       await waitFor(() => {
         // Both data types should be fetched
-        const fetchUrls = mockFetch.mock.calls.map(call => call[0]);
-        
+        const fetchUrls = mockFetch.mock.calls.map((call) => call[0]);
+
         expect(fetchUrls.length > 0).toBe(true);
       });
     });
@@ -337,7 +352,7 @@ describe('E2E: Complete Application Flow', () => {
         // Get all interactive elements
         const buttons = screen.queryAllByRole('button');
         const links = screen.queryAllByRole('link');
-        
+
         // Application maintains structure
         expect(buttons.length + links.length >= 0).toBe(true);
         expect(container).toBeTruthy();
@@ -348,13 +363,13 @@ describe('E2E: Complete Application Flow', () => {
   describe('User Flow: Performance & Responsiveness', () => {
     it('renders within acceptable time frame', async () => {
       const startTime = Date.now();
-      
+
       render(<App />);
 
       await waitFor(() => {
         const endTime = Date.now();
         const renderTime = endTime - startTime;
-        
+
         // Should render within 5 seconds
         expect(renderTime).toBeLessThan(5000);
       });
@@ -365,14 +380,12 @@ describe('E2E: Complete Application Flow', () => {
 
       await waitFor(() => {
         const buttons = screen.queryAllByRole('button');
-        
+
         // Rapidly click multiple buttons
-        const clickPromises = buttons.slice(0, 3).map(button => 
-          userEvent.click(button)
-        );
+        const clickPromises = buttons.slice(0, 3).map((button) => userEvent.click(button));
 
         Promise.all(clickPromises);
-        
+
         // App should remain stable
         expect(document.body).toBeTruthy();
       });
@@ -380,10 +393,10 @@ describe('E2E: Complete Application Flow', () => {
 
     it('does not cause memory leaks on unmount', () => {
       const { unmount } = render(<App />);
-      
+
       // Unmount should clean up
       unmount();
-      
+
       // Check that cleanup occurred
       expect(true).toBe(true);
     });
@@ -396,7 +409,7 @@ describe('E2E: Complete Application Flow', () => {
       await waitFor(() => {
         // Check for semantic HTML or ARIA labels
         // ensure main-like containers exist
-        
+
         expect(document.body).toBeTruthy();
       });
     });
@@ -405,32 +418,38 @@ describe('E2E: Complete Application Flow', () => {
       render(<App />);
 
       await waitFor(() => {
-        const focusableElements = screen.queryAllByRole('button')
+        const focusableElements = screen
+          .queryAllByRole('button')
           .concat(screen.queryAllByRole('link'));
-        
+
         // Tab through elements
         if (focusableElements.length > 0) {
           focusableElements[0].focus();
         }
-        
+
         expect(document.body).toBeTruthy();
       });
     });
 
     it('provides loading feedback during async operations', async () => {
       // Slow down fetch to see loading states
-      mockFetch.mockImplementation(() => 
-        new Promise(resolve => 
-          setTimeout(() => resolve({
-            ok: true,
-            json: async () => mockMentalModelsData,
-          }), 100)
-        )
+      mockFetch.mockImplementation(
+        () =>
+          new Promise((resolve) =>
+            setTimeout(
+              () =>
+                resolve({
+                  ok: true,
+                  json: async () => mockMentalModelsData,
+                }),
+              100
+            )
+          )
       );
 
       const { container } = render(<App />);
       // Should show loading indicator (not asserted strictly)
-      
+
       // App renders with or without explicit loading states
       expect(container).toBeTruthy();
     });
@@ -439,14 +458,14 @@ describe('E2E: Complete Application Flow', () => {
   describe('Production Smoke Tests', () => {
     it('successfully initializes without errors', () => {
       const consoleError = vi.spyOn(console, 'error').mockImplementation(() => {});
-      
+
       render(<App />);
 
       // No console errors during initialization
       expect(consoleError).not.toHaveBeenCalledWith(
         expect.stringMatching(/error|failed|exception/i)
       );
-      
+
       consoleError.mockRestore();
     });
 
@@ -462,15 +481,18 @@ describe('E2E: Complete Application Flow', () => {
     it('establishes data connections', async () => {
       render(<App />);
 
-      await waitFor(() => {
-        // Fetch should be called for data
-        expect(mockFetch).toHaveBeenCalled();
-      }, { timeout: 3000 });
+      await waitFor(
+        () => {
+          // Fetch should be called for data
+          expect(mockFetch).toHaveBeenCalled();
+        },
+        { timeout: 3000 }
+      );
     });
 
     it('handles page lifecycle correctly', () => {
       const { unmount } = render(<App />);
-      
+
       // Should unmount without errors
       expect(() => unmount()).not.toThrow();
     });

@@ -12,10 +12,7 @@ interface CacheEntry<T> {
 class APIClient {
   private cache: Map<string, CacheEntry<any>> = new Map();
 
-  private async fetchWithCache<T>(
-    endpoint: string,
-    options?: RequestInit
-  ): Promise<T> {
+  private async fetchWithCache<T>(endpoint: string, options?: RequestInit): Promise<T> {
     const cacheKey = `${endpoint}:${JSON.stringify(options)}`;
 
     // Check cache

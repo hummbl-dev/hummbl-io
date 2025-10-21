@@ -32,7 +32,7 @@
       "id": "NAR-HUMMBL-COMPOSITION",
       "label": "Composition",
       "category": "construction",
-      "confidence": 0.90,
+      "confidence": 0.9,
       "evidence_quality": "A",
       "provenance_hash": "sha256:c9f5e1a4d3b0c6e8a2f7d9b4e1c8a5f3d0b7e4a9c6f2d8b5e1a7c4f0d9b3e6a2",
       "complexity": "medium",
@@ -42,7 +42,7 @@
       "id": "NAR-HUMMBL-DECOMPOSITION",
       "label": "Decomposition",
       "category": "analysis",
-      "confidence": 0.90,
+      "confidence": 0.9,
       "evidence_quality": "A",
       "provenance_hash": "sha256:d0a6f2b5e8c1d7a4f9b3e6c2d8a5f1b7e4c9d6a3f0b8e5c2d9a6f3b0e7c4d1a8",
       "complexity": "medium",
@@ -83,7 +83,7 @@
       "target": "NAR-HUMMBL-COMPOSITION",
       "type": "uses",
       "description": "Frames are composed from semantic primitives",
-      "weight": 0.80,
+      "weight": 0.8,
       "bidirectional": false
     },
     {
@@ -91,7 +91,7 @@
       "target": "NAR-HUMMBL-PERSPECTIVE",
       "type": "inverse_of",
       "description": "Inversion challenges established perspectives",
-      "weight": 0.90,
+      "weight": 0.9,
       "bidirectional": true
     },
     {
@@ -200,7 +200,7 @@
     }
   ],
   "network_statistics": {
-    "density": 0.50,
+    "density": 0.5,
     "avg_degree": 5.0,
     "central_nodes": [
       {

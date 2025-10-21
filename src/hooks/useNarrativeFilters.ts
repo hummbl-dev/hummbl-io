@@ -1,7 +1,7 @@
 // Hook for filtering and sorting narratives
 
 import { useMemo } from 'react';
-import type { Narrative } from '../types/narrative';
+import type { Narrative } from '@cascade/types/narrative';
 
 export interface FilterOptions {
   searchTerm: string;
@@ -12,10 +12,7 @@ export interface FilterOptions {
   sortDirection: 'asc' | 'desc';
 }
 
-export function useNarrativeFilters(
-  narratives: Narrative[],
-  filters: FilterOptions
-) {
+export function useNarrativeFilters(narratives: Narrative[], filters: FilterOptions) {
   const filteredAndSorted = useMemo(() => {
     let result = [...narratives];
 
@@ -29,8 +26,10 @@ export function useNarrativeFilters(
           narrative.category,
           ...(narrative.tags || []),
           ...(narrative.domain || []),
-        ].join(' ').toLowerCase();
-        
+        ]
+          .join(' ')
+          .toLowerCase();
+
         return searchableText.includes(searchLower);
       });
     }
@@ -47,9 +46,7 @@ export function useNarrativeFilters(
 
     // Apply complexity level filter
     if (filters.complexityLevel) {
-      result = result.filter(
-        (n) => n.complexity?.cognitive_load === filters.complexityLevel
-      );
+      result = result.filter((n) => n.complexity?.cognitive_load === filters.complexityLevel);
     }
 
     // Apply sorting

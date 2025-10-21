@@ -25,13 +25,13 @@ const AUTO_BACKUP_INTERVAL = 7 * 24 * 60 * 60 * 1000; // 7 days in milliseconds
 function generateChecksum(data: any): string {
   const jsonString = JSON.stringify(data);
   let hash = 0;
-  
+
   for (let i = 0; i < jsonString.length; i++) {
     const char = jsonString.charCodeAt(i);
-    hash = ((hash << 5) - hash) + char;
+    hash = (hash << 5) - hash + char;
     hash = hash & hash; // Convert to 32bit integer
   }
-  
+
   return Math.abs(hash).toString(16);
 }
 
@@ -115,23 +115,23 @@ export function restoreFromBackup(backup: BackupData): { success: boolean; error
     if (backup.data.bookmarks) {
       localStorage.setItem('hummbl_bookmarks', JSON.stringify(backup.data.bookmarks));
     }
-    
+
     if (backup.data.notes) {
       localStorage.setItem('hummbl_notes', JSON.stringify(backup.data.notes));
     }
-    
+
     if (backup.data.history) {
       localStorage.setItem('hummbl_reading_history', JSON.stringify(backup.data.history));
     }
-    
+
     if (backup.data.preferences) {
       localStorage.setItem('hummbl_preferences', JSON.stringify(backup.data.preferences));
     }
-    
+
     if (backup.data.searchHistory) {
       localStorage.setItem('hummbl_search_history', JSON.stringify(backup.data.searchHistory));
     }
-    
+
     if (backup.data.userProfile) {
       localStorage.setItem('hummbl_user_profile', JSON.stringify(backup.data.userProfile));
     }
@@ -193,7 +193,7 @@ export function setAutoBackup(enabled: boolean): void {
  */
 export function isBackupDue(): boolean {
   const lastBackup = localStorage.getItem(LAST_BACKUP_KEY);
-  
+
   if (!lastBackup) {
     return true; // Never backed up
   }
@@ -210,7 +210,7 @@ export function isBackupDue(): boolean {
  */
 export function getLastBackupTimestamp(): Date | null {
   const lastBackup = localStorage.getItem(LAST_BACKUP_KEY);
-  
+
   if (!lastBackup) {
     return null;
   }
@@ -233,16 +233,19 @@ export function initAutoBackup(): void {
   }
 
   // Set up periodic checks (every hour)
-  setInterval(() => {
-    if (isAutoBackupEnabled() && isBackupDue()) {
-      try {
-        downloadBackup();
-        console.log('[Backup] Auto-backup completed');
-      } catch (error) {
-        console.error('[Backup] Auto-backup failed:', error);
+  setInterval(
+    () => {
+      if (isAutoBackupEnabled() && isBackupDue()) {
+        try {
+          downloadBackup();
+          console.log('[Backup] Auto-backup completed');
+        } catch (error) {
+          console.error('[Backup] Auto-backup failed:', error);
+        }
       }
-    }
-  }, 60 * 60 * 1000); // 1 hour
+    },
+    60 * 60 * 1000
+  ); // 1 hour
 }
 
 /**

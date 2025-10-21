@@ -48,15 +48,15 @@ router.post('/login', async (req: Request, res: Response) => {
 
     if (!supabase) {
       logger.warn('Supabase not configured, using mock authentication');
-      
+
       // Mock authentication for development
       if (email === 'demo@hummbl.io' && password === 'demo123') {
         const token = jwt.sign(
-          { 
+          {
             sub: 'demo-user-id',
             email: email,
             role: 'user',
-            name: 'Demo User'
+            name: 'Demo User',
           },
           process.env.JWT_SECRET || 'fallback-secret',
           { expiresIn: '24h' }
@@ -125,7 +125,6 @@ router.post('/login', async (req: Request, res: Response) => {
       token: token,
       expiresIn: 86400, // 24 hours
     });
-
   } catch (error) {
     logger.error('Login error', error as Error);
     res.status(500).json({
@@ -193,7 +192,6 @@ router.post('/register', async (req: Request, res: Response) => {
       },
       requiresVerification: !data.session, // True if email verification is required
     });
-
   } catch (error) {
     logger.error('Registration error', error as Error);
     res.status(500).json({
@@ -267,7 +265,6 @@ router.post('/oauth', async (req: Request, res: Response) => {
       token: token,
       expiresIn: 86400, // 24 hours
     });
-
   } catch (error) {
     logger.error('OAuth error', error as Error);
     res.status(500).json({
@@ -323,7 +320,6 @@ router.post('/refresh', async (req: Request, res: Response) => {
       token: token,
       expiresIn: 86400, // 24 hours
     });
-
   } catch (error) {
     logger.error('Token refresh error', error as Error);
     res.status(500).json({
@@ -336,7 +332,7 @@ router.post('/refresh', async (req: Request, res: Response) => {
 router.get('/me', async (req: Request, res: Response) => {
   try {
     const authHeader = req.headers.authorization;
-    
+
     if (!authHeader || !authHeader.startsWith('Bearer ')) {
       return res.status(401).json({
         error: 'Authorization required',
@@ -355,7 +351,6 @@ router.get('/me', async (req: Request, res: Response) => {
         provider: decoded.provider,
       },
     });
-
   } catch (error) {
     res.status(401).json({
       error: 'Invalid token',

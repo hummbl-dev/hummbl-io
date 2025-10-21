@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import { loadNarratives } from '../utils/dataLoader';
-import type { Narrative } from '../types/narrative';
+import type { Narrative } from '@cascade/types/narrative';
 
 export function useNarratives() {
   const [narratives, setNarratives] = useState<Narrative[]>([]);

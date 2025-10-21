@@ -1,5 +1,12 @@
 import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
-import { loadNarratives, loadNetwork, loadQDM, loadLedger, loadSITREP, config } from '../dataLoader';
+import {
+  loadNarratives,
+  loadNetwork,
+  loadQDM,
+  loadLedger,
+  loadSITREP,
+  config,
+} from '../dataLoader';
 
 // Mock the fetch function
 const mockFetch = vi.fn();
@@ -8,7 +15,7 @@ global.fetch = mockFetch;
 describe('Data Loader', () => {
   const mockResponse = (data: any) => ({
     ok: true,
-    json: async () => data
+    json: async () => data,
   });
 
   beforeEach(() => {
@@ -25,7 +32,7 @@ describe('Data Loader', () => {
     it('loads narratives from static file', async () => {
       const testData = [{ id: '1', title: 'Test Narrative' }];
       mockFetch.mockResolvedValueOnce(mockResponse(testData));
-      
+
       const result = await loadNarratives();
       expect(result).toEqual(testData);
       expect(mockFetch).toHaveBeenCalledWith('/test-data/narratives.json');
@@ -34,7 +41,7 @@ describe('Data Loader', () => {
     it('loads network data from static file', async () => {
       const testData = { nodes: [], links: [] };
       mockFetch.mockResolvedValueOnce(mockResponse(testData));
-      
+
       const result = await loadNetwork();
       expect(result).toEqual(testData);
       expect(mockFetch).toHaveBeenCalledWith('/test-data/network.json');
@@ -44,7 +51,7 @@ describe('Data Loader', () => {
       mockFetch.mockResolvedValueOnce({
         ok: false,
         status: 404,
-        statusText: 'Not Found'
+        statusText: 'Not Found',
       });
 
       await expect(loadNarratives()).rejects.toThrow('Failed to load narratives: 404');
@@ -53,14 +60,14 @@ describe('Data Loader', () => {
 
   describe('API Data Loading', () => {
     const testData = { id: '1', data: 'test' };
-    
+
     beforeEach(() => {
       vi.spyOn(config, 'useStatic', 'get').mockReturnValue(false);
     });
-    
+
     it('loads narratives from API', async () => {
       mockFetch.mockResolvedValueOnce(mockResponse(testData));
-      
+
       const result = await loadNarratives();
       expect(result).toEqual(testData);
       expect(mockFetch).toHaveBeenCalledWith('/api/narratives');
@@ -68,18 +75,18 @@ describe('Data Loader', () => {
 
     it('loads QDM data from API', async () => {
       mockFetch.mockResolvedValueOnce(mockResponse(testData));
-      
+
       const result = await loadQDM();
       expect(result).toEqual(testData);
       expect(mockFetch).toHaveBeenCalledWith('/api/qdm');
     });
-    
+
     it('loads ledger data from API', async () => {
       mockFetch.mockResolvedValueOnce(mockResponse(testData));
       await expect(loadLedger()).resolves.toEqual(testData);
       expect(mockFetch).toHaveBeenCalledWith('/api/ledger');
     });
-    
+
     it('loads SITREP data from API', async () => {
       mockFetch.mockResolvedValueOnce(mockResponse(testData));
       await expect(loadSITREP()).resolves.toEqual(testData);
@@ -137,7 +144,7 @@ describe('Data Loader', () => {
     it('handles 404 errors with descriptive message', async () => {
       mockFetch.mockResolvedValueOnce({
         ok: false,
-        status: 404
+        status: 404,
       });
       await expect(loadNetwork()).rejects.toThrow('Failed to load network data: 404');
     });
@@ -145,7 +152,7 @@ describe('Data Loader', () => {
     it('handles 500 errors with descriptive message', async () => {
       mockFetch.mockResolvedValueOnce({
         ok: false,
-        status: 500
+        status: 500,
       });
       await expect(loadQDM()).rejects.toThrow('Failed to load QDM data: 500');
     });
@@ -153,7 +160,7 @@ describe('Data Loader', () => {
     it('handles 403 errors with descriptive message', async () => {
       mockFetch.mockResolvedValueOnce({
         ok: false,
-        status: 403
+        status: 403,
       });
       await expect(loadLedger()).rejects.toThrow('Failed to load ledger data: 403');
     });
@@ -166,7 +173,9 @@ describe('Data Loader', () => {
     it('handles malformed response errors', async () => {
       mockFetch.mockResolvedValueOnce({
         ok: true,
-        json: async () => { throw new Error('Invalid JSON'); }
+        json: async () => {
+          throw new Error('Invalid JSON');
+        },
       });
       await expect(loadNarratives()).rejects.toThrow('Invalid JSON');
     });

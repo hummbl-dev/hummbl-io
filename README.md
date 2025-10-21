@@ -24,14 +24,14 @@ HUMMBL provides an interactive interface to browse, search, and learn about 120 
 
 The mental models are organized into six fundamental transformations:
 
-| Code | Transformation | Description |
-|------|---------------|-------------|
-| **P** | Perspective | Viewing situations from different angles |
-| **IN** | Inversion | Thinking backwards or opposite |
-| **CO** | Composition | Combining elements together |
-| **DE** | Decomposition | Breaking down into parts |
-| **RE** | Recursion | Self-referential patterns and iteration |
-| **SY** | Meta-Systems | Systems thinking and higher-order patterns |
+| Code   | Transformation | Description                                |
+| ------ | -------------- | ------------------------------------------ |
+| **P**  | Perspective    | Viewing situations from different angles   |
+| **IN** | Inversion      | Thinking backwards or opposite             |
+| **CO** | Composition    | Combining elements together                |
+| **DE** | Decomposition  | Breaking down into parts                   |
+| **RE** | Recursion      | Self-referential patterns and iteration    |
+| **SY** | Meta-Systems   | Systems thinking and higher-order patterns |
 
 Each transformation contains 20 models (P1-P20, IN1-IN20, etc.)
 
@@ -51,23 +51,181 @@ Each transformation contains 20 models (P1-P20, IN1-IN20, etc.)
 
 ### Prerequisites
 
+- Node.js 20.x or later
+- pnpm 8.x or later
+- Git
+
+### Installation
+
+1. Clone the repository:
+
+   ```bash
+   git clone https://github.com/your-username/hummbl-io.git
+   cd hummbl-io
+   ```
+
+2. Install dependencies:
+
+   ```bash
+   pnpm install
+   ```
+
+3. Set up environment variables:
+   ```bash
+   cp .env.example .env
+   # Edit .env with your configuration
+   ```
+
+### Development
+
+Start the development server:
+
+```bash
+pnpm dev
+```
+
+### Building for Production
+
+```bash
+pnpm build
+pnpm preview
+```
+
+### Testing
+
+Run unit tests:
+
+```bash
+pnpm test
+```
+
+Run performance tests:
+
+```bash
+pnpm test:perf
+pnpm test:auth
+```
+
+### Linting and Formatting
+
+```bash
+# Lint code
+pnpm lint
+
+# Format code
+pnpm format
+
+# Check TypeScript types
+pnpm typecheck
+```
+
+### Git Hooks
+
+This project uses Husky for Git hooks. After cloning, run:
+
+```bash
+pnpm prepare
+```
+
+This will set up pre-commit hooks that run linting and formatting automatically.
+
+## 📊 Analytics
+
+The application includes a robust analytics system that tracks user interactions while respecting privacy. The system supports multiple analytics providers and is designed to be performant and reliable.
+
+### Key Features
+
+- **Multi-provider Support**: Tracks events in both Plausible and Google Analytics
+- **Type Safety**: Full TypeScript support with strict type checking
+- **Performance Optimized**: Lightweight and non-blocking
+- **Comprehensive Testing**: Extensive test coverage for all tracking functions
+- **Privacy-Focused**: No personally identifiable information (PII) is collected by default
+
+### Available Tracking Methods
+
+```typescript
+// Basic event tracking
+trackEvent({
+  event: 'button_click',
+  category: 'engagement',
+  label: 'Signup Button',
+  properties: {
+    button_position: 'hero',
+    button_color: 'blue',
+  },
+});
+
+// Page view tracking
+trackPageView('/dashboard', 'Dashboard Page');
+
+// Predefined events
+trackSearchPerformed('mental models', 15);
+trackMentalModelViewed('P1', 'First Principles');
+```
+
+### Configuration
+
+Initialize analytics in your main application file:
+
+```typescript
+import { initAnalytics } from './utils/analytics';
+
+initAnalytics({
+  debug: process.env.NODE_ENV === 'development',
+  trackPageViews: true,
+  trackErrors: true,
+  sampleRate: 1.0, // 100% of sessions
+});
+```
+
+### Testing
+
+Run the test suite:
+
+```bash
+# Run all analytics tests
+pnpm test:analytics
+
+# Run edge case tests
+pnpm test:analytics:edge-cases
+```
+
+For more details, see the [Analytics Documentation](./docs/ANALYTICS.md).
+
+## 🤝 Contributing
+
+1. Fork the repository
+2. Create a feature branch: `git checkout -b feature/amazing-feature`
+3. Commit your changes: `git commit -m 'Add some amazing feature'`
+4. Push to the branch: `git push origin feature/amazing-feature`
+5. Open a pull request
+
+## 📄 License
+
+This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
+
+### Prerequisites
+
 - **Node.js** (v16 or higher)
 - **npm** or **yarn**
 
 ### Installation
 
 1. **Clone the repository:**
+
    ```bash
    git clone https://github.com/[YOUR-USERNAME]/hummbl-io.git
    cd hummbl-io
    ```
 
 2. **Install dependencies:**
+
    ```bash
    npm install
    ```
 
 3. **Start the development server:**
+
    ```bash
    npm run dev
    ```
@@ -120,12 +278,14 @@ This project is configured for Vercel deployment:
 ### Deploy to Other Platforms
 
 **Cloudflare Pages:**
+
 ```bash
 npm run build
 npx wrangler pages deploy dist --project-name=hummbl-io
 ```
 
 **Netlify:**
+
 ```bash
 npm run build
 # Drag and drop dist/ folder to Netlify
@@ -185,6 +345,7 @@ hummbl-io/
 ### Searching Models
 
 Use the search bar to find models by:
+
 - **Model name** (e.g., "First Principles")
 - **Model code** (e.g., "P1")
 - **Keywords** in definitions (e.g., "feedback", "decomposition")
@@ -194,6 +355,7 @@ The search is case-insensitive and searches across all model fields.
 ### Filtering by Transformation
 
 Click transformation filter buttons to view models by type:
+
 - **All** - View all 120 models
 - **P - Perspective** - Models focused on viewpoint shifts
 - **IN - Inversion** - Models using reverse thinking
@@ -205,6 +367,7 @@ Click transformation filter buttons to view models by type:
 ### Viewing Model Details
 
 Click any model card to expand and view:
+
 - Complete definition
 - Practical example application
 - Transformation classification
@@ -246,27 +409,32 @@ After modifying `models.json`, restart the development server.
 ### Build Issues
 
 **Error: "Command 'vite build' exited with 127"**
+
 - **Solution:** Ensure build command in deployment platform is set to `npm run build`, not `vite build`
 
 **Error: "Module not found"**
+
 - **Solution:** Delete `node_modules` and `package-lock.json`, then run `npm install`
 
 **TypeScript errors during build**
+
 - **Solution:** Run `npm run build` locally first to catch type errors
 - Check `tsconfig.json` configuration
 
 ### Development Server Issues
 
 **Port 5173 already in use**
+
 - **Solution:** Kill the existing process or change port in `vite.config.ts`:
   ```ts
   export default defineConfig({
     plugins: [react()],
-    server: { port: 3000 }
-  })
+    server: { port: 3000 },
+  });
   ```
 
 **Hot reload not working**
+
 - **Solution:** Check browser console for errors
 - Restart dev server with `npm run dev`
 
@@ -277,6 +445,7 @@ After modifying `models.json`, restart the development server.
 The HUMMBL Mental Models Framework is a comprehensive collection of 120 cognitive tools for strategic thinking, organized into six transformations with 20 tiers each.
 
 **Framework Structure:**
+
 - **Base6**: 6 foundational models (one per transformation)
 - **Base42**: 42 core models (first 7 tiers)
 - **Base90**: 90 essential models (first 15 tiers)
@@ -328,6 +497,7 @@ This project is licensed under the MIT License - see the LICENSE file for detail
 **Website:** [hummbl.io](https://hummbl.io)
 
 For questions, feedback, or bug reports:
+
 - Open an issue on GitHub
 - Visit the live site for more information
 

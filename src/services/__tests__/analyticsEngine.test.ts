@@ -106,12 +106,12 @@ describe('AnalyticsEngine', () => {
 
     it('persists session ID', () => {
       const summary1 = analytics.getSummary();
-      
+
       const analytics2 = new AnalyticsEngine();
       const summary2 = analytics2.getSummary();
 
       expect(summary2.sessionId).toBe(summary1.sessionId);
-      
+
       analytics2.destroy();
     });
   });
@@ -139,7 +139,7 @@ describe('AnalyticsEngine', () => {
       });
 
       analytics.track('custom', 'Test', '1');
-      
+
       await analytics.flush();
 
       expect(analytics.getQueueSize()).toBe(0);
@@ -158,12 +158,12 @@ describe('AnalyticsEngine', () => {
   describe('Singleton', () => {
     it('returns same instance', () => {
       resetAnalytics();
-      
+
       const instance1 = getAnalytics();
       const instance2 = getAnalytics();
 
       expect(instance1).toBe(instance2);
-      
+
       resetAnalytics();
     });
   });
@@ -175,7 +175,7 @@ describe('AnalyticsEngine', () => {
       sampledAnalytics.track('custom', 'Test', 'action');
 
       expect(sampledAnalytics.getQueueSize()).toBe(0);
-      
+
       sampledAnalytics.destroy();
     });
   });

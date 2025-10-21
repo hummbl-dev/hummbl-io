@@ -45,15 +45,18 @@
 ## 📡 API Endpoints
 
 ### Base URL
+
 - **Development**: `http://localhost:3000/api`
 - **Production**: `https://hummbl.io/api`
 
 ### Endpoint Specifications
 
 #### 1. GET `/api/narratives`
+
 **Purpose**: Retrieve all narratives with metadata
 
 **Response**:
+
 ```json
 {
   "metadata": {
@@ -85,18 +88,22 @@
 ```
 
 **Status Codes**:
+
 - `200 OK`: Success
 - `500 Internal Server Error`: Server error
 
 ---
 
 #### 2. GET `/api/narratives/:id`
+
 **Purpose**: Retrieve single narrative by ID
 
 **Parameters**:
+
 - `id` (path): Narrative ID (e.g., `NAR-HUMMBL-PERSPECTIVE`)
 
 **Response**:
+
 ```json
 {
   "narrative_id": "NAR-HUMMBL-PERSPECTIVE",
@@ -114,6 +121,7 @@
 ```
 
 **Status Codes**:
+
 - `200 OK`: Success
 - `404 Not Found`: Narrative not found
 - `500 Internal Server Error`: Server error
@@ -121,12 +129,15 @@
 ---
 
 #### 3. GET `/api/network`
+
 **Purpose**: Retrieve network graph data for visualization
 
 **Query Parameters**:
+
 - `format` (optional): `d3` | `cytoscape` | `raw` (default: `raw`)
 
 **Response**:
+
 ```json
 {
   "metadata": {
@@ -170,6 +181,7 @@
 ```
 
 **Status Codes**:
+
 - `200 OK`: Success
 - `400 Bad Request`: Invalid format parameter
 - `500 Internal Server Error`: Server error
@@ -177,12 +189,15 @@
 ---
 
 #### 4. GET `/api/qdm`
+
 **Purpose**: Retrieve QDM Matrix data
 
 **Query Parameters**:
+
 - `include` (optional): `matrix` | `scores` | `pathways` | `all` (default: `all`)
 
 **Response**:
+
 ```json
 {
   "matrix": {
@@ -212,6 +227,7 @@
 ```
 
 **Status Codes**:
+
 - `200 OK`: Success
 - `400 Bad Request`: Invalid include parameter
 - `500 Internal Server Error`: Server error
@@ -219,13 +235,16 @@
 ---
 
 #### 5. GET `/api/ledger`
+
 **Purpose**: Retrieve ledger chain
 
 **Query Parameters**:
+
 - `block_id` (optional): Specific block ID
 - `narrative_id` (optional): Filter by narrative ID
 
 **Response**:
+
 ```json
 {
   "blocks": [
@@ -248,6 +267,7 @@
 ```
 
 **Status Codes**:
+
 - `200 OK`: Success
 - `404 Not Found`: Block not found
 - `500 Internal Server Error`: Server error
@@ -255,9 +275,11 @@
 ---
 
 #### 6. GET `/api/sitrep`
+
 **Purpose**: Retrieve current situation report
 
 **Response**:
+
 ```json
 {
   "timestamp": "2025-10-17T10:26:51-04:00",
@@ -268,9 +290,9 @@
     "B": 1,
     "C": 0
   },
-  "average_confidence": 0.90,
+  "average_confidence": 0.9,
   "network_health": {
-    "density": 0.50,
+    "density": 0.5,
     "connectivity": "HEALTHY",
     "central_nodes": ["NAR-HUMMBL-RECURSION", "NAR-HUMMBL-COMPOSITION"]
   },
@@ -288,17 +310,20 @@
 ```
 
 **Status Codes**:
+
 - `200 OK`: Success
 - `500 Internal Server Error`: Server error
 
 ---
 
 #### 7. GET `/api/integrity`
+
 **Purpose**: Retrieve full integrity report
 
 **Response**: (Full integrity_report.json content)
 
 **Status Codes**:
+
 - `200 OK`: Success
 - `500 Internal Server Error`: Server error
 
@@ -353,6 +378,7 @@ App
 ### Custom Hooks
 
 #### `useNarratives()`
+
 ```typescript
 import { useNarratives } from '@/hooks/useNarratives';
 
@@ -360,6 +386,7 @@ const { narratives, loading, error, refetch } = useNarratives();
 ```
 
 **Returns**:
+
 - `narratives`: Array of narrative objects
 - `loading`: Boolean loading state
 - `error`: Error object or null
@@ -368,6 +395,7 @@ const { narratives, loading, error, refetch } = useNarratives();
 ---
 
 #### `useNarrative(id: string)`
+
 ```typescript
 import { useNarrative } from '@/hooks/useNarrative';
 
@@ -375,6 +403,7 @@ const { narrative, loading, error } = useNarrative('NAR-HUMMBL-PERSPECTIVE');
 ```
 
 **Returns**:
+
 - `narrative`: Single narrative object
 - `loading`: Boolean loading state
 - `error`: Error object or null
@@ -382,6 +411,7 @@ const { narrative, loading, error } = useNarrative('NAR-HUMMBL-PERSPECTIVE');
 ---
 
 #### `useNetwork(format?: string)`
+
 ```typescript
 import { useNetwork } from '@/hooks/useNetwork';
 
@@ -389,6 +419,7 @@ const { network, loading, error } = useNetwork('d3');
 ```
 
 **Returns**:
+
 - `network`: Network graph data
 - `loading`: Boolean loading state
 - `error`: Error object or null
@@ -396,6 +427,7 @@ const { network, loading, error } = useNetwork('d3');
 ---
 
 #### `useQDM(include?: string)`
+
 ```typescript
 import { useQDM } from '@/hooks/useQDM';
 
@@ -403,6 +435,7 @@ const { qdm, loading, error } = useQDM('all');
 ```
 
 **Returns**:
+
 - `qdm`: QDM matrix data
 - `loading`: Boolean loading state
 - `error`: Error object or null
@@ -410,6 +443,7 @@ const { qdm, loading, error } = useQDM('all');
 ---
 
 #### `useLedger(filters?: LedgerFilters)`
+
 ```typescript
 import { useLedger } from '@/hooks/useLedger';
 
@@ -417,6 +451,7 @@ const { ledger, loading, error } = useLedger({ narrative_id: 'NAR-HUMMBL-PERSPEC
 ```
 
 **Returns**:
+
 - `ledger`: Ledger chain data
 - `loading`: Boolean loading state
 - `error`: Error object or null
@@ -424,6 +459,7 @@ const { ledger, loading, error } = useLedger({ narrative_id: 'NAR-HUMMBL-PERSPEC
 ---
 
 #### `useSITREP()`
+
 ```typescript
 import { useSITREP } from '@/hooks/useSITREP';
 
@@ -431,6 +467,7 @@ const { sitrep, loading, error, refresh } = useSITREP();
 ```
 
 **Returns**:
+
 - `sitrep`: SITREP data
 - `loading`: Boolean loading state
 - `error`: Error object or null
@@ -633,6 +670,7 @@ export interface SITREP {
 ### Context Providers
 
 #### NarrativeProvider
+
 ```typescript
 import { NarrativeProvider } from '@/providers/NarrativeProvider';
 
@@ -642,6 +680,7 @@ import { NarrativeProvider } from '@/providers/NarrativeProvider';
 ```
 
 **Provides**:
+
 - Global narrative state
 - Caching layer
 - Refetch mechanisms
@@ -649,6 +688,7 @@ import { NarrativeProvider } from '@/providers/NarrativeProvider';
 ---
 
 #### NetworkProvider
+
 ```typescript
 import { NetworkProvider } from '@/providers/NetworkProvider';
 
@@ -658,6 +698,7 @@ import { NetworkProvider } from '@/providers/NetworkProvider';
 ```
 
 **Provides**:
+
 - Network graph state
 - Layout algorithms
 - Interaction handlers
@@ -667,6 +708,7 @@ import { NetworkProvider } from '@/providers/NetworkProvider';
 ## 🎯 Integration Bridge
 
 ### File Structure
+
 ```
 /Users/others/CascadeProjects/hummbl-io/
 ├── src/
@@ -731,18 +773,21 @@ import { NetworkProvider } from '@/providers/NetworkProvider';
 ## 🚀 Implementation Steps
 
 ### Phase 1: API Layer (Week 1)
+
 1. ✅ Create API client configuration
 2. ✅ Implement endpoint handlers
 3. ✅ Add error handling and retries
 4. ✅ Set up CORS and security
 
 ### Phase 2: Data Layer (Week 1-2)
+
 1. ✅ Define TypeScript types
 2. ✅ Create custom hooks
 3. ✅ Implement context providers
 4. ✅ Add caching layer
 
 ### Phase 3: Components (Week 2-3)
+
 1. ✅ Build narrative components
 2. ✅ Create network visualizer
 3. ✅ Implement QDM dashboard
@@ -750,12 +795,14 @@ import { NetworkProvider } from '@/providers/NetworkProvider';
 5. ✅ Create SITREP panel
 
 ### Phase 4: Integration (Week 3-4)
+
 1. ✅ Connect build outputs to API
 2. ✅ Wire up React components
 3. ✅ Add routing and navigation
 4. ✅ Implement state management
 
 ### Phase 5: Testing & Deployment (Week 4)
+
 1. ✅ Unit tests for hooks
 2. ✅ Integration tests for API
 3. ✅ E2E tests for components
@@ -766,6 +813,7 @@ import { NetworkProvider } from '@/providers/NetworkProvider';
 ## 📝 Configuration
 
 ### Environment Variables
+
 ```env
 # .env.local
 VITE_API_BASE_URL=http://localhost:3000/api
@@ -775,6 +823,7 @@ VITE_CACHE_TTL=300000
 ```
 
 ### Vite Configuration
+
 ```typescript
 // vite.config.ts
 import { defineConfig } from 'vite';
@@ -818,4 +867,4 @@ export default defineConfig({
 
 ---
 
-*End of Integration Specification*
+_End of Integration Specification_

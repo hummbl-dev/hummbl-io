@@ -87,12 +87,12 @@ function saveAnalytics(analytics: UserAnalytics): void {
   try {
     // Update session duration
     analytics.sessionDuration = Date.now() - analytics.sessionStart;
-    
+
     // Trim actions if needed
     if (analytics.actions.length > MAX_ACTIONS) {
       analytics.actions = analytics.actions.slice(-MAX_ACTIONS);
     }
-    
+
     localStorage.setItem(ANALYTICS_KEY, JSON.stringify(analytics));
   } catch (error) {
     console.warn('Failed to save analytics:', error);
@@ -118,18 +118,18 @@ export function useUserAnalytics() {
    */
   const trackNarrativeView = useCallback((narrativeId: string, narrativeTitle?: string) => {
     const analytics = getAnalytics();
-    
-    analytics.views.narrativeViews[narrativeId] = 
+
+    analytics.views.narrativeViews[narrativeId] =
       (analytics.views.narrativeViews[narrativeId] || 0) + 1;
     analytics.views.totalViews++;
     analytics.views.lastViewTimestamp = Date.now();
-    
+
     analytics.actions.push({
       type: 'view',
       timestamp: Date.now(),
       data: { narrativeId, narrativeTitle, viewType: 'narrative' },
     });
-    
+
     saveAnalytics(analytics);
   }, []);
 
@@ -138,18 +138,17 @@ export function useUserAnalytics() {
    */
   const trackModelView = useCallback((modelId: string, modelTitle?: string) => {
     const analytics = getAnalytics();
-    
-    analytics.views.modelViews[modelId] = 
-      (analytics.views.modelViews[modelId] || 0) + 1;
+
+    analytics.views.modelViews[modelId] = (analytics.views.modelViews[modelId] || 0) + 1;
     analytics.views.totalViews++;
     analytics.views.lastViewTimestamp = Date.now();
-    
+
     analytics.actions.push({
       type: 'view',
       timestamp: Date.now(),
       data: { modelId, modelTitle, viewType: 'model' },
     });
-    
+
     saveAnalytics(analytics);
   }, []);
 
@@ -158,27 +157,27 @@ export function useUserAnalytics() {
    */
   const trackSearchQuery = useCallback((query: string, resultCount?: number) => {
     if (!query.trim()) return;
-    
+
     const analytics = getAnalytics();
     const normalizedQuery = query.toLowerCase().trim();
-    
+
     // Add to queries list (keep unique)
     if (!analytics.searches.queries.includes(normalizedQuery)) {
       analytics.searches.queries.push(normalizedQuery);
     }
-    
+
     // Increment count
-    analytics.searches.queryCount[normalizedQuery] = 
+    analytics.searches.queryCount[normalizedQuery] =
       (analytics.searches.queryCount[normalizedQuery] || 0) + 1;
     analytics.searches.totalSearches++;
     analytics.searches.lastSearchTimestamp = Date.now();
-    
+
     analytics.actions.push({
       type: 'search',
       timestamp: Date.now(),
       data: { query: normalizedQuery, resultCount },
     });
-    
+
     saveAnalytics(analytics);
   }, []);
 
@@ -187,13 +186,13 @@ export function useUserAnalytics() {
    */
   const trackFilter = useCallback((filterType: string, filterValue: unknown) => {
     const analytics = getAnalytics();
-    
+
     analytics.actions.push({
       type: 'filter',
       timestamp: Date.now(),
       data: { filterType, filterValue },
     });
-    
+
     saveAnalytics(analytics);
   }, []);
 
@@ -202,24 +201,23 @@ export function useUserAnalytics() {
    */
   const trackExport = useCallback((format: string, itemCount: number) => {
     const analytics = getAnalytics();
-    
-    analytics.exports.formatUsage[format] = 
-      (analytics.exports.formatUsage[format] || 0) + 1;
+
+    analytics.exports.formatUsage[format] = (analytics.exports.formatUsage[format] || 0) + 1;
     analytics.exports.totalExports++;
     analytics.exports.lastExportTimestamp = Date.now();
-    
+
     // Update average
     const currentAvg = analytics.exports.averageNarrativeCount;
     const totalExports = analytics.exports.totalExports;
-    analytics.exports.averageNarrativeCount = 
-      ((currentAvg * (totalExports - 1)) + itemCount) / totalExports;
-    
+    analytics.exports.averageNarrativeCount =
+      (currentAvg * (totalExports - 1) + itemCount) / totalExports;
+
     analytics.actions.push({
       type: 'export',
       timestamp: Date.now(),
       data: { format, itemCount },
     });
-    
+
     saveAnalytics(analytics);
   }, []);
 
@@ -228,13 +226,13 @@ export function useUserAnalytics() {
    */
   const trackSelection = useCallback((itemType: string, itemId: string) => {
     const analytics = getAnalytics();
-    
+
     analytics.actions.push({
       type: 'select',
       timestamp: Date.now(),
       data: { itemType, itemId },
     });
-    
+
     saveAnalytics(analytics);
   }, []);
 
@@ -250,10 +248,9 @@ export function useUserAnalytics() {
    */
   const getMostViewed = useCallback((type: 'narrative' | 'model', limit = 5) => {
     const analytics = getAnalytics();
-    const views = type === 'narrative' 
-      ? analytics.views.narrativeViews 
-      : analytics.views.modelViews;
-    
+    const views =
+      type === 'narrative' ? analytics.views.narrativeViews : analytics.views.modelViews;
+
     return Object.entries(views)
       .sort(([, a], [, b]) => b - a)
       .slice(0, limit)
@@ -265,7 +262,7 @@ export function useUserAnalytics() {
    */
   const getTopSearches = useCallback((limit = 5) => {
     const analytics = getAnalytics();
-    
+
     return Object.entries(analytics.searches.queryCount)
       .sort(([, a], [, b]) => b - a)
       .slice(0, limit)
@@ -295,13 +292,13 @@ export function useUserAnalytics() {
     trackFilter,
     trackExport,
     trackSelection,
-    
+
     // Query functions
     getStats,
     getMostViewed,
     getTopSearches,
     getRecentActions,
-    
+
     // Utility
     clearAnalytics,
   };

@@ -11,7 +11,7 @@ describe('Mental Model Validation', () => {
     tags: ['thinking'],
     transformations: ['P'],
     sources: [{ name: 'Aristotle', reference: 'Metaphysics' }],
-    meta: { added: '2025-01-01', updated: '2025-01-01', isCore: true, difficulty: 3 }
+    meta: { added: '2025-01-01', updated: '2025-01-01', isCore: true, difficulty: 3 },
   };
 
   it('validates a complete mental model', () => {
@@ -38,7 +38,7 @@ describe('Mental Model Validation', () => {
   it('validates array of models', () => {
     const models = [validModel, { ...validModel, id: '2' }];
     expect(validateMentalModels(models)).toBe(true);
-    
+
     const invalidModels = [validModel, { invalid: 'model' }];
     expect(validateMentalModels(invalidModels)).toBe(false);
   });

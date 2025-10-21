@@ -1,6 +1,6 @@
 // Advanced analytics engine with event tracking
 
-export type EventType = 
+export type EventType =
   | 'search'
   | 'filter'
   | 'view'
@@ -66,7 +66,7 @@ export class AnalyticsEngine {
   constructor(config: AnalyticsConfig = {}) {
     this.config = { ...DEFAULT_CONFIG, ...config };
     this.sessionId = this.getOrCreateSessionId();
-    
+
     // Load any persisted events
     if (this.config.enableLocalStorage) {
       this.loadPersistedEvents();
@@ -81,7 +81,7 @@ export class AnalyticsEngine {
    */
   private getOrCreateSessionId(): string {
     let sessionId = sessionStorage.getItem(SESSION_KEY);
-    
+
     if (!sessionId) {
       sessionId = `session_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
       sessionStorage.setItem(SESSION_KEY, sessionId);
@@ -230,11 +230,15 @@ export class AnalyticsEngine {
   /**
    * Track custom event
    */
-  trackCustom(category: string, action: string, options?: {
-    label?: string;
-    value?: number;
-    metadata?: Record<string, unknown>;
-  }): void {
+  trackCustom(
+    category: string,
+    action: string,
+    options?: {
+      label?: string;
+      value?: number;
+      metadata?: Record<string, unknown>;
+    }
+  ): void {
     this.track('custom', category, action, options);
   }
 

@@ -10,11 +10,21 @@
       "code": { "type": "string" },
       "name": { "type": "string" },
       "description": { "type": "string" },
-      "transformation": { "type": "string", "enum": ["Perspective","Inversion","Composition","Decomposition","Recursion","Meta-Systems"] },
+      "transformation": {
+        "type": "string",
+        "enum": [
+          "Perspective",
+          "Inversion",
+          "Composition",
+          "Decomposition",
+          "Recursion",
+          "Meta-Systems"
+        ]
+      },
       "tier": { "type": "integer", "minimum": 1, "maximum": 20 },
-      "aliases": { "type": "array", "items": { "type":"string" }, "uniqueItems": true },
+      "aliases": { "type": "array", "items": { "type": "string" }, "uniqueItems": true },
       "linked_signals": {
-        "type": ["array","null"],
+        "type": ["array", "null"],
         "items": { "type": "string" }
       },
       "metadata": { "type": "object", "additionalProperties": true }

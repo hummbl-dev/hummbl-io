@@ -1,4 +1,6 @@
 {
-  "buildCommand": "npm run build",
-  "outputDirectory": "dist"
+  "buildCommand": "pnpm install --no-frozen-lockfile && pnpm run build",
+  "outputDirectory": "dist",
+  "installCommand": "pnpm install --no-frozen-lockfile",
+  "framework": "vite"
 }

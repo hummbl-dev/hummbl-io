@@ -82,7 +82,12 @@ vi.mock('../useUserAnalytics', () => ({
     getStats: vi.fn(() => ({
       views: { totalViews: 50, narrativeViews: {}, modelViews: {}, lastViewTimestamp: Date.now() },
       searches: { totalSearches: 20, queries: [], queryCount: {}, lastSearchTimestamp: Date.now() },
-      exports: { totalExports: 5, formatUsage: {}, lastExportTimestamp: Date.now(), averageNarrativeCount: 10 },
+      exports: {
+        totalExports: 5,
+        formatUsage: {},
+        lastExportTimestamp: Date.now(),
+        averageNarrativeCount: 10,
+      },
       sessionStart: Date.now() - 3600000,
       sessionDuration: 3600000,
       actions: [],

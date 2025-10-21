@@ -23,7 +23,9 @@ export interface ApiResponse<T = unknown> {
 }
 
 type RequestInterceptor = (config: RequestConfig) => RequestConfig | Promise<RequestConfig>;
-type ResponseInterceptor = <T>(response: ApiResponse<T>) => ApiResponse<T> | Promise<ApiResponse<T>>;
+type ResponseInterceptor = <T>(
+  response: ApiResponse<T>
+) => ApiResponse<T> | Promise<ApiResponse<T>>;
 type ErrorInterceptor = (error: Error) => Error | Promise<Error>;
 
 /**
@@ -60,13 +62,16 @@ export class ApiClient {
         if (token) {
           config.headers = {
             ...config.headers,
-            'Authorization': `Bearer ${token}`,
+            Authorization: `Bearer ${token}`,
           };
         }
       }
 
       // Add content-type if not present
-      if (!config.headers || !Object.keys(config.headers).some(k => k.toLowerCase() === 'content-type')) {
+      if (
+        !config.headers ||
+        !Object.keys(config.headers).some((k) => k.toLowerCase() === 'content-type')
+      ) {
         config.headers = {
           ...config.headers,
           'Content-Type': 'application/json',
@@ -193,7 +198,6 @@ export class ApiClient {
 
         // Apply response interceptors
         return await this.applyResponseInterceptors(apiResponse);
-
       } catch (error) {
         lastError = error instanceof Error ? error : new Error('Request failed');
 
@@ -256,11 +260,18 @@ export class ApiClient {
    * Convenience methods
    */
 
-  async get<T>(url: string, config?: Omit<RequestConfig, 'url' | 'method'>): Promise<ApiResponse<T>> {
+  async get<T>(
+    url: string,
+    config?: Omit<RequestConfig, 'url' | 'method'>
+  ): Promise<ApiResponse<T>> {
     return this.request<T>({ ...config, url, method: 'GET' });
   }
 
-  async post<T>(url: string, body?: unknown, config?: Omit<RequestConfig, 'url' | 'method' | 'body'>): Promise<ApiResponse<T>> {
+  async post<T>(
+    url: string,
+    body?: unknown,
+    config?: Omit<RequestConfig, 'url' | 'method' | 'body'>
+  ): Promise<ApiResponse<T>> {
     return this.request<T>({
       ...config,
       url,
@@ -269,7 +280,11 @@ export class ApiClient {
     });
   }
 
-  async put<T>(url: string, body?: unknown, config?: Omit<RequestConfig, 'url' | 'method' | 'body'>): Promise<ApiResponse<T>> {
+  async put<T>(
+    url: string,
+    body?: unknown,
+    config?: Omit<RequestConfig, 'url' | 'method' | 'body'>
+  ): Promise<ApiResponse<T>> {
     return this.request<T>({
       ...config,
       url,
@@ -278,7 +293,11 @@ export class ApiClient {
     });
   }
 
-  async patch<T>(url: string, body?: unknown, config?: Omit<RequestConfig, 'url' | 'method' | 'body'>): Promise<ApiResponse<T>> {
+  async patch<T>(
+    url: string,
+    body?: unknown,
+    config?: Omit<RequestConfig, 'url' | 'method' | 'body'>
+  ): Promise<ApiResponse<T>> {
     return this.request<T>({
       ...config,
       url,
@@ -287,7 +306,10 @@ export class ApiClient {
     });
   }
 
-  async delete<T>(url: string, config?: Omit<RequestConfig, 'url' | 'method'>): Promise<ApiResponse<T>> {
+  async delete<T>(
+    url: string,
+    config?: Omit<RequestConfig, 'url' | 'method'>
+  ): Promise<ApiResponse<T>> {
     return this.request<T>({ ...config, url, method: 'DELETE' });
   }
 }

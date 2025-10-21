@@ -14,6 +14,7 @@
 **Current State:** The Narratives section is **severely under-designed** compared to Mental Models section, creating a jarring inconsistency in user experience.
 
 **Gap Analysis:**
+
 - Mental Models: Professional design system, polished animations, clear hierarchy
 - Narratives: Inline styles, no design tokens, minimal styling, basic layout
 
@@ -30,6 +31,7 @@
 #### **1.1 Inline Styles Anti-Pattern**
 
 **Current Implementation:**
+
 ```tsx
 // NarrativeList.tsx (Lines 11-23)
 <div style={{ padding: '40px', textAlign: 'center' }}>
@@ -51,6 +53,7 @@
 ```
 
 **Problems:**
+
 - ❌ No design tokens (hardcoded values everywhere)
 - ❌ Inconsistent with Mental Models design system
 - ❌ Difficult to maintain and update
@@ -67,6 +70,7 @@
 #### **1.2 No Design System Integration**
 
 **Current State:**
+
 ```css
 /* Mental Models uses: */
 --text-lg, --text-base, --space-6, --radius-xl, --shadow-sm, --transition-base
@@ -78,6 +82,7 @@ borderRadius: '8px' // Should be: var(--radius-lg)
 ```
 
 **Problems:**
+
 - ❌ Zero usage of CSS custom properties
 - ❌ Different spacing/sizing than Mental Models
 - ❌ No animation keyframes
@@ -87,6 +92,7 @@ borderRadius: '8px' // Should be: var(--radius-lg)
 **Impact:** HIGH - Creates visual disconnect between sections
 
 **Evidence:**
+
 - Mental Models cards: `var(--shadow-sm)` hover effect
 - Narrative cards: Manual `onMouseEnter/onMouseLeave` with inline styles
 
@@ -95,6 +101,7 @@ borderRadius: '8px' // Should be: var(--radius-lg)
 #### **1.3 Poor Visual Hierarchy**
 
 **Current Layout:**
+
 ```
 HUMMBL Narratives
 6 cognitive narratives loaded
@@ -104,6 +111,7 @@ HUMMBL Narratives
 ```
 
 **Problems:**
+
 - ❌ No Hero section (Mental Models has one)
 - ❌ Generic "HUMMBL Narratives" title (not descriptive)
 - ❌ Minimal context about what narratives ARE
@@ -114,6 +122,7 @@ HUMMBL Narratives
 **Impact:** HIGH - Users don't understand narratives' purpose
 
 **Comparison:**
+
 - Mental Models Hero: Value prop, stats cards, CTAs, features list
 - Narratives Hero: None (just a title and count)
 
@@ -122,6 +131,7 @@ HUMMBL Narratives
 #### **1.4 Missing Animations & Polish**
 
 **Current State:**
+
 - No entrance animations (Mental Models has staggered `fadeInUp`)
 - Manual hover via `onMouseEnter/onMouseLeave` (should use CSS)
 - No loading skeletons (Mental Models has them)
@@ -129,6 +139,7 @@ HUMMBL Narratives
 - No transition system
 
 **Problems:**
+
 - ❌ Cards appear instantly (jarring)
 - ❌ JavaScript hover handlers (performance)
 - ❌ Generic "Loading narratives..." text
@@ -141,6 +152,7 @@ HUMMBL Narratives
 #### **1.5 Inadequate Information Display**
 
 **Current Card Content:**
+
 ```tsx
 ✅ Title
 ✅ ID (narrative_id)
@@ -163,6 +175,7 @@ HUMMBL Narratives
 ```
 
 **Problems:**
+
 - Rich data structure (see `narrative.ts` - 76 lines of types)
 - Only displaying ~40% of available information
 - No detail modal/expandable view
@@ -176,16 +189,16 @@ HUMMBL Narratives
 
 #### **2.1 Card Design Mismatch**
 
-| Feature | Mental Models | Narratives | Status |
-|---------|--------------|------------|---------|
-| **Top accent line** | ✅ Green line on hover | ❌ None | MISSING |
-| **Shadow system** | ✅ Multi-layer `--shadow-sm` | ❌ Basic box-shadow | INCONSISTENT |
-| **Border** | ✅ `var(--border-light)` | ❌ `#e5e7eb` | INCONSISTENT |
-| **Border radius** | ✅ `var(--radius-xl)` (12px) | ❌ `8px` | INCONSISTENT |
-| **Padding** | ✅ `var(--space-6)` (24px) | ❌ `20px` | INCONSISTENT |
-| **Hover lift** | ✅ `translateY(-2px)` CSS | ❌ JS inline style | INCONSISTENT |
-| **Ring effect** | ✅ `0 0 0 3px rgba(...)` | ❌ None | MISSING |
-| **Animations** | ✅ Staggered delays | ❌ None | MISSING |
+| Feature             | Mental Models                | Narratives          | Status       |
+| ------------------- | ---------------------------- | ------------------- | ------------ |
+| **Top accent line** | ✅ Green line on hover       | ❌ None             | MISSING      |
+| **Shadow system**   | ✅ Multi-layer `--shadow-sm` | ❌ Basic box-shadow | INCONSISTENT |
+| **Border**          | ✅ `var(--border-light)`     | ❌ `#e5e7eb`        | INCONSISTENT |
+| **Border radius**   | ✅ `var(--radius-xl)` (12px) | ❌ `8px`            | INCONSISTENT |
+| **Padding**         | ✅ `var(--space-6)` (24px)   | ❌ `20px`           | INCONSISTENT |
+| **Hover lift**      | ✅ `translateY(-2px)` CSS    | ❌ JS inline style  | INCONSISTENT |
+| **Ring effect**     | ✅ `0 0 0 3px rgba(...)`     | ❌ None             | MISSING      |
+| **Animations**      | ✅ Staggered delays          | ❌ None             | MISSING      |
 
 ---
 
@@ -201,6 +214,7 @@ font-weight: var(--font-semibold) (600)
 ```
 
 **Close, but...**
+
 - Narratives: `fontWeight: 600` (hardcoded)
 - Mental Models: `font-weight: var(--font-semibold)` (design token)
 
@@ -211,6 +225,7 @@ font-weight: var(--font-semibold) (600)
 #### **2.3 Color System Mismatch**
 
 **Narratives Color Definitions:**
+
 ```tsx
 const evidenceColors = {
   A: '#10B981', // Hardcoded
@@ -226,6 +241,7 @@ const categoryColors = {
 ```
 
 **Should Use Design Tokens:**
+
 ```css
 --grade-a: #10b981;
 --grade-b: #3b82f6;
@@ -234,6 +250,7 @@ const categoryColors = {
 ```
 
 **Problems:**
+
 - ❌ Duplicates color definitions
 - ❌ Can't theme or customize
 - ❌ Grade B/C colors don't match design system
@@ -245,12 +262,14 @@ const categoryColors = {
 #### **3.1 No Search/Filter**
 
 **Mental Models Has:**
+
 - Search input with icon
 - Transformation filters (P, I, N, C, D, T)
 - Real-time filtering
 - Result count display
 
 **Narratives Has:**
+
 - Nothing - displays all 6 narratives statically
 
 **Impact:** MEDIUM - Fine for 6 items, but poor scalability
@@ -260,6 +279,7 @@ const categoryColors = {
 #### **3.2 No Hero Section**
 
 **Mental Models Hero Includes:**
+
 - Title: "Cognitive Framework for Better Thinking"
 - Subtitle: Value proposition
 - Stats cards: 120 Mental Models | 6 Transformations
@@ -267,6 +287,7 @@ const categoryColors = {
 - Features: 3 checkmarks with benefits
 
 **Narratives Has:**
+
 - Title: "HUMMBL Narratives"
 - Subtitle: "6 cognitive narratives loaded"
 - Nothing else
@@ -278,22 +299,24 @@ const categoryColors = {
 #### **3.3 No Detail View**
 
 **Current State:**
+
 - Card shows limited info
 - `onClick` handler logs to console
 - No modal, no detail page, no expansion
 
 **Available Data Not Shown:**
+
 ```tsx
 interface Narrative {
   // Displayed: 9 fields
   // Available but hidden: 13 fields
-  
-  examples: Example[];        // ❌ Not shown
-  citations: Citation[];      // ❌ Not shown
-  elicitation_methods: [];    // ❌ Not shown
-  complexity: Complexity;     // ❌ Not shown
-  related_frameworks: [];     // ❌ Not shown
-  changelog: [];              // ❌ Not shown
+
+  examples: Example[]; // ❌ Not shown
+  citations: Citation[]; // ❌ Not shown
+  elicitation_methods: []; // ❌ Not shown
+  complexity: Complexity; // ❌ Not shown
+  related_frameworks: []; // ❌ Not shown
+  changelog: []; // ❌ Not shown
 }
 ```
 
@@ -314,6 +337,7 @@ interface Narrative {
 ```
 
 **Problems:**
+
 - ❌ No semantic HTML5 elements
 - ❌ Not keyboard accessible
 - ❌ Screen readers can't identify card structure
@@ -326,11 +350,13 @@ interface Narrative {
 #### **4.2 No Keyboard Navigation**
 
 **Mental Models:**
+
 - Tab through cards
 - Enter to select
 - Escape to close
 
 **Narratives:**
+
 - Only mouse clicking works
 - No keyboard support
 - No focus indicators
@@ -366,6 +392,7 @@ color: '#6b7280'
 #### **5.1 Inline Style Objects**
 
 **Every render creates new objects:**
+
 ```tsx
 <div style={{    // ❌ New object every render
   display: 'flex',
@@ -390,6 +417,7 @@ onMouseEnter={(e) => {
 ```
 
 **Problems:**
+
 - Direct DOM manipulation on every hover
 - Should use CSS `:hover` pseudo-class
 - Triggers style recalculation
@@ -400,21 +428,21 @@ onMouseEnter={(e) => {
 
 ## 📊 COMPARISON MATRIX
 
-| Feature | Mental Models | Narratives | Gap |
-|---------|--------------|------------|-----|
-| **Design System** | ✅ Full integration | ❌ None | 🔴 Critical |
+| Feature              | Mental Models            | Narratives       | Gap         |
+| -------------------- | ------------------------ | ---------------- | ----------- |
+| **Design System**    | ✅ Full integration      | ❌ None          | 🔴 Critical |
 | **CSS Architecture** | ✅ External CSS + tokens | ❌ Inline styles | 🔴 Critical |
-| **Hero Section** | ✅ Comprehensive | ❌ Missing | 🔴 Critical |
-| **Card Animations** | ✅ Staggered entrance | ❌ None | 🔴 Critical |
-| **Hover Effects** | ✅ Multi-layer CSS | ❌ JS inline | 🟡 High |
-| **Search/Filter** | ✅ Full system | ❌ None | 🟡 High |
-| **Loading States** | ✅ Skeletons | ❌ Basic text | 🟡 High |
-| **Empty States** | ✅ Designed | ❌ Basic | 🟡 High |
-| **Detail View** | ✅ (planned) | ❌ None | 🟡 High |
-| **Keyboard Nav** | ✅ Full support | ❌ None | 🟠 Medium |
-| **Semantic HTML** | ✅ Proper tags | ❌ Divs only | 🟠 Medium |
-| **Responsive** | ✅ Mobile-first | ⚠️ Basic grid | 🟠 Medium |
-| **Print Styles** | ✅ Optimized | ❌ None | 🟢 Low |
+| **Hero Section**     | ✅ Comprehensive         | ❌ Missing       | 🔴 Critical |
+| **Card Animations**  | ✅ Staggered entrance    | ❌ None          | 🔴 Critical |
+| **Hover Effects**    | ✅ Multi-layer CSS       | ❌ JS inline     | 🟡 High     |
+| **Search/Filter**    | ✅ Full system           | ❌ None          | 🟡 High     |
+| **Loading States**   | ✅ Skeletons             | ❌ Basic text    | 🟡 High     |
+| **Empty States**     | ✅ Designed              | ❌ Basic         | 🟡 High     |
+| **Detail View**      | ✅ (planned)             | ❌ None          | 🟡 High     |
+| **Keyboard Nav**     | ✅ Full support          | ❌ None          | 🟠 Medium   |
+| **Semantic HTML**    | ✅ Proper tags           | ❌ Divs only     | 🟠 Medium   |
+| **Responsive**       | ✅ Mobile-first          | ⚠️ Basic grid    | 🟠 Medium   |
+| **Print Styles**     | ✅ Optimized             | ❌ None          | 🟢 Low      |
 
 **Overall Grade:** Mental Models = **A- (90%)** | Narratives = **C+ (60%)**
 
@@ -427,29 +455,37 @@ onMouseEnter={(e) => {
 **Priority: P0 - Critical**
 
 #### Step 1.1: Create CSS Files
+
 ```bash
 touch src/components/narratives/NarrativeList.css
 touch src/components/narratives/NarrativeCard.css
 ```
 
 #### Step 1.2: Convert Inline Styles to CSS Classes
+
 - Remove ALL inline `style={}` props
 - Create proper CSS classes
 - Use design tokens from `index.css`
 - Match Mental Models styling patterns
 
 #### Step 1.3: Add Animations
+
 ```css
 .narrative-card {
   animation: fadeInUp 0.4s ease-out both;
 }
 
-.narrative-card:nth-child(1) { animation-delay: 0.05s; }
-.narrative-card:nth-child(2) { animation-delay: 0.1s; }
+.narrative-card:nth-child(1) {
+  animation-delay: 0.05s;
+}
+.narrative-card:nth-child(2) {
+  animation-delay: 0.1s;
+}
 /* ... staggered delays */
 ```
 
 #### Step 1.4: Enhance Card Hover
+
 ```css
 .narrative-card::before {
   content: '';
@@ -482,37 +518,31 @@ Create `NarrativeHero.tsx` component:
     <div className="narrative-hero-header">
       <h2>Cognitive Narratives Framework</h2>
       <p>
-        Deep-dive into the 6 core narrative structures that shape 
-        cognitive elicitation and knowledge representation.
+        Deep-dive into the 6 core narrative structures that shape cognitive elicitation and
+        knowledge representation.
       </p>
     </div>
-    
+
     <div className="narrative-stats">
       <div className="stat-card">
         <div className="stat-number">6</div>
         <div className="stat-label">Core Narratives</div>
-        <div className="stat-description">
-          Foundational narrative structures
-        </div>
+        <div className="stat-description">Foundational narrative structures</div>
       </div>
-      
+
       <div className="stat-card">
         <div className="stat-number">120+</div>
         <div className="stat-label">Mental Models</div>
-        <div className="stat-description">
-          Connected through narratives
-        </div>
+        <div className="stat-description">Connected through narratives</div>
       </div>
-      
+
       <div className="stat-card">
         <div className="stat-number">A-Grade</div>
         <div className="stat-label">Evidence Quality</div>
-        <div className="stat-description">
-          Academically validated frameworks
-        </div>
+        <div className="stat-description">Academically validated frameworks</div>
       </div>
     </div>
-    
+
     <div className="narrative-features">
       <div className="feature">
         <svg>✓</svg>
@@ -540,32 +570,33 @@ Create `NarrativeHero.tsx` component:
 #### 3.1: Add More Card Data
 
 Show complexity indicators:
+
 ```tsx
 <div className="narrative-complexity">
   <span className="complexity-badge" data-level={narrative.complexity.cognitive_load}>
     {narrative.complexity.cognitive_load} load
   </span>
-  <span className="complexity-time">
-    {narrative.complexity.time_to_elicit}
-  </span>
+  <span className="complexity-time">{narrative.complexity.time_to_elicit}</span>
 </div>
 ```
 
 #### 3.2: Add Citations Count
+
 ```tsx
 <div className="metadata-item">
   <span className="metadata-label">Citations</span>
-  <div className="metadata-value">
-    {narrative.citations.length}
-  </div>
+  <div className="metadata-value">{narrative.citations.length}</div>
 </div>
 ```
 
 #### 3.3: Show Domain Tags
+
 ```tsx
 <div className="narrative-domains">
-  {narrative.domain.map(d => (
-    <span className="domain-badge" key={d}>{d}</span>
+  {narrative.domain.map((d) => (
+    <span className="domain-badge" key={d}>
+      {d}
+    </span>
   ))}
 </div>
 ```
@@ -579,6 +610,7 @@ Show complexity indicators:
 Create `NarrativeDetailModal.tsx`:
 
 **Sections:**
+
 1. **Header:** Title, ID, Evidence grade, Version
 2. **Summary:** Expanded description
 3. **Complexity:** Visual indicators (cognitive load, time, expertise)
@@ -599,13 +631,11 @@ Create `NarrativeDetailModal.tsx`:
 **Priority: P2 - Medium**
 
 Add filtering system:
+
 ```tsx
 <div className="narrative-filters">
-  <input 
-    className="search-input" 
-    placeholder="Search narratives..."
-  />
-  
+  <input className="search-input" placeholder="Search narratives..." />
+
   <div className="filter-buttons">
     <button className="filter-btn">All</button>
     <button className="filter-btn">Perspective</button>
@@ -623,6 +653,7 @@ Add filtering system:
 **Priority: P1 - High**
 
 #### 6.1: Semantic HTML
+
 ```tsx
 <article className="narrative-card" tabIndex={0} role="button">
   <header>
@@ -634,6 +665,7 @@ Add filtering system:
 ```
 
 #### 6.2: Keyboard Support
+
 ```tsx
 onKeyDown={(e) => {
   if (e.key === 'Enter' || e.key === ' ') {
@@ -643,8 +675,9 @@ onKeyDown={(e) => {
 ```
 
 #### 6.3: ARIA Labels
+
 ```tsx
-<button 
+<button
   aria-label={`View details for ${narrative.title}`}
   aria-describedby={`narrative-${narrative.narrative_id}`}
 >
@@ -657,23 +690,27 @@ onKeyDown={(e) => {
 ### **Before → After Metrics:**
 
 **Visual Quality:**
+
 - Card Design: 5/10 → 9/10
 - Animation: 2/10 → 9/10
 - Consistency: 3/10 → 10/10
 - Information Density: 4/10 → 8/10
 
 **User Experience:**
+
 - Navigation: 6/10 → 9/10
 - Understanding: 5/10 → 9/10
 - Engagement: 4/10 → 8/10
 - Accessibility: 4/10 → 9/10
 
 **Technical Quality:**
+
 - Architecture: 3/10 → 10/10
 - Performance: 7/10 → 9/10
 - Maintainability: 3/10 → 9/10
 
 **Overall Grade:**
+
 - Current: **C+ (60%)**
 - Target: **A- (90%)**
 
@@ -682,27 +719,23 @@ onKeyDown={(e) => {
 ## 🚨 CRITICAL PATH
 
 **Must-Do (Ship-Blockers):**
+
 1. ✅ Convert inline styles to CSS
 2. ✅ Integrate design system tokens
 3. ✅ Add Hero section
 4. ✅ Add card animations
 5. ✅ Fix accessibility issues
 
-**Should-Do (Quality):**
-6. ⚠️ Add detail modal
-7. ⚠️ Show more card information
-8. ⚠️ Add loading skeletons
+**Should-Do (Quality):** 6. ⚠️ Add detail modal 7. ⚠️ Show more card information 8. ⚠️ Add loading skeletons
 
-**Nice-to-Have (Enhancement):**
-9. 🔵 Search/filter system
-10. 🔵 Empty states
-11. 🔵 Print styles
+**Nice-to-Have (Enhancement):** 9. 🔵 Search/filter system 10. 🔵 Empty states 11. 🔵 Print styles
 
 ---
 
 ## 📁 FILES TO CREATE/MODIFY
 
 **Create:**
+
 ```
 src/components/narratives/NarrativeList.css
 src/components/narratives/NarrativeCard.css
@@ -713,6 +746,7 @@ src/components/narratives/NarrativeDetailModal.css (optional)
 ```
 
 **Modify:**
+
 ```
 src/components/narratives/NarrativeList.tsx (remove inline styles)
 src/components/narratives/NarrativeCard.tsx (remove inline styles, add semantic HTML)
@@ -738,7 +772,7 @@ src/components/narratives/NarrativeCard.tsx (remove inline styles, add semantic 
 
 .model-card:hover {
   transform: translateY(-2px);
-  box-shadow: 
+  box-shadow:
     0 8px 16px rgba(0, 0, 0, 0.08),
     0 4px 8px rgba(0, 0, 0, 0.04),
     0 0 0 3px rgba(16, 185, 129, 0.1);

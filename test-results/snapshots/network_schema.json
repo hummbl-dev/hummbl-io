@@ -16,13 +16,6 @@
     ]
   },
   "sample_edge": {
-    "fields": [
-      "source",
-      "target",
-      "type",
-      "description",
-      "weight",
-      "bidirectional"
-    ]
+    "fields": ["source", "target", "type", "description", "weight", "bidirectional"]
   }
 }

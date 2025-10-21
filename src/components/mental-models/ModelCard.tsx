@@ -1,4 +1,4 @@
-import type { MentalModel } from '@/models/mentalModels';
+import type { MentalModel } from '@cascade/types/mental-model';
 
 type ModelCardProps = {
   model: MentalModel;
@@ -7,18 +7,16 @@ type ModelCardProps = {
 
 const ModelCard = ({ model, onSelect }: ModelCardProps) => {
   return (
-    <div
-      data-testid="model-card"
-      onClick={() => onSelect(model)}
-      className="model-card"
-    >
+    <div data-testid="model-card" onClick={() => onSelect(model)} className="model-card">
       {/* Header with code */}
       <div className="model-header">
         <span className="model-code">{model.code}</span>
       </div>
 
       {/* Title */}
-      <h3 className="model-name" data-testid="model-name">{model.name}</h3>
+      <h3 className="model-name" data-testid="model-name">
+        {model.name}
+      </h3>
 
       {/* Description */}
       {model.description && (
@@ -28,15 +26,13 @@ const ModelCard = ({ model, onSelect }: ModelCardProps) => {
       )}
 
       {/* Example */}
-      {model.example && (
-        <div className="model-example">{model.example}</div>
-      )}
+      {model.example && <div className="model-example">{model.example}</div>}
 
       {/* Footer with metadata */}
       <div className="model-footer">
         <div className="model-meta">
           {model.sources && model.sources.length > 0 && (
-            <span className="model-sources" title={model.sources.map(s => s.name).join(', ')}>
+            <span className="model-sources" title={model.sources.map((s) => s.name).join(', ')}>
               {model.sources.length} {model.sources.length === 1 ? 'source' : 'sources'}
             </span>
           )}

@@ -1,6 +1,6 @@
 export function validateCascadeContext(obj: any): { valid: boolean; errors: string[] } {
   const errors: string[] = [];
-  
+
   // Basic validation
   if (!obj) {
     return { valid: false, errors: ['Context object is null or undefined'] };
@@ -65,7 +65,7 @@ export function validateCascadeContext(obj: any): { valid: boolean; errors: stri
 
   return {
     valid: errors.length === 0,
-    errors
+    errors,
   };
 }
 

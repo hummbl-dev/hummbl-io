@@ -10,12 +10,15 @@ const PORT = process.env.PORT || 4000;
 
 // Security middleware
 app.use(helmet());
-app.use(cors({
-  origin: process.env.NODE_ENV === 'production' 
-    ? ['https://hummbl.io', 'https://www.hummbl.io']
-    : ['http://localhost:5173', 'http://localhost:3000'],
-  credentials: true,
-}));
+app.use(
+  cors({
+    origin:
+      process.env.NODE_ENV === 'production'
+        ? ['https://hummbl.io', 'https://www.hummbl.io']
+        : ['http://localhost:5173', 'http://localhost:3000'],
+    credentials: true,
+  })
+);
 
 // Rate limiting
 const limiter = rateLimit({
@@ -40,37 +43,39 @@ app.get('/health', (req, res) => {
 // Mock API proxy endpoint
 app.post('/api/proxy', (req, res) => {
   const { provider, model, messages } = req.body;
-  
+
   console.log(`[PROXY] ${provider}/${model} - ${messages?.length || 0} messages`);
-  
+
   // Mock response
   res.json({
     id: 'mock-response-' + Date.now(),
     object: 'chat.completion',
     created: Math.floor(Date.now() / 1000),
     model: model,
-    choices: [{
-      index: 0,
-      message: {
-        role: 'assistant',
-        content: `Mock response from ${provider}/${model}. This is a test response from the HUMMBL backend proxy.`
+    choices: [
+      {
+        index: 0,
+        message: {
+          role: 'assistant',
+          content: `Mock response from ${provider}/${model}. This is a test response from the HUMMBL backend proxy.`,
+        },
+        finish_reason: 'stop',
       },
-      finish_reason: 'stop'
-    }],
+    ],
     usage: {
       prompt_tokens: 50,
       completion_tokens: 20,
-      total_tokens: 70
-    }
+      total_tokens: 70,
+    },
   });
 });
 
 // Mock auth endpoint
 app.post('/api/auth/login', (req, res) => {
   const { email, password } = req.body;
-  
+
   console.log(`[AUTH] Login attempt: ${email}`);
-  
+
   if (email === 'demo@hummbl.io' && password === 'demo123') {
     res.json({
       user: {
@@ -92,9 +97,9 @@ app.post('/api/auth/login', (req, res) => {
 // Mock telemetry endpoint
 app.post('/api/telemetry/event', (req, res) => {
   const event = req.body;
-  
+
   console.log(`[TELEMETRY] ${event.event} - Task: ${event.taskId}`);
-  
+
   res.json({
     success: true,
     message: 'Telemetry event recorded',

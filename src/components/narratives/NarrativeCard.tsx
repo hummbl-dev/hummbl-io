@@ -1,6 +1,6 @@
 // Narrative card component
 
-import type { Narrative } from '../../types/narrative';
+import type { Narrative } from '../../../cascade/types/narrative';
 import './NarrativeCard.css';
 
 interface NarrativeCardProps {
@@ -25,7 +25,6 @@ export function NarrativeCard({ narrative, onClick }: NarrativeCardProps) {
     }
   };
 
-
   return (
     <article
       className="narrative-card"
@@ -37,20 +36,14 @@ export function NarrativeCard({ narrative, onClick }: NarrativeCardProps) {
     >
       {/* Header */}
       <header className="narrative-card-header">
-        <h3 className="narrative-card-title">
-          {narrative.title}
-        </h3>
+        <h3 className="narrative-card-title">{narrative.title}</h3>
         {narrative.category && (
-          <span className="narrative-category-badge">
-            {narrative.category}
-          </span>
+          <span className="narrative-category-badge">{narrative.category}</span>
         )}
       </header>
 
       {/* Summary */}
-      <p className="narrative-card-summary">
-        {narrative.summary}
-      </p>
+      <p className="narrative-card-summary">{narrative.summary}</p>
 
       {/* Footer with minimal info */}
       <div className="narrative-card-footer">
@@ -62,7 +55,8 @@ export function NarrativeCard({ narrative, onClick }: NarrativeCardProps) {
           )}
           {narrative.linked_signals && narrative.linked_signals.length > 0 && (
             <span className="signal-count" title="Linked Signals">
-              {narrative.linked_signals.length} {narrative.linked_signals.length === 1 ? 'signal' : 'signals'}
+              {narrative.linked_signals.length}{' '}
+              {narrative.linked_signals.length === 1 ? 'signal' : 'signals'}
             </span>
           )}
         </div>

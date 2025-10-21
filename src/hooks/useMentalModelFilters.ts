@@ -1,5 +1,5 @@
 import { useState, useMemo } from 'react';
-import type { MentalModel } from '@/models/mentalModels';
+import type { MentalModel } from '@cascade/types/mental-model';
 import type { FilterOptions } from '../components/mental-models/MentalModelsFilters';
 
 export function useMentalModelFilters(models: MentalModel[]) {
@@ -35,15 +35,15 @@ export function useMentalModelFilters(models: MentalModel[]) {
     // Apply search filter (minimum 2 characters for better accuracy)
     if (filters.searchTerm && filters.searchTerm.length >= 2) {
       const searchLower = filters.searchTerm.toLowerCase();
-      const searchWords = searchLower.split(/\s+/).filter(w => w.length > 0);
-      
+      const searchWords = searchLower.split(/\s+/).filter((w) => w.length > 0);
+
       result = result
         .map((model) => {
           let score = 0;
           const nameLower = model.name.toLowerCase();
           const descLower = model.description?.toLowerCase() || '';
           const codeLower = model.code?.toLowerCase() || '';
-          
+
           // Exact name match (highest priority)
           if (nameLower === searchLower) {
             score += 1000;
@@ -53,42 +53,45 @@ export function useMentalModelFilters(models: MentalModel[]) {
             score += 500;
           }
           // Name contains search at word boundary
-          else if (new RegExp(`\\b${searchLower.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')}`).test(nameLower)) {
+          else if (
+            new RegExp(`\\b${searchLower.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')}`).test(nameLower)
+          ) {
             score += 300;
           }
           // Name contains search anywhere
           else if (nameLower.includes(searchLower)) {
             score += 100;
           }
-          
+
           // Code exact match
           if (codeLower === searchLower) {
             score += 400;
           } else if (codeLower.includes(searchLower)) {
             score += 50;
           }
-          
+
           // Check if all search words match
-          const allWordsMatch = searchWords.every(word =>
-            nameLower.includes(word) || 
-            descLower.includes(word) ||
-            model.tags?.some(tag => tag.toLowerCase().includes(word))
+          const allWordsMatch = searchWords.every(
+            (word) =>
+              nameLower.includes(word) ||
+              descLower.includes(word) ||
+              model.tags?.some((tag) => tag.toLowerCase().includes(word))
           );
-          
+
           if (allWordsMatch) {
             score += 200;
           }
-          
+
           // Description contains search
           if (descLower.includes(searchLower)) {
             score += 50;
           }
-          
+
           // Tags contain search
           if (model.tags?.some((tag) => tag.toLowerCase().includes(searchLower))) {
             score += 75;
           }
-          
+
           return { model, score };
         })
         .filter(({ score }) => score > 0)

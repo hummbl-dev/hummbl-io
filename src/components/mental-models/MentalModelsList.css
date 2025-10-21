@@ -104,8 +104,9 @@
 
 .model-card:hover {
   transform: translateY(-4px);
-  box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1),
-              0 8px 10px -6px rgba(0, 0, 0, 0.1);
+  box-shadow:
+    0 10px 25px -5px rgba(0, 0, 0, 0.1),
+    0 8px 10px -6px rgba(0, 0, 0, 0.1);
   border-color: #cbd5e0;
 }
 
@@ -365,28 +366,28 @@
   .mental-models-container {
     padding: 1rem 1.25rem 2.5rem;
   }
-  
+
   .filters {
     flex-direction: column;
     gap: 1.25rem;
   }
-  
+
   .search-box,
   .filter-group {
     width: 100%;
     max-width: 100%;
   }
-  
+
   .filter-group {
     flex-direction: column;
     align-items: flex-start;
     gap: 0.5rem;
   }
-  
+
   .filter-select {
     width: 100%;
   }
-  
+
   .models-grid {
     grid-template-columns: 1fr;
     gap: 1.25rem;
@@ -403,37 +404,38 @@
     border-color: #4a5568;
     color: #e2e8f0;
   }
-  
+
   .search-input:focus,
   .filter-select:focus {
     border-color: #63b3ed;
     box-shadow: 0 0 0 3px rgba(99, 179, 237, 0.3);
   }
-  
+
   .model-card {
     background-color: #2d3748;
     border-color: #4a5568;
   }
-  
+
   .model-card:hover {
     border-color: #718096;
-    box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.25),
-                0 8px 10px -6px rgba(0, 0, 0, 0.2);
+    box-shadow:
+      0 10px 25px -5px rgba(0, 0, 0, 0.25),
+      0 8px 10px -6px rgba(0, 0, 0, 0.2);
   }
-  
+
   .model-name {
     color: #f7fafc;
   }
-  
+
   .model-code {
     color: #bfdbfe;
     background-color: rgba(30, 58, 138, 0.3);
   }
-  
+
   .model-definition {
     color: #e5e7eb;
   }
-  
+
   .model-transformation {
     background-color: rgba(55, 65, 81, 0.4);
     color: #f3f4f6;
@@ -486,7 +488,7 @@
     background-color: rgba(55, 65, 81, 0.5);
     color: #e5e7eb;
   }
-  
+
   .model-footer {
     border-color: #4a5568;
   }
@@ -517,17 +519,17 @@
     background-color: #60a5fa;
     color: #1e293b;
   }
-  
+
   .model-example {
     background-color: rgba(55, 65, 81, 0.3);
     border-left-color: #6b7280;
     color: #e5e7eb;
   }
-  
+
   .model-example::before {
     color: #f3f4f6;
   }
-  
+
   .no-results {
     background-color: rgba(74, 85, 104, 0.3);
     border-color: #4a5568;
@@ -537,8 +539,13 @@
 
 /* Animation for loading state */
 @keyframes pulse {
-  0%, 100% { opacity: 0.6; }
-  50% { opacity: 1; }
+  0%,
+  100% {
+    opacity: 0.6;
+  }
+  50% {
+    opacity: 1;
+  }
 }
 
 .loading-card {
@@ -561,7 +568,7 @@
     border: 1px solid #e2e8f0;
     page-break-inside: avoid;
   }
-  
+
   .models-grid {
     display: block;
   }

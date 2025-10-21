@@ -18,7 +18,7 @@ export class TaskClassifier {
       /create|write|generate.*file/i,
       /delete|remove.*file/i,
       /add.*to.*file|modify.*code|update.*component/i,
-      /implement.*improvements|implement.*changes|implement.*system/i
+      /implement.*improvements|implement.*changes|implement.*system/i,
     ],
     commandExecution: [
       /run|execute|start|launch/i,
@@ -28,23 +28,23 @@ export class TaskClassifier {
       /git|commit|push|pull/i,
       /fix.*build|fix.*error/i,
       /add.*streaming|add.*responses/i,
-      /implement.*improvements|implement.*changes/i
+      /implement.*improvements|implement.*changes/i,
     ],
     gitOperations: [
       /git|commit|push|pull|merge|branch/i,
       /version control|repository/i,
-      /deploy|deployment/i
+      /deploy|deployment/i,
     ],
     realTimeData: [
       /current|latest|real.?time|live/i,
       /status|health|monitor/i,
-      /logs|metrics|analytics/i
+      /logs|metrics|analytics/i,
     ],
     environmentState: [
       /environment|env|config/i,
       /server|database|api.*status/i,
-      /dependencies|packages/i
-    ]
+      /dependencies|packages/i,
+    ],
   };
 
   // Reasoning keywords and patterns
@@ -53,30 +53,30 @@ export class TaskClassifier {
       /analyze|analysis|examine|investigate/i,
       /why|how|explain|understand/i,
       /compare|contrast|evaluate/i,
-      /pros.*cons|advantages.*disadvantages/i
+      /pros.*cons|advantages.*disadvantages/i,
     ],
     research: [
       /research|study|investigate/i,
       /best practices|patterns|approaches/i,
       /what.*is|define|explain/i,
-      /learn|understand|knowledge/i
+      /learn|understand|knowledge/i,
     ],
     comparison: [
       /compare|vs|versus|difference/i,
       /which.*better|choose.*between/i,
-      /pros.*cons|trade.?offs/i
+      /pros.*cons|trade.?offs/i,
     ],
     architecturalDesign: [
       /architecture|design|structure/i,
       /system.*design|scalability/i,
       /patterns|principles/i,
-      /microservices|monolith/i
+      /microservices|monolith/i,
     ],
     documentation: [
       /document|docs|readme/i,
       /explain|describe|outline/i,
-      /guide|tutorial|instructions/i
-    ]
+      /guide|tutorial|instructions/i,
+    ],
   };
 
   // Creative keywords and patterns
@@ -84,28 +84,24 @@ export class TaskClassifier {
     contentGeneration: [
       /write|create|generate.*content/i,
       /blog|article|post/i,
-      /copy|text|content/i
+      /copy|text|content/i,
     ],
     creativeWriting: [
       /story|narrative|creative/i,
       /write.*story|fiction/i,
-      /poem|poetry|creative.*writing/i
+      /poem|poetry|creative.*writing/i,
     ],
     marketingCopy: [
       /marketing|advertisement|ad.*copy/i,
       /landing.*page|sales.*page/i,
-      /tagline|slogan|headline/i
+      /tagline|slogan|headline/i,
     ],
-    userStories: [
-      /user.*story|user.*journey/i,
-      /persona|use.*case/i,
-      /requirements|specs/i
-    ],
+    userStories: [/user.*story|user.*journey/i, /persona|use.*case/i, /requirements|specs/i],
     brainstorming: [
       /brainstorm|ideas|creative.*thinking/i,
       /possibilities|options|alternatives/i,
-      /innovative|novel|unique/i
-    ]
+      /innovative|novel|unique/i,
+    ],
   };
 
   // Project type detection
@@ -115,7 +111,7 @@ export class TaskClassifier {
     fullstack: [/fullstack|full.stack|end.to.end/i],
     mobile: [/mobile|ios|android|react.native/i],
     desktop: [/desktop|electron|native/i],
-    ai: [/ai|ml|machine.learning|neural/i]
+    ai: [/ai|ml|machine.learning|neural/i],
   };
 
   /**
@@ -139,13 +135,13 @@ export class TaskClassifier {
       requiresMarketingCopy: false,
       requiresUserStories: false,
       requiresBrainstorming: false,
-      
+
       // Default values
       projectType: 'other',
       urgency: 'medium',
       complexity: 'moderate',
       userIntent: userInput,
-      conversationHistory
+      conversationHistory,
     };
 
     const detectedIntents: string[] = [];
@@ -153,25 +149,25 @@ export class TaskClassifier {
 
     // Analyze execution requirements
     this.analyzeExecutionRequirements(userInput, context, detectedIntents);
-    
+
     // Analyze reasoning requirements
     this.analyzeReasoningRequirements(userInput, context, detectedIntents);
-    
+
     // Analyze creative requirements
     this.analyzeCreativeRequirements(userInput, context, detectedIntents);
-    
+
     // Detect project type
     context.projectType = this.detectProjectType(userInput);
-    
+
     // Detect urgency
     context.urgency = this.detectUrgency(userInput);
-    
+
     // Detect complexity
     context.complexity = this.detectComplexity(userInput);
-    
+
     // Generate prompt enhancements
     this.generatePromptEnhancements(context, suggestedPromptEnhancements);
-    
+
     // Calculate confidence
     const confidence = this.calculateConfidence(detectedIntents, userInput);
 
@@ -179,7 +175,7 @@ export class TaskClassifier {
       context,
       confidence,
       detectedIntents,
-      suggestedPromptEnhancements
+      suggestedPromptEnhancements,
     };
   }
 
@@ -187,8 +183,8 @@ export class TaskClassifier {
    * Analyze if task requires execution capabilities
    */
   private analyzeExecutionRequirements(
-    input: string, 
-    context: TaskContext, 
+    input: string,
+    context: TaskContext,
     intents: string[]
   ): void {
     // Check file access patterns
@@ -226,8 +222,8 @@ export class TaskClassifier {
    * Analyze if task requires reasoning capabilities
    */
   private analyzeReasoningRequirements(
-    input: string, 
-    context: TaskContext, 
+    input: string,
+    context: TaskContext,
     intents: string[]
   ): void {
     if (this.matchesAnyPattern(input, this.reasoningPatterns.deepAnalysis)) {
@@ -260,8 +256,8 @@ export class TaskClassifier {
    * Analyze if task requires creative capabilities
    */
   private analyzeCreativeRequirements(
-    input: string, 
-    context: TaskContext, 
+    input: string,
+    context: TaskContext,
     intents: string[]
   ): void {
     if (this.matchesAnyPattern(input, this.creativePatterns.contentGeneration)) {
@@ -337,10 +333,7 @@ export class TaskClassifier {
   /**
    * Generate prompt enhancement suggestions
    */
-  private generatePromptEnhancements(
-    context: TaskContext, 
-    enhancements: string[]
-  ): void {
+  private generatePromptEnhancements(context: TaskContext, enhancements: string[]): void {
     if (context.requiresFileAccess && !context.requiresCommandExecution) {
       enhancements.push('Consider specifying which files need to be accessed');
     }
@@ -368,7 +361,7 @@ export class TaskClassifier {
    * Check if input matches any pattern in array
    */
   private matchesAnyPattern(_input: string, patterns: RegExp[]): boolean {
-    return patterns.some(pattern => pattern.test(_input));
+    return patterns.some((pattern) => pattern.test(_input));
   }
 }
 

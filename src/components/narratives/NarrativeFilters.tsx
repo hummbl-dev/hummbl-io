@@ -2,8 +2,13 @@
 
 import { useState, useEffect } from 'react';
 import type { FilterOptions } from '../../hooks/useNarrativeFilters';
-import type { Narrative } from '../../types/narrative';
-import { exportToJSON, exportToCSV, exportToMarkdown, getExportFilename } from '../../utils/exportNarratives';
+import type { Narrative } from '../../../cascade/types/narrative';
+import {
+  exportToJSON,
+  exportToCSV,
+  exportToMarkdown,
+  getExportFilename,
+} from '../../utils/exportNarratives';
 import './NarrativeFilters.css';
 
 interface NarrativeFiltersProps {
@@ -84,7 +89,7 @@ export function NarrativeFilters({
 
   const handleExport = (format: 'json' | 'csv' | 'md') => {
     const filename = getExportFilename(format);
-    
+
     switch (format) {
       case 'json':
         exportToJSON(narratives, filename);
@@ -96,7 +101,7 @@ export function NarrativeFilters({
         exportToMarkdown(narratives, filename);
         break;
     }
-    
+
     setShowExportMenu(false);
   };
 
@@ -122,9 +127,17 @@ export function NarrativeFilters({
       {/* Search Bar */}
       <div className="filter-search">
         <div className="search-input-wrapper">
-          <svg className="search-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-            <circle cx="11" cy="11" r="8"/>
-            <path d="m21 21-4.35-4.35"/>
+          <svg
+            className="search-icon"
+            width="20"
+            height="20"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            strokeWidth="2"
+          >
+            <circle cx="11" cy="11" r="8" />
+            <path d="m21 21-4.35-4.35" />
           </svg>
           <input
             type="text"
@@ -135,11 +148,7 @@ export function NarrativeFilters({
             aria-label="Search narratives"
           />
           {searchInput && (
-            <button
-              className="search-clear"
-              onClick={handleClearSearch}
-              aria-label="Clear search"
-            >
+            <button className="search-clear" onClick={handleClearSearch} aria-label="Clear search">
               ✕
             </button>
           )}
@@ -149,7 +158,9 @@ export function NarrativeFilters({
       {/* Filter Controls */}
       <div className="filter-controls">
         <div className="filter-group">
-          <label htmlFor="category-filter" className="filter-label">Category</label>
+          <label htmlFor="category-filter" className="filter-label">
+            Category
+          </label>
           <select
             id="category-filter"
             className="filter-select"
@@ -166,7 +177,9 @@ export function NarrativeFilters({
         </div>
 
         <div className="filter-group">
-          <label htmlFor="grade-filter" className="filter-label">Evidence Grade</label>
+          <label htmlFor="grade-filter" className="filter-label">
+            Evidence Grade
+          </label>
           <select
             id="grade-filter"
             className="filter-select"
@@ -181,7 +194,9 @@ export function NarrativeFilters({
         </div>
 
         <div className="filter-group">
-          <label htmlFor="complexity-filter" className="filter-label">Complexity</label>
+          <label htmlFor="complexity-filter" className="filter-label">
+            Complexity
+          </label>
           <select
             id="complexity-filter"
             className="filter-select"
@@ -196,7 +211,9 @@ export function NarrativeFilters({
         </div>
 
         <div className="filter-group">
-          <label htmlFor="sort-filter" className="filter-label">Sort By</label>
+          <label htmlFor="sort-filter" className="filter-label">
+            Sort By
+          </label>
           <select
             id="sort-filter"
             className="filter-select"
@@ -217,7 +234,7 @@ export function NarrativeFilters({
           <span className="results-count">
             Showing <strong>{resultCount}</strong> of <strong>{totalCount}</strong> narratives
           </span>
-          
+
           {/* Export Button */}
           <div className="export-dropdown">
             <button
@@ -226,43 +243,62 @@ export function NarrativeFilters({
               aria-label="Export narratives"
               aria-expanded={showExportMenu}
             >
-              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
-                <polyline points="7 10 12 15 17 10"/>
-                <line x1="12" y1="15" x2="12" y2="3"/>
+              <svg
+                width="16"
+                height="16"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth="2"
+              >
+                <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" />
+                <polyline points="7 10 12 15 17 10" />
+                <line x1="12" y1="15" x2="12" y2="3" />
               </svg>
               Export
             </button>
-            
+
             {showExportMenu && (
               <div className="export-menu">
-                <button
-                  className="export-menu-item"
-                  onClick={() => handleExport('json')}
-                >
-                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                    <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
-                    <polyline points="14 2 14 8 20 8"/>
+                <button className="export-menu-item" onClick={() => handleExport('json')}>
+                  <svg
+                    width="16"
+                    height="16"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    strokeWidth="2"
+                  >
+                    <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z" />
+                    <polyline points="14 2 14 8 20 8" />
                   </svg>
                   JSON Format
                 </button>
-                <button
-                  className="export-menu-item"
-                  onClick={() => handleExport('csv')}
-                >
-                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                    <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
-                    <polyline points="14 2 14 8 20 8"/>
+                <button className="export-menu-item" onClick={() => handleExport('csv')}>
+                  <svg
+                    width="16"
+                    height="16"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    strokeWidth="2"
+                  >
+                    <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z" />
+                    <polyline points="14 2 14 8 20 8" />
                   </svg>
                   CSV Format
                 </button>
-                <button
-                  className="export-menu-item"
-                  onClick={() => handleExport('md')}
-                >
-                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                    <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
-                    <polyline points="14 2 14 8 20 8"/>
+                <button className="export-menu-item" onClick={() => handleExport('md')}>
+                  <svg
+                    width="16"
+                    height="16"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    strokeWidth="2"
+                  >
+                    <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z" />
+                    <polyline points="14 2 14 8 20 8" />
                   </svg>
                   Markdown Format
                 </button>

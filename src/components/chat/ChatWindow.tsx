@@ -3,7 +3,7 @@
 import { useRef, useEffect } from 'react';
 import { ChatMessage } from './ChatMessage';
 import { ChatInput } from './ChatInput';
-import type { ChatConversation } from '../../types/chat';
+import type { ChatConversation } from '../../../cascade/types/chat';
 import './ChatWindow.css';
 
 interface ChatWindowProps {
@@ -77,11 +77,7 @@ export function ChatWindow({
             >
               ⚙️
             </button>
-            <button
-              className="chat-close-button"
-              onClick={onClose}
-              aria-label="Close chat"
-            >
+            <button className="chat-close-button" onClick={onClose} aria-label="Close chat">
               ✕
             </button>
           </div>
@@ -131,11 +127,7 @@ export function ChatWindow({
                   <span>Thinking...</span>
                 </div>
               )}
-              {error && (
-                <div className="chat-error">
-                  ⚠️ {error}
-                </div>
-              )}
+              {error && <div className="chat-error">⚠️ {error}</div>}
               <div ref={messagesEndRef} />
             </>
           )}

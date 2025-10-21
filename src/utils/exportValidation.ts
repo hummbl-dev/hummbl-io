@@ -1,6 +1,6 @@
 // Export validation utilities
 
-import type { Narrative } from '../types/narrative';
+import type { Narrative } from '../../cascade/types/narrative';
 
 export interface ValidationResult {
   isValid: boolean;
@@ -44,7 +44,7 @@ export function validateJSONExport(data: unknown): ValidationResult {
  */
 function validateNarrativeStructure(item: unknown, index: number): string[] {
   const errors: string[] = [];
-  
+
   if (typeof item !== 'object' || item === null) {
     errors.push(`Item ${index}: Must be an object`);
     return errors;
@@ -108,14 +108,7 @@ export function validateCSVExport(csvContent: string): ValidationResult {
 
   // Validate header
   const header = lines[0];
-  const requiredColumns = [
-    'ID',
-    'Title',
-    'Category',
-    'Evidence Grade',
-    'Confidence',
-    'Summary',
-  ];
+  const requiredColumns = ['ID', 'Title', 'Category', 'Evidence Grade', 'Confidence', 'Summary'];
 
   requiredColumns.forEach((col) => {
     if (!header.includes(col)) {
@@ -133,7 +126,9 @@ export function validateCSVExport(csvContent: string): ValidationResult {
   for (let i = 1; i < lines.length; i++) {
     const columnCount = lines[i].split(',').length;
     if (columnCount !== headerColumns) {
-      errors.push(`Row ${i + 1}: Column count mismatch (expected ${headerColumns}, got ${columnCount})`);
+      errors.push(
+        `Row ${i + 1}: Column count mismatch (expected ${headerColumns}, got ${columnCount})`
+      );
     }
   }
 

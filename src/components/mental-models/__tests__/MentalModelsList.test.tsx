@@ -5,8 +5,8 @@ import { describe, it, expect, vi } from 'vitest';
 import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import MentalModelsList from '../MentalModelsList';
-import type { MentalModel } from '@/models/mentalModels';
-import type { TransformationKey } from '@/types/transformation';
+import type { MentalModel } from '@cascade/types/mental-model';
+import type { TransformationKey } from '@cascade/types/transformation';
 
 // Mock the mental models data
 const mockModels: MentalModel[] = [
@@ -23,8 +23,8 @@ const mockModels: MentalModel[] = [
       added: '2025-01-01',
       updated: '2025-01-01',
       isCore: true,
-      difficulty: 3
-    }
+      difficulty: 3,
+    },
   },
   {
     id: '2',
@@ -39,9 +39,9 @@ const mockModels: MentalModel[] = [
       added: '2024-05-01',
       updated: '2025-01-01',
       isCore: false,
-      difficulty: 4
-    }
-  }
+      difficulty: 4,
+    },
+  },
 ];
 
 describe('MentalModelsList', () => {
@@ -49,73 +49,49 @@ describe('MentalModelsList', () => {
   const mockOnRetry = vi.fn();
 
   it('renders loading state', () => {
-    render(
-      <MentalModelsList 
-        isLoading={true} 
-        onSelect={mockOnSelect} 
-      />
-    );
-    
+    render(<MentalModelsList isLoading={true} onSelect={mockOnSelect} />);
+
     expect(screen.getByTestId('skeleton-grid')).toBeInTheDocument();
   });
 
   it('renders error state', () => {
     render(
-      <MentalModelsList 
-        error="Failed to load models" 
-        onSelect={mockOnSelect} 
+      <MentalModelsList
+        error="Failed to load models"
+        onSelect={mockOnSelect}
         onRetry={mockOnRetry}
       />
     );
-    
+
     expect(screen.getByText('Failed to load models')).toBeInTheDocument();
     expect(screen.getByRole('button', { name: /retry/i })).toBeInTheDocument();
   });
 
   it('renders empty state when no models are available', () => {
-    render(
-      <MentalModelsList 
-        models={[]} 
-        onSelect={mockOnSelect} 
-      />
-    );
-    
+    render(<MentalModelsList models={[]} onSelect={mockOnSelect} />);
+
     expect(screen.getByText('No models found')).toBeInTheDocument();
   });
 
   it('renders list of models', () => {
-    render(
-      <MentalModelsList 
-        models={mockModels} 
-        onSelect={mockOnSelect} 
-      />
-    );
-    
+    render(<MentalModelsList models={mockModels} onSelect={mockOnSelect} />);
+
     expect(screen.getByText('First Principles')).toBeInTheDocument();
     expect(screen.getByText('Second-Order Thinking')).toBeInTheDocument();
   });
 
   it('calls onSelect when a model is clicked', async () => {
-    render(
-      <MentalModelsList 
-        models={mockModels} 
-        onSelect={mockOnSelect} 
-      />
-    );
-    
+    render(<MentalModelsList models={mockModels} onSelect={mockOnSelect} />);
+
     await userEvent.click(screen.getByText('First Principles'));
     expect(mockOnSelect).toHaveBeenCalledWith(mockModels[0]);
   });
 
   it('calls onRetry when retry button is clicked', async () => {
     render(
-      <MentalModelsList 
-        error="Failed to load" 
-        onSelect={mockOnSelect}
-        onRetry={mockOnRetry}
-      />
+      <MentalModelsList error="Failed to load" onSelect={mockOnSelect} onRetry={mockOnRetry} />
     );
-    
+
     await userEvent.click(screen.getByRole('button', { name: /retry/i }));
     expect(mockOnRetry).toHaveBeenCalled();
   });

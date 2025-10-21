@@ -1,6 +1,6 @@
 // Individual chat message component
 
-import type { ChatMessage as ChatMessageType } from '../../types/chat';
+import type { ChatMessage as ChatMessageType } from '../../../cascade/types/chat';
 import './ChatMessage.css';
 
 interface ChatMessageProps {
@@ -17,24 +17,18 @@ export function ChatMessage({ message }: ChatMessageProps) {
 
   const formatTime = (timestamp: number) => {
     const date = new Date(timestamp);
-    return date.toLocaleTimeString('en-US', { 
-      hour: '2-digit', 
-      minute: '2-digit' 
+    return date.toLocaleTimeString('en-US', {
+      hour: '2-digit',
+      minute: '2-digit',
     });
   };
 
   return (
     <div className={`chat-message ${isUser ? 'user-message' : 'assistant-message'}`}>
-      <div className="message-avatar">
-        {isUser ? '👤' : '🤖'}
-      </div>
+      <div className="message-avatar">{isUser ? '👤' : '🤖'}</div>
       <div className="message-content">
-        <div className="message-text">
-          {message.content}
-        </div>
-        <div className="message-time">
-          {formatTime(message.timestamp)}
-        </div>
+        <div className="message-text">{message.content}</div>
+        <div className="message-time">{formatTime(message.timestamp)}</div>
       </div>
     </div>
   );

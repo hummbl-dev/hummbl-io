@@ -151,38 +151,44 @@ export function useSearchHistory() {
   /**
    * Get recent searches (unique queries)
    */
-  const getRecentSearches = useCallback((limit = 10): string[] => {
-    const seen = new Set<string>();
-    const recent: string[] = [];
+  const getRecentSearches = useCallback(
+    (limit = 10): string[] => {
+      const seen = new Set<string>();
+      const recent: string[] = [];
 
-    for (const entry of history) {
-      const normalized = entry.query.toLowerCase().trim();
-      if (!seen.has(normalized)) {
-        seen.add(normalized);
-        recent.push(entry.query);
-        if (recent.length >= limit) break;
+      for (const entry of history) {
+        const normalized = entry.query.toLowerCase().trim();
+        if (!seen.has(normalized)) {
+          seen.add(normalized);
+          recent.push(entry.query);
+          if (recent.length >= limit) break;
+        }
       }
-    }
 
-    return recent;
-  }, [history]);
+      return recent;
+    },
+    [history]
+  );
 
   /**
    * Get popular searches (most frequent)
    */
-  const getPopularSearches = useCallback((limit = 5): Array<{ query: string; count: number }> => {
-    const counts = new Map<string, number>();
+  const getPopularSearches = useCallback(
+    (limit = 5): Array<{ query: string; count: number }> => {
+      const counts = new Map<string, number>();
 
-    for (const entry of history) {
-      const normalized = entry.query.toLowerCase().trim();
-      counts.set(normalized, (counts.get(normalized) || 0) + 1);
-    }
+      for (const entry of history) {
+        const normalized = entry.query.toLowerCase().trim();
+        counts.set(normalized, (counts.get(normalized) || 0) + 1);
+      }
 
-    return Array.from(counts.entries())
-      .map(([query, count]) => ({ query, count }))
-      .sort((a, b) => b.count - a.count)
-      .slice(0, limit);
-  }, [history]);
+      return Array.from(counts.entries())
+        .map(([query, count]) => ({ query, count }))
+        .sort((a, b) => b.count - a.count)
+        .slice(0, limit);
+    },
+    [history]
+  );
 
   /**
    * Save a search with a name

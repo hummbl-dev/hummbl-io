@@ -192,7 +192,7 @@ describe('Agent Effectiveness', () => {
   describe('getProductivityTrend', () => {
     it('detects improving productivity', () => {
       const baseTime = Date.now();
-      
+
       // First half: low productivity
       for (let i = 0; i < 5; i++) {
         recordTask({

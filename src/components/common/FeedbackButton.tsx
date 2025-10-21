@@ -117,9 +117,7 @@ export const FeedbackButton: React.FC = () => {
                   <textarea
                     id="feedback-message"
                     value={formData.message}
-                    onChange={(e) =>
-                      setFormData({ ...formData, message: e.target.value })
-                    }
+                    onChange={(e) => setFormData({ ...formData, message: e.target.value })}
                     placeholder="Tell us what you think..."
                     rows={5}
                     required
@@ -132,9 +130,7 @@ export const FeedbackButton: React.FC = () => {
                     id="feedback-email"
                     type="email"
                     value={formData.email}
-                    onChange={(e) =>
-                      setFormData({ ...formData, email: e.target.value })
-                    }
+                    onChange={(e) => setFormData({ ...formData, email: e.target.value })}
                     placeholder="your@email.com"
                   />
                   <small>We'll only use this to follow up on your feedback</small>
@@ -142,19 +138,10 @@ export const FeedbackButton: React.FC = () => {
 
                 <div className="feedback-field">
                   <label>Current Page</label>
-                  <input
-                    type="text"
-                    value={formData.url}
-                    disabled
-                    className="feedback-url"
-                  />
+                  <input type="text" value={formData.url} disabled className="feedback-url" />
                 </div>
 
-                <button
-                  type="submit"
-                  className="feedback-submit"
-                  disabled={isSubmitting}
-                >
+                <button type="submit" className="feedback-submit" disabled={isSubmitting}>
                   {isSubmitting ? 'Sending...' : 'Send Feedback'}
                 </button>
               </form>

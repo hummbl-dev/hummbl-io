@@ -40,9 +40,9 @@ export function cosineSimilarity(vecA: number[], vecB: number[]): number {
   }
 
   const denominator = Math.sqrt(normA) * Math.sqrt(normB);
-  
+
   if (denominator === 0) return 0;
-  
+
   return dotProduct / denominator;
 }
 
@@ -68,9 +68,9 @@ export function euclideanDistance(vecA: number[], vecB: number[]): number {
  */
 export function normalizeVector(vec: number[]): number[] {
   const magnitude = Math.sqrt(vec.reduce((sum, val) => sum + val * val, 0));
-  
+
   if (magnitude === 0) return vec;
-  
+
   return vec.map((val) => val / magnitude);
 }
 
@@ -88,7 +88,7 @@ export class SemanticSearch {
       dimensions: config.dimensions || 384,
       ...config,
     };
-    
+
     this.cache = this.loadCache();
   }
 
@@ -165,7 +165,7 @@ export class SemanticSearch {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
-        'Authorization': `Bearer ${this.config.apiKey}`,
+        Authorization: `Bearer ${this.config.apiKey}`,
       },
       body: JSON.stringify({
         input: text,
@@ -202,13 +202,13 @@ export class SemanticSearch {
     // Simple hash-based mock embedding
     let hash = 0;
     for (let i = 0; i < text.length; i++) {
-      hash = ((hash << 5) - hash) + text.charCodeAt(i);
+      hash = (hash << 5) - hash + text.charCodeAt(i);
       hash = hash & hash;
     }
 
     // Generate deterministic vector from hash
     const rng = this.seededRandom(hash);
-    
+
     for (let i = 0; i < dimensions; i++) {
       embedding.push((rng() - 0.5) * 2);
     }
@@ -257,9 +257,7 @@ export class SemanticSearch {
     }
 
     // Sort by score descending and limit
-    return results
-      .sort((a, b) => b.score - a.score)
-      .slice(0, limit);
+    return results.sort((a, b) => b.score - a.score).slice(0, limit);
   }
 
   /**
@@ -289,9 +287,7 @@ export class SemanticSearch {
       });
     }
 
-    return results
-      .sort((a, b) => b.score - a.score)
-      .slice(0, limit);
+    return results.sort((a, b) => b.score - a.score).slice(0, limit);
   }
 
   /**
@@ -303,9 +299,7 @@ export class SemanticSearch {
     // Process in batches
     for (let i = 0; i < texts.length; i += BATCH_SIZE) {
       const batch = texts.slice(i, i + BATCH_SIZE);
-      const batchEmbeddings = await Promise.all(
-        batch.map((text) => this.generateEmbedding(text))
-      );
+      const batchEmbeddings = await Promise.all(batch.map((text) => this.generateEmbedding(text)));
       embeddings.push(...batchEmbeddings);
     }
 

@@ -1,7 +1,7 @@
 // Narrative API endpoints
 
 import { apiClient } from './client';
-import type { Narrative, NarrativesResponse } from '../types/narrative';
+import type { Narrative, NarrativesResponse } from '@cascade/types/narrative';
 
 export const narrativesAPI = {
   /**
@@ -31,7 +31,7 @@ export const narrativesAPI = {
     if (query.category) params.append('category', query.category);
     if (query.evidence_quality) params.append('evidence_quality', query.evidence_quality);
     if (query.min_confidence) params.append('min_confidence', query.min_confidence.toString());
-    if (query.tags) query.tags.forEach(tag => params.append('tags', tag));
+    if (query.tags) query.tags.forEach((tag) => params.append('tags', tag));
 
     return apiClient.get<Narrative[]>(`/narratives/search?${params.toString()}`);
   },

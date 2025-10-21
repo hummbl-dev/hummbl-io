@@ -74,9 +74,9 @@ export function MentalModelsFilters({
     });
   };
 
-  const hasActiveFilters = 
-    filters.searchTerm || 
-    filters.category || 
+  const hasActiveFilters =
+    filters.searchTerm ||
+    filters.category ||
     filters.transformation ||
     filters.sortBy !== 'name-asc';
 
@@ -169,10 +169,7 @@ export function MentalModelsFilters({
           Showing <strong>{resultCount}</strong> of <strong>{totalCount}</strong> mental models
         </div>
         {hasActiveFilters && (
-          <button
-            className="mm-clear-filters"
-            onClick={handleClearFilters}
-          >
+          <button className="mm-clear-filters" onClick={handleClearFilters}>
             Clear All Filters
           </button>
         )}

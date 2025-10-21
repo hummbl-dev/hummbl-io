@@ -37,9 +37,7 @@ export default function HomeScreen() {
     <ScrollView style={styles.container}>
       <View style={styles.header}>
         <Text style={styles.title}>HUMMBL</Text>
-        <Text style={styles.subtitle}>
-          Human Mental Models & Behavioral Logic
-        </Text>
+        <Text style={styles.subtitle}>Human Mental Models & Behavioral Logic</Text>
       </View>
 
       <View style={styles.grid}>

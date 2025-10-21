@@ -9,7 +9,9 @@
   border-radius: 50%;
   background: linear-gradient(135deg, #10b981 0%, #059669 100%);
   border: none;
-  box-shadow: 0 4px 12px rgba(16, 185, 129, 0.4), 0 2px 4px rgba(0, 0, 0, 0.1);
+  box-shadow:
+    0 4px 12px rgba(16, 185, 129, 0.4),
+    0 2px 4px rgba(0, 0, 0, 0.1);
   cursor: pointer;
   display: flex;
   align-items: center;
@@ -21,7 +23,9 @@
 
 .chat-widget-button:hover {
   transform: scale(1.05);
-  box-shadow: 0 6px 16px rgba(16, 185, 129, 0.5), 0 4px 8px rgba(0, 0, 0, 0.15);
+  box-shadow:
+    0 6px 16px rgba(16, 185, 129, 0.5),
+    0 4px 8px rgba(0, 0, 0, 0.15);
 }
 
 .chat-widget-button:active {

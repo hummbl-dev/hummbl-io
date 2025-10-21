@@ -291,9 +291,7 @@ describe('Search Weighting', () => {
       const modelNameWeight = DEFAULT_WEIGHTS.mentalModel.find((w) => w.field === 'name');
       const modelOtherWeights = DEFAULT_WEIGHTS.mentalModel.filter((w) => w.field !== 'name');
 
-      expect(modelOtherWeights.every((w) => (modelNameWeight?.weight || 0) >= w.weight)).toBe(
-        true
-      );
+      expect(modelOtherWeights.every((w) => (modelNameWeight?.weight || 0) >= w.weight)).toBe(true);
     });
   });
 });

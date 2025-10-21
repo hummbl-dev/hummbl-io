@@ -40,7 +40,7 @@ describe('Authentication', () => {
     it('creates session with correct role', () => {
       authenticate('test_password', 'analyst');
       const session = getSession();
-      
+
       expect(session).toBeTruthy();
       expect(session?.role).toBe('analyst');
       expect(session?.authenticated).toBe(true);
@@ -49,7 +49,7 @@ describe('Authentication', () => {
     it('sets session expiration', () => {
       authenticate('test_password', 'admin');
       const session = getSession();
-      
+
       expect(session).toBeTruthy();
       expect(session?.expiresAt).toBeGreaterThan(Date.now());
     });
@@ -79,14 +79,14 @@ describe('Authentication', () => {
 
     it('returns false for expired session', () => {
       authenticate('test_password', 'admin');
-      
+
       // Manually expire session
       const session = getSession();
       if (session) {
         session.expiresAt = Date.now() - 1000;
         localStorage.setItem('hummbl_auth_session', JSON.stringify(session));
       }
-      
+
       expect(hasRole('admin')).toBe(false);
     });
   });
@@ -95,7 +95,7 @@ describe('Authentication', () => {
     it('retrieves current session', () => {
       authenticate('test_password', 'admin');
       const session = getSession();
-      
+
       expect(session).toBeTruthy();
       expect(session?.userId).toBe('admin');
     });
@@ -108,7 +108,7 @@ describe('Authentication', () => {
     it('clears session on logout', () => {
       authenticate('test_password', 'admin');
       expect(isAuthenticated()).toBe(true);
-      
+
       clearSession();
       expect(isAuthenticated()).toBe(false);
       expect(getSession()).toBeNull();
@@ -118,12 +118,12 @@ describe('Authentication', () => {
       authenticate('test_password', 'admin');
       const originalSession = getSession();
       const originalExpiry = originalSession?.expiresAt;
-      
+
       // Wait a bit
       setTimeout(() => {
         extendSession();
         const extendedSession = getSession();
-        
+
         expect(extendedSession?.expiresAt).toBeGreaterThan(originalExpiry!);
       }, 100);
     });
@@ -140,21 +140,21 @@ describe('Authentication', () => {
     it('formats time remaining', () => {
       authenticate('test_password', 'admin');
       const timeRemaining = getSessionTimeRemaining();
-      
+
       expect(timeRemaining).toContain('h');
       expect(timeRemaining).toContain('m');
     });
 
     it('shows expired for past sessions', () => {
       authenticate('test_password', 'admin');
-      
+
       // Manually expire
       const session = getSession();
       if (session) {
         session.expiresAt = Date.now() - 1000;
         localStorage.setItem('hummbl_auth_session', JSON.stringify(session));
       }
-      
+
       // When session is expired but not yet cleared
       const timeRemaining = getSessionTimeRemaining();
       expect(['Expired', 'No session']).toContain(timeRemaining);
@@ -166,7 +166,7 @@ describe('Authentication', () => {
 
     it('admin has all permissions', () => {
       authenticate('test_password', 'admin');
-      
+
       roles.forEach((role) => {
         expect(hasRole(role)).toBe(true);
       });
@@ -174,7 +174,7 @@ describe('Authentication', () => {
 
     it('analyst has analyst and user permissions', () => {
       authenticate('test_password', 'analyst');
-      
+
       expect(hasRole('admin')).toBe(false);
       expect(hasRole('analyst')).toBe(true);
       expect(hasRole('content_editor')).toBe(true);
@@ -183,7 +183,7 @@ describe('Authentication', () => {
 
     it('content_editor has content_editor and user permissions', () => {
       authenticate('test_password', 'content_editor');
-      
+
       expect(hasRole('admin')).toBe(false);
       expect(hasRole('analyst')).toBe(false);
       expect(hasRole('content_editor')).toBe(true);
@@ -192,7 +192,7 @@ describe('Authentication', () => {
 
     it('user has only user permissions', () => {
       authenticate('test_password', 'user');
-      
+
       expect(hasRole('admin')).toBe(false);
       expect(hasRole('analyst')).toBe(false);
       expect(hasRole('content_editor')).toBe(false);

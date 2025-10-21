@@ -7,11 +7,12 @@ import './LoginModal.css';
 interface LoginModalProps {
   isOpen: boolean;
   onClose: () => void;
+  onSuccess?: () => void;
 }
 
 type AuthMode = 'signin' | 'signup';
 
-export const LoginModal: React.FC<LoginModalProps> = ({ isOpen, onClose }) => {
+export const LoginModal: React.FC<LoginModalProps> = ({ isOpen, onClose, onSuccess }) => {
   const { signIn, signUp, signInWithOAuth } = useAuth();
   const [mode, setMode] = useState<AuthMode>('signin');
   const [email, setEmail] = useState('');
@@ -23,23 +24,21 @@ export const LoginModal: React.FC<LoginModalProps> = ({ isOpen, onClose }) => {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    setError(null);
     setLoading(true);
+    setError(null);
 
     try {
-      const { error } = mode === 'signin'
-        ? await signIn(email, password)
-        : await signUp(email, password);
-
-      if (error) {
-        setError(error.message);
+      if (mode === 'signin') {
+        await signIn(email, password);
       } else {
-        onClose();
-        setEmail('');
-        setPassword('');
+        await signUp(email, password);
       }
+      onSuccess?.();
+      onClose();
+      setEmail('');
+      setPassword('');
     } catch (err) {
-      setError('An unexpected error occurred');
+      setError(err instanceof Error ? err.message : 'An error occurred');
     } finally {
       setLoading(false);
     }
@@ -48,7 +47,7 @@ export const LoginModal: React.FC<LoginModalProps> = ({ isOpen, onClose }) => {
   const handleOAuth = async (provider: 'google' | 'github' | 'azure' | 'apple') => {
     setError(null);
     setLoading(true);
-    const { error} = await signInWithOAuth(provider);
+    const { error } = await signInWithOAuth(provider);
     if (error) {
       setError(error.message);
       setLoading(false);

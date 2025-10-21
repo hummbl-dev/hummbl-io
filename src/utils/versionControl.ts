@@ -175,14 +175,14 @@ export function createChangeLog(versions: ContentVersion[]): string {
     for (const version of dayVersions) {
       markdown += `### Version ${version.version} - ${version.content_id}\n\n`;
       markdown += `**Author:** ${version.author}\n\n`;
-      
+
       if (version.changes.length > 0) {
         markdown += '**Changes:**\n';
         for (const change of version.changes) {
           markdown += `- ${change}\n`;
         }
       }
-      
+
       markdown += '\n';
     }
   }

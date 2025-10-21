@@ -26,11 +26,11 @@ export interface CascadeAgentContext {
 }
 
 const cascadeAgentContext: CascadeAgentContext = {
-  agent: { id: "cascade-001", role: "validator" },
-  team: { members: ["gpt5", "claude", "cascade"] },
+  agent: { id: 'cascade-001', role: 'validator' },
+  team: { members: ['gpt5', 'claude', 'cascade'] },
   telemetry: { enabled: true, interval: 5000 },
-  vcs: { repo: "hummbl-io", branch: "main" },
-  version: "1.0.0",
+  vcs: { repo: 'hummbl-io', branch: 'main' },
+  version: '1.0.0',
 };
 
 export default cascadeAgentContext;

@@ -27,25 +27,25 @@ export class IntelligentRoutingService {
   public async route(userInput: string, conversationHistory?: string[]): Promise<RoutingResult> {
     // Step 1: Classify the task
     const classification = taskClassifier.classify(userInput, conversationHistory);
-    
+
     // Step 2: Route to optimal model
     const routing = modelRouter.route(classification.context);
-    
+
     // Step 3: Generate execution plan
     const executionPlan = this.generateExecutionPlan(classification, routing);
-    
+
     // Step 4: Estimate total duration
     const estimatedDuration = this.calculateTotalDuration(executionPlan);
-    
+
     // Step 5: Generate recommended approach
     const recommendedApproach = this.generateRecommendedApproach(classification, routing);
-    
+
     return {
       classification,
       routing,
       executionPlan,
       estimatedDuration,
-      recommendedApproach
+      recommendedApproach,
     };
   }
 
@@ -53,12 +53,12 @@ export class IntelligentRoutingService {
    * Generate step-by-step execution plan
    */
   private generateExecutionPlan(
-    classification: ClassificationResult, 
+    classification: ClassificationResult,
     routing: RoutingDecision
   ): ExecutionStep[] {
     const steps: ExecutionStep[] = [];
     const context = classification.context;
-    
+
     // Analysis phase (always first for complex tasks)
     if (context.complexity === 'complex' || context.complexity === 'enterprise') {
       steps.push({
@@ -67,7 +67,7 @@ export class IntelligentRoutingService {
         modelClass: routing.selectedModel.modelClass,
         estimatedTime: 300, // 5 minutes
         dependencies: [],
-        tools: ['reasoning', 'planning']
+        tools: ['reasoning', 'planning'],
       });
     }
 
@@ -79,7 +79,7 @@ export class IntelligentRoutingService {
         modelClass: 'execution',
         estimatedTime: 900, // 15 minutes
         dependencies: context.complexity === 'complex' ? ['analysis'] : [],
-        tools: ['file_system', 'terminal', 'git']
+        tools: ['file_system', 'terminal', 'git'],
       });
     }
 
@@ -90,7 +90,7 @@ export class IntelligentRoutingService {
         modelClass: 'reasoning',
         estimatedTime: 600, // 10 minutes
         dependencies: ['implementation'],
-        tools: ['writing', 'analysis']
+        tools: ['writing', 'analysis'],
       });
     }
 
@@ -101,7 +101,7 @@ export class IntelligentRoutingService {
         modelClass: 'execution',
         estimatedTime: 180, // 3 minutes
         dependencies: ['implementation'],
-        tools: ['git', 'terminal']
+        tools: ['git', 'terminal'],
       });
     }
 
@@ -113,18 +113,22 @@ export class IntelligentRoutingService {
         modelClass: 'execution',
         estimatedTime: 300, // 5 minutes
         dependencies: ['implementation'],
-        tools: ['testing', 'validation']
+        tools: ['testing', 'validation'],
       });
     }
 
-    return steps.length > 0 ? steps : [{
-      stepId: 'response',
-      description: 'Generate response',
-      modelClass: routing.selectedModel.modelClass,
-      estimatedTime: 120, // 2 minutes
-      dependencies: [],
-      tools: ['reasoning']
-    }];
+    return steps.length > 0
+      ? steps
+      : [
+          {
+            stepId: 'response',
+            description: 'Generate response',
+            modelClass: routing.selectedModel.modelClass,
+            estimatedTime: 120, // 2 minutes
+            dependencies: [],
+            tools: ['reasoning'],
+          },
+        ];
   }
 
   /**
@@ -158,12 +162,12 @@ export class IntelligentRoutingService {
   ): string {
     const approach: string[] = [];
     const context = classification.context;
-    
+
     // Model selection reasoning
     approach.push(`**Model Selection:** ${routing.selectedModel.modelId}`);
     approach.push(`*Reasoning:* ${routing.reasoning}`);
     approach.push('');
-    
+
     // Execution strategy
     if (routing.selectedModel.modelClass === 'execution') {
       approach.push('**Execution Strategy:**');
@@ -181,9 +185,9 @@ export class IntelligentRoutingService {
       approach.push('- Creative problem-solving approach');
       approach.push('- Multiple iteration and refinement');
     }
-    
+
     approach.push('');
-    
+
     // Risk mitigation
     if (context.urgency === 'critical') {
       approach.push('**Risk Mitigation:**');
@@ -191,7 +195,7 @@ export class IntelligentRoutingService {
       approach.push('- Implement with fallback options');
       approach.push('- Continuous validation during execution');
     }
-    
+
     // Success metrics
     approach.push('**Success Metrics:**');
     if (context.requiresCommandExecution) {
@@ -202,7 +206,7 @@ export class IntelligentRoutingService {
       approach.push('- Clear, comprehensive documentation');
       approach.push('- Examples and usage instructions included');
     }
-    
+
     return approach.join('\n');
   }
 
@@ -216,12 +220,12 @@ export class IntelligentRoutingService {
     alternatives: string[];
   }> {
     const result = await this.route(userInput);
-    
+
     return {
       selectedModel: result.routing.selectedModel.modelId,
       confidence: result.routing.confidence,
       reasoning: result.routing.reasoning,
-      alternatives: result.routing.fallbackModels.map(m => m.modelId)
+      alternatives: result.routing.fallbackModels.map((m) => m.modelId),
     };
   }
 }
@@ -239,10 +243,12 @@ export async function routeTask(userInput: string): Promise<ModelClass> {
 export function requiresExecution(userInput: string): boolean {
   const classification = taskClassifier.classify(userInput);
   const context = classification.context;
-  
-  return context.requiresFileAccess ||
-         context.requiresCommandExecution ||
-         context.requiresGitOperations ||
-         context.requiresRealTimeData ||
-         context.requiresEnvironmentState;
+
+  return (
+    context.requiresFileAccess ||
+    context.requiresCommandExecution ||
+    context.requiresGitOperations ||
+    context.requiresRealTimeData ||
+    context.requiresEnvironmentState
+  );
 }

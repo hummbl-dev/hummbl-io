@@ -17,7 +17,7 @@ const SESSION_DURATION = 24 * 60 * 60 * 1000; // 24 hours
  */
 export function hasRole(requiredRole: Role): boolean {
   const session = getSession();
-  
+
   if (!session || !session.authenticated) {
     return false;
   }

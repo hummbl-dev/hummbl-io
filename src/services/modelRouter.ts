@@ -10,21 +10,21 @@ export interface TaskContext {
   requiresGitOperations: boolean;
   requiresRealTimeData: boolean;
   requiresEnvironmentState: boolean;
-  
+
   // Reasoning indicators
   requiresDeepAnalysis: boolean;
   requiresResearch: boolean;
   requiresComparison: boolean;
   requiresArchitecturalDesign: boolean;
   requiresDocumentation: boolean;
-  
+
   // Creative indicators
   requiresContentGeneration: boolean;
   requiresCreativeWriting: boolean;
   requiresMarketingCopy: boolean;
   requiresUserStories: boolean;
   requiresBrainstorming: boolean;
-  
+
   // Context metadata
   projectType: 'frontend' | 'backend' | 'fullstack' | 'mobile' | 'desktop' | 'ai' | 'other';
   urgency: 'low' | 'medium' | 'high' | 'critical';
@@ -68,20 +68,20 @@ export class ModelRouter {
         'Git operations',
         'Multi-tool coordination',
         'Real-time environment state',
-        'End-to-end feature delivery'
+        'End-to-end feature delivery',
       ],
       limitations: [
         'Limited to development contexts',
         'Requires active repository',
-        'Not optimized for pure reasoning'
+        'Not optimized for pure reasoning',
       ],
       costPerToken: 0.001, // Estimated
       maxTokens: 8192,
       supportsStreaming: true,
       supportsTools: true,
-      supportsCodeExecution: true
+      supportsCodeExecution: true,
     },
-    
+
     // Reasoning Models
     {
       modelClass: 'reasoning',
@@ -92,20 +92,20 @@ export class ModelRouter {
         'Complex problem decomposition',
         'Architectural design',
         'Research synthesis',
-        'Long-form documentation'
+        'Long-form documentation',
       ],
       limitations: [
         'No environment access',
         'Cannot execute code',
-        'Higher latency for simple tasks'
+        'Higher latency for simple tasks',
       ],
       costPerToken: 0.003,
       maxTokens: 200000,
       supportsStreaming: true,
       supportsTools: false,
-      supportsCodeExecution: false
+      supportsCodeExecution: false,
     },
-    
+
     {
       modelClass: 'reasoning',
       provider: 'openai',
@@ -115,20 +115,16 @@ export class ModelRouter {
         'Code analysis',
         'Technical documentation',
         'API design',
-        'Testing strategies'
+        'Testing strategies',
       ],
-      limitations: [
-        'No environment access',
-        'Cannot execute code',
-        'Token limit constraints'
-      ],
+      limitations: ['No environment access', 'Cannot execute code', 'Token limit constraints'],
       costPerToken: 0.01,
       maxTokens: 128000,
       supportsStreaming: true,
       supportsTools: true,
-      supportsCodeExecution: false
+      supportsCodeExecution: false,
     },
-    
+
     // Creative Models
     {
       modelClass: 'creative',
@@ -139,45 +135,45 @@ export class ModelRouter {
         'Marketing copy',
         'User stories',
         'Content generation',
-        'Brainstorming'
+        'Brainstorming',
       ],
       limitations: [
         'No environment access',
         'Not optimized for code',
-        'Higher cost for technical tasks'
+        'Higher cost for technical tasks',
       ],
       costPerToken: 0.03,
       maxTokens: 8192,
       supportsStreaming: true,
       supportsTools: false,
-      supportsCodeExecution: false
-    }
+      supportsCodeExecution: false,
+    },
   ];
 
   /**
    * Route task to optimal model based on context analysis
    */
   public route(context: TaskContext): RoutingDecision {
-    const scores = this.models.map(model => ({
+    const scores = this.models.map((model) => ({
       model,
       score: this.calculateModelScore(model, context),
-      reasoning: this.generateReasoning(model, context)
+      reasoning: this.generateReasoning(model, context),
     }));
 
     // Sort by score (highest first)
     scores.sort((a, b) => b.score - a.score);
-    
+
     const selectedModel = scores[0].model;
     const confidence = scores[0].score;
     const reasoning = scores[0].reasoning;
-    
+
     return {
       selectedModel,
       confidence,
       reasoning,
-      fallbackModels: scores.slice(1, 3).map(s => s.model),
+      fallbackModels: scores.slice(1, 3).map((s) => s.model),
       estimatedCost: this.estimateCost(selectedModel, context),
-      estimatedLatency: this.estimateLatency(selectedModel, context)
+      estimatedLatency: this.estimateLatency(selectedModel, context),
     };
   }
 
@@ -186,7 +182,7 @@ export class ModelRouter {
    */
   private calculateModelScore(model: ModelCapability, context: TaskContext): number {
     let score = 0;
-    
+
     // Execution requirements (high weight)
     if (this.requiresExecution(context)) {
       if (model.modelClass === 'execution') {
@@ -195,7 +191,7 @@ export class ModelRouter {
         score -= 0.5; // Heavy penalty for non-execution models
       }
     }
-    
+
     // Reasoning requirements (medium weight)
     if (this.requiresReasoning(context)) {
       if (model.modelClass === 'reasoning') {
@@ -204,7 +200,7 @@ export class ModelRouter {
         score += 0.3; // Cascade can reason, but not optimal
       }
     }
-    
+
     // Creative requirements (medium weight)
     if (this.requiresCreativity(context)) {
       if (model.modelClass === 'creative') {
@@ -213,15 +209,15 @@ export class ModelRouter {
         score += 0.1; // Other models have some creative capability
       }
     }
-    
+
     // Context-specific bonuses
     score += this.getContextBonus(model, context);
-    
+
     // Urgency adjustments
     if (context.urgency === 'critical' && model.modelClass === 'execution') {
       score += 0.2; // Execution models are faster for critical tasks
     }
-    
+
     return Math.max(0, Math.min(1, score));
   }
 
@@ -229,33 +225,39 @@ export class ModelRouter {
    * Check if task requires execution capabilities
    */
   private requiresExecution(context: TaskContext): boolean {
-    return context.requiresFileAccess ||
-           context.requiresCommandExecution ||
-           context.requiresGitOperations ||
-           context.requiresRealTimeData ||
-           context.requiresEnvironmentState;
+    return (
+      context.requiresFileAccess ||
+      context.requiresCommandExecution ||
+      context.requiresGitOperations ||
+      context.requiresRealTimeData ||
+      context.requiresEnvironmentState
+    );
   }
 
   /**
    * Check if task requires deep reasoning
    */
   private requiresReasoning(context: TaskContext): boolean {
-    return context.requiresDeepAnalysis ||
-           context.requiresResearch ||
-           context.requiresComparison ||
-           context.requiresArchitecturalDesign ||
-           context.requiresDocumentation;
+    return (
+      context.requiresDeepAnalysis ||
+      context.requiresResearch ||
+      context.requiresComparison ||
+      context.requiresArchitecturalDesign ||
+      context.requiresDocumentation
+    );
   }
 
   /**
    * Check if task requires creative capabilities
    */
   private requiresCreativity(context: TaskContext): boolean {
-    return context.requiresContentGeneration ||
-           context.requiresCreativeWriting ||
-           context.requiresMarketingCopy ||
-           context.requiresUserStories ||
-           context.requiresBrainstorming;
+    return (
+      context.requiresContentGeneration ||
+      context.requiresCreativeWriting ||
+      context.requiresMarketingCopy ||
+      context.requiresUserStories ||
+      context.requiresBrainstorming
+    );
   }
 
   /**
@@ -263,17 +265,17 @@ export class ModelRouter {
    */
   private getContextBonus(model: ModelCapability, context: TaskContext): number {
     let bonus = 0;
-    
+
     // Project type bonuses
     if (context.projectType === 'frontend' && model.modelId === 'cascade-agent') {
       bonus += 0.1;
     }
-    
+
     // Complexity adjustments
     if (context.complexity === 'enterprise' && model.modelClass === 'reasoning') {
       bonus += 0.1;
     }
-    
+
     return bonus;
   }
 
@@ -282,23 +284,23 @@ export class ModelRouter {
    */
   private generateReasoning(model: ModelCapability, context: TaskContext): string {
     const reasons: string[] = [];
-    
+
     if (this.requiresExecution(context) && model.modelClass === 'execution') {
       reasons.push('Task requires direct environment access and code execution');
     }
-    
+
     if (this.requiresReasoning(context) && model.modelClass === 'reasoning') {
       reasons.push('Task benefits from deep analytical reasoning capabilities');
     }
-    
+
     if (this.requiresCreativity(context) && model.modelClass === 'creative') {
       reasons.push('Task requires creative content generation');
     }
-    
+
     if (context.urgency === 'critical') {
       reasons.push('Critical urgency favors fast execution models');
     }
-    
+
     return reasons.join('; ') || 'General capability match';
   }
 
@@ -318,9 +320,9 @@ export class ModelRouter {
     const baseLatency = {
       execution: 2000, // 2s - includes tool execution time
       reasoning: 5000, // 5s - longer processing time
-      creative: 3000   // 3s - moderate processing
+      creative: 3000, // 3s - moderate processing
     };
-    
+
     return baseLatency[model.modelClass] || 3000;
   }
 
@@ -329,13 +331,13 @@ export class ModelRouter {
    */
   private estimateTokenUsage(context: TaskContext): number {
     let tokens = 1000; // Base estimate
-    
+
     if (context.complexity === 'enterprise') tokens *= 3;
     if (context.requiresDocumentation) tokens *= 2;
     if (context.conversationHistory?.length) {
       tokens += context.conversationHistory.length * 100;
     }
-    
+
     return tokens;
   }
 }

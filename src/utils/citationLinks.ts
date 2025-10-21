@@ -1,6 +1,6 @@
 // Citation link generation utilities
 
-import type { Citation } from '../types/narrative';
+import type { Citation } from '@cascade/types/narrative';
 
 /**
  * Generates a Google Scholar search URL for a citation
@@ -17,24 +17,24 @@ export function generateScholarUrl(citation: Citation): string {
  */
 export function getDirectSourceUrl(citation: Citation): string | null {
   const source = citation.source.toLowerCase();
-  
+
   // Check for DOI in source
   const doiMatch = source.match(/doi:\s*([^\s,]+)/i);
   if (doiMatch) {
     return `https://doi.org/${doiMatch[1]}`;
   }
-  
+
   // Check for arXiv
   const arxivMatch = source.match(/arxiv:\s*([^\s,]+)/i);
   if (arxivMatch) {
     return `https://arxiv.org/abs/${arxivMatch[1]}`;
   }
-  
+
   // Check if source is already a URL
   if (source.startsWith('http://') || source.startsWith('https://')) {
     return citation.source;
   }
-  
+
   return null;
 }
 

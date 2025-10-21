@@ -17,16 +17,18 @@
     "noFallthroughCasesInSwitch": true,
     "baseUrl": ".",
     "paths": {
-      "@/*": ["./src/*"]
+      "@/*": ["./src/*"],
+      "@cascade/*": ["./cascade/*"],
+      "@types/*": ["./cascade/types/*"]
     },
     "types": [
-    "vite/client",
-    "node",
-    "jsdom",
-    "@testing-library/jest-dom",
-    "vitest/globals",
-    "@testing-library/jest-dom/vitest"
-  ]
+      "vite/client",
+      "node",
+      "jsdom",
+      "@testing-library/jest-dom",
+      "vitest/globals",
+      "@testing-library/jest-dom/vitest"
+    ]
   },
   "include": [
     "src",
@@ -38,11 +40,7 @@
     "**/__tests__/**/*.ts",
     "**/__tests__/**/*.tsx"
   ],
-  "exclude": [
-    "node_modules",
-    "**/*.stories.ts",
-    "**/*.stories.tsx"
-  ],
+  "exclude": ["node_modules", "**/*.stories.ts", "**/*.stories.tsx"],
   "references": [{ "path": "./tsconfig.node.json" }],
   "ts-node": {
     "esm": true,

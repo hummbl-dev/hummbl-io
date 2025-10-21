@@ -92,7 +92,7 @@ describe('useSearchHistory', () => {
       act(() => {
         result.current.addToHistory({ query: 'test1' });
       });
-      
+
       // Small delay between additions to ensure different timestamps
       act(() => {
         result.current.addToHistory({ query: 'test2' });
@@ -100,7 +100,7 @@ describe('useSearchHistory', () => {
 
       // Verify we have 2 entries
       expect(result.current.history.length).toBeGreaterThanOrEqual(1);
-      
+
       if (result.current.history.length >= 2) {
         const timestamp = result.current.history[1].timestamp;
 
@@ -196,7 +196,7 @@ describe('useSearchHistory', () => {
       act(() => {
         result.current.saveSearch('Search 1', 'query1');
       });
-      
+
       act(() => {
         result.current.saveSearch('Search 2', 'query2');
       });

@@ -15,17 +15,8 @@
       "title": "Perspective / Identity",
       "summary": "Frame Semantics and construction grammar support framing and perspective elicitation.",
       "category": "perspective",
-      "tags": [
-        "cognitive",
-        "linguistic",
-        "frame-semantics",
-        "identity"
-      ],
-      "domain": [
-        "linguistics",
-        "cognitive-science",
-        "semiotics"
-      ],
+      "tags": ["cognitive", "linguistic", "frame-semantics", "identity"],
+      "domain": ["linguistics", "cognitive-science", "semiotics"],
       "linked_signals": [
         {
           "signal_id": "SIG-FRAME-SHIFT",
@@ -128,17 +119,8 @@
       "title": "Inversion",
       "summary": "Classical inversion and recursion-inversion links support adversarial and counterfactual analysis.",
       "category": "transformation",
-      "tags": [
-        "logic",
-        "adversarial",
-        "counterfactual",
-        "opposition"
-      ],
-      "domain": [
-        "logic",
-        "cognitive-science",
-        "argumentation"
-      ],
+      "tags": ["logic", "adversarial", "counterfactual", "opposition"],
+      "domain": ["logic", "cognitive-science", "argumentation"],
       "linked_signals": [
         {
           "signal_id": "SIG-NEGATION",
@@ -252,17 +234,8 @@
       "title": "Composition",
       "summary": "Compositionality principles underpin building complex mental models from primitives.",
       "category": "construction",
-      "tags": [
-        "compositionality",
-        "mental-models",
-        "synthesis",
-        "building"
-      ],
-      "domain": [
-        "cognitive-science",
-        "linguistics",
-        "philosophy"
-      ],
+      "tags": ["compositionality", "mental-models", "synthesis", "building"],
+      "domain": ["cognitive-science", "linguistics", "philosophy"],
       "linked_signals": [
         {
           "signal_id": "SIG-CONJUNCTION",
@@ -381,17 +354,8 @@
       "title": "Decomposition",
       "summary": "Hierarchical task analysis and human problem solving support task breakdown and protocol analysis.",
       "category": "analysis",
-      "tags": [
-        "decomposition",
-        "task-analysis",
-        "problem-solving",
-        "hierarchy"
-      ],
-      "domain": [
-        "cognitive-science",
-        "human-factors",
-        "systems-engineering"
-      ],
+      "tags": ["decomposition", "task-analysis", "problem-solving", "hierarchy"],
+      "domain": ["cognitive-science", "human-factors", "systems-engineering"],
       "linked_signals": [
         {
           "signal_id": "SIG-SUBTASK",
@@ -510,17 +474,8 @@
       "title": "Recursion",
       "summary": "Recursion core theories support nested structure generation and recursive reasoning.",
       "category": "structure",
-      "tags": [
-        "recursion",
-        "nesting",
-        "self-reference",
-        "iteration"
-      ],
-      "domain": [
-        "linguistics",
-        "computer-science",
-        "cognitive-science"
-      ],
+      "tags": ["recursion", "nesting", "self-reference", "iteration"],
+      "domain": ["linguistics", "computer-science", "cognitive-science"],
       "linked_signals": [
         {
           "signal_id": "SIG-NESTING",
@@ -644,17 +599,8 @@
       "title": "Meta-Systems",
       "summary": "General systems theory and second-order cybernetics support meta-model mapping and system-level reasoning.",
       "category": "meta-cognition",
-      "tags": [
-        "meta-systems",
-        "systems-theory",
-        "cybernetics",
-        "meta-cognition"
-      ],
-      "domain": [
-        "systems-theory",
-        "cybernetics",
-        "cognitive-science"
-      ],
+      "tags": ["meta-systems", "systems-theory", "cybernetics", "meta-cognition"],
+      "domain": ["systems-theory", "cybernetics", "cognitive-science"],
       "linked_signals": [
         {
           "signal_id": "SIG-META-REFERENCE",

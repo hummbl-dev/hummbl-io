@@ -1,5 +1,5 @@
 import React from 'react';
-import { MentalModel } from '../models/mentalModels';
+import type { MentalModel } from '@cascade/types/mental-model';
 import { validateMentalModel } from '../utils/validation';
 
 // Types
@@ -36,21 +36,20 @@ export async function fetchMentalModels(): Promise<MentalModel[]> {
 
     // Fetch from network
     const response = await fetch(DATA_URL);
-    
+
     if (!response.ok) {
       throw new Error(`Failed to fetch mental models: ${response.statusText}`);
     }
 
     const data: any = await response.json();
-    
+
     // Check if this is the old models.json format (has 'definition' field)
     // or the new format (has 'description' and proper structure)
-    const needsTransformation = data.models.length > 0 && 
-                                data.models[0].definition && 
-                                !data.models[0].description;
-    
+    const needsTransformation =
+      data.models.length > 0 && data.models[0].definition && !data.models[0].description;
+
     let finalData: MentalModelsResponse;
-    
+
     if (needsTransformation) {
       // Transform old models.json format to expected format
       finalData = {
@@ -68,9 +67,9 @@ export async function fetchMentalModels(): Promise<MentalModel[]> {
           sources: [],
           meta: {
             isCore: true,
-            difficulty: 3
-          }
-        }))
+            difficulty: 3,
+          },
+        })),
       };
     } else {
       // Data is already in correct format
@@ -84,7 +83,7 @@ export async function fetchMentalModels(): Promise<MentalModel[]> {
 
     // Cache the response
     saveToCache(finalData);
-    
+
     return finalData.models;
   } catch (error) {
     console.error('Error fetching mental models:', error);
@@ -134,12 +133,12 @@ export function useMentalModels() {
 // Transformation helpers
 function getCategoryFromTransformation(transformation: string): string {
   const categoryMap: Record<string, string> = {
-    'P': 'Perspective & Identity',
-    'IN': 'Inversion & Reversal',
-    'CO': 'Composition & Integration',
-    'DE': 'Decomposition & Analysis',
-    'RE': 'Recursion & Self-Reference',
-    'SY': 'Meta-Systems & Emergence'
+    P: 'Perspective & Identity',
+    IN: 'Inversion & Reversal',
+    CO: 'Composition & Integration',
+    DE: 'Decomposition & Analysis',
+    RE: 'Recursion & Self-Reference',
+    SY: 'Meta-Systems & Emergence',
   };
   return categoryMap[transformation] || 'General';
 }
@@ -160,7 +159,7 @@ function getFromCache<T>(): T | null {
       localStorage.removeItem(CACHE_KEY);
       return null;
     }
-    
+
     // Check if cache is still valid
     if (Date.now() - timestamp > CACHE_TTL) {
       localStorage.removeItem(CACHE_KEY);
@@ -201,9 +200,9 @@ export function clearMentalModelsCache(): void {
 // Validation
 function isValidMentalModelsResponse(data: unknown): data is MentalModelsResponse {
   if (!data || typeof data !== 'object') return false;
-  
+
   const response = data as Partial<MentalModelsResponse>;
-  
+
   if (!response.version || !response.lastUpdated || !Array.isArray(response.models)) {
     return false;
   }

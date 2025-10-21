@@ -1,5 +1,5 @@
 import React from 'react';
-import { ViewType } from '../../types/view';
+import { ViewType } from '../../../cascade/types/view';
 import './ViewSwitcher.css';
 
 interface ViewSwitcherProps {
@@ -8,10 +8,10 @@ interface ViewSwitcherProps {
   className?: string;
 }
 
-export const ViewSwitcher: React.FC<ViewSwitcherProps> = ({ 
-  currentView, 
+export const ViewSwitcher: React.FC<ViewSwitcherProps> = ({
+  currentView,
   onViewChange,
-  className = '' 
+  className = '',
 }) => {
   return (
     <div className={`view-switcher ${className}`}>

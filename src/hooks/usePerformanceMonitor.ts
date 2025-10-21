@@ -43,7 +43,9 @@ export function usePerformanceMonitor(enabled = true) {
 
     // Web Vitals from Performance API
     if ('performance' in window) {
-      const navigation = performance.getEntriesByType('navigation')[0] as PerformanceNavigationTiming;
+      const navigation = performance.getEntriesByType(
+        'navigation'
+      )[0] as PerformanceNavigationTiming;
       if (navigation) {
         snap.ttfb = navigation.responseStart - navigation.requestStart;
       }
@@ -57,8 +59,19 @@ export function usePerformanceMonitor(enabled = true) {
     }
 
     // Memory usage (if available)
-    if ('memory' in performance && (performance as Performance & { memory?: { usedJSHeapSize: number; totalJSHeapSize: number; jsHeapSizeLimit: number } }).memory) {
-      const mem = (performance as Performance & { memory: { usedJSHeapSize: number; totalJSHeapSize: number; jsHeapSizeLimit: number } }).memory;
+    if (
+      'memory' in performance &&
+      (
+        performance as Performance & {
+          memory?: { usedJSHeapSize: number; totalJSHeapSize: number; jsHeapSizeLimit: number };
+        }
+      ).memory
+    ) {
+      const mem = (
+        performance as Performance & {
+          memory: { usedJSHeapSize: number; totalJSHeapSize: number; jsHeapSizeLimit: number };
+        }
+      ).memory;
       snap.memoryUsage = {
         used: mem.usedJSHeapSize,
         total: mem.totalJSHeapSize,

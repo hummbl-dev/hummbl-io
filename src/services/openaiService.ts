@@ -12,13 +12,10 @@ export class OpenAIService {
     this.apiKey = apiKey;
   }
 
-  async sendMessage(
-    messages: OpenAIMessage[],
-    systemContext?: string
-  ): Promise<string> {
+  async sendMessage(messages: OpenAIMessage[], systemContext?: string): Promise<string> {
     try {
       const allMessages: OpenAIMessage[] = [];
-      
+
       // Add system context if provided
       if (systemContext) {
         allMessages.push({
@@ -41,7 +38,7 @@ export class OpenAIService {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
-          'Authorization': `Bearer ${this.apiKey}`,
+          Authorization: `Bearer ${this.apiKey}`,
         },
         body: JSON.stringify(request),
       });
@@ -52,7 +49,7 @@ export class OpenAIService {
       }
 
       const data: OpenAIResponse = await response.json();
-      
+
       if (!data.choices || data.choices.length === 0) {
         throw new Error('No response from OpenAI');
       }
@@ -66,21 +63,23 @@ export class OpenAIService {
 
   // Build system context from mental models, narratives, and current view context
   buildSystemContext(
-    mentalModels?: any[], 
+    mentalModels?: any[],
     narratives?: any[],
     contextDescription?: string
   ): string {
-    let context = 'You are HUMMBL AI Assistant, helping users understand mental models and narratives for better decision-making.\n\n';
+    let context =
+      'You are HUMMBL AI Assistant, helping users understand mental models and narratives for better decision-making.\n\n';
 
     // Add current context if provided
     if (contextDescription) {
       context += `CURRENT CONTEXT: ${contextDescription}\n\n`;
-      context += 'Use this context to provide relevant, focused answers about what the user is currently viewing.\n\n';
+      context +=
+        'Use this context to provide relevant, focused answers about what the user is currently viewing.\n\n';
     }
 
     if (mentalModels && mentalModels.length > 0) {
       context += `Available Mental Models (${mentalModels.length}):\n`;
-      mentalModels.slice(0, 10).forEach(model => {
+      mentalModels.slice(0, 10).forEach((model) => {
         context += `- ${model.name}: ${model.description?.substring(0, 100)}...\n`;
       });
       context += '\n';
@@ -88,14 +87,14 @@ export class OpenAIService {
 
     if (narratives && narratives.length > 0) {
       context += `Available Narratives (${narratives.length}):\n`;
-      narratives.slice(0, 10).forEach(narrative => {
+      narratives.slice(0, 10).forEach((narrative) => {
         context += `- ${narrative.title}: ${narrative.summary?.substring(0, 100)}...\n`;
       });
       context += '\n';
     }
 
     context += 'Help users explore these concepts, answer questions, and provide insights.';
-    
+
     return context;
   }
 }
@@ -107,10 +106,10 @@ export const getOpenAIService = (apiKey?: string): OpenAIService => {
   if (!openAIService && apiKey) {
     openAIService = new OpenAIService(apiKey);
   }
-  
+
   if (!openAIService) {
     throw new Error('OpenAI service not initialized. Please provide API key.');
   }
-  
+
   return openAIService;
 };

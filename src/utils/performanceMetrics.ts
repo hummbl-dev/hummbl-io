@@ -86,9 +86,7 @@ export function getMetrics(): PerformanceMetric[] {
 /**
  * Get metrics by category
  */
-export function getMetricsByCategory(
-  category: PerformanceMetric['category']
-): PerformanceMetric[] {
+export function getMetricsByCategory(category: PerformanceMetric['category']): PerformanceMetric[] {
   return getStoredMetrics().filter((m) => m.category === category);
 }
 
@@ -138,8 +136,7 @@ export function getPerformanceReport(): PerformanceReport {
     loadTimes.length > 0 ? loadTimes.reduce((a, b) => a + b, 0) / loadTimes.length : 0;
   const avgRenderTime =
     renderTimes.length > 0 ? renderTimes.reduce((a, b) => a + b, 0) / renderTimes.length : 0;
-  const cacheHitRate =
-    cacheHits + cacheMisses > 0 ? cacheHits / (cacheHits + cacheMisses) : 0;
+  const cacheHitRate = cacheHits + cacheMisses > 0 ? cacheHits / (cacheHits + cacheMisses) : 0;
 
   return {
     metrics,
@@ -163,10 +160,7 @@ export function clearMetrics(): void {
 /**
  * Measure function execution time
  */
-export function measureExecutionTime<T>(
-  fn: () => T,
-  metricName: string
-): T {
+export function measureExecutionTime<T>(fn: () => T, metricName: string): T {
   const startTime = performance.now();
   const result = fn();
   const endTime = performance.now();

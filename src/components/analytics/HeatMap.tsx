@@ -84,9 +84,7 @@ export const HeatMap: React.FC<HeatMapProps> = ({
         if (nearby) {
           // Merge with nearby point
           updated = prev.map((p) =>
-            p === nearby
-              ? { ...p, intensity: Math.min(p.intensity + 1, maxIntensity) }
-              : p
+            p === nearby ? { ...p, intensity: Math.min(p.intensity + 1, maxIntensity) } : p
           );
         } else {
           // Add new point
@@ -156,18 +154,13 @@ export const HeatMap: React.FC<HeatMapProps> = ({
 
       // Create radial gradient
       const gradient = ctx.createRadialGradient(point.x, point.y, 0, point.x, point.y, radius);
-      
+
       const color = getColorForIntensity(normalizedIntensity, colorScheme);
       gradient.addColorStop(0, `rgba(${color.r}, ${color.g}, ${color.b}, ${alpha})`);
       gradient.addColorStop(1, `rgba(${color.r}, ${color.g}, ${color.b}, 0)`);
 
       ctx.fillStyle = gradient;
-      ctx.fillRect(
-        point.x - radius,
-        point.y - radius,
-        radius * 2,
-        radius * 2
-      );
+      ctx.fillRect(point.x - radius, point.y - radius, radius * 2, radius * 2);
     });
   }, [enabled, points, dimensions, radius, opacity, colorScheme, minIntensity, maxIntensity]);
 
@@ -204,7 +197,7 @@ export const HeatMap: React.FC<HeatMapProps> = ({
         className="heatmap-canvas"
         aria-hidden="true"
       />
-      
+
       <div className="heatmap-controls">
         <button onClick={clearHeatMap} className="heatmap-btn">
           Clear Heat Map
@@ -212,9 +205,7 @@ export const HeatMap: React.FC<HeatMapProps> = ({
         <button onClick={exportData} className="heatmap-btn">
           Export Data
         </button>
-        <div className="heatmap-stats">
-          {points.length} interaction points
-        </div>
+        <div className="heatmap-stats">{points.length} interaction points</div>
       </div>
     </div>
   );
@@ -271,20 +262,34 @@ function hslToRgb(h: number, s: number, l: number): { r: number; g: number; b: n
   const x = c * (1 - Math.abs(((h / 60) % 2) - 1));
   const m = l - c / 2;
 
-  let r = 0, g = 0, b = 0;
+  let r = 0,
+    g = 0,
+    b = 0;
 
   if (h < 60) {
-    r = c; g = x; b = 0;
+    r = c;
+    g = x;
+    b = 0;
   } else if (h < 120) {
-    r = x; g = c; b = 0;
+    r = x;
+    g = c;
+    b = 0;
   } else if (h < 180) {
-    r = 0; g = c; b = x;
+    r = 0;
+    g = c;
+    b = x;
   } else if (h < 240) {
-    r = 0; g = x; b = c;
+    r = 0;
+    g = x;
+    b = c;
   } else if (h < 300) {
-    r = x; g = 0; b = c;
+    r = x;
+    g = 0;
+    b = c;
   } else {
-    r = c; g = 0; b = x;
+    r = c;
+    g = 0;
+    b = x;
   }
 
   return {

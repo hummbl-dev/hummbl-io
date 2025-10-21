@@ -63,7 +63,7 @@ describe('ContentImportPipeline', () => {
 
       const result = await pipeline.importNarratives(data);
 
-      expect(result.errors.some(e => e.field === 'evidence_quality')).toBe(true);
+      expect(result.errors.some((e) => e.field === 'evidence_quality')).toBe(true);
     });
 
     it('handles multiple narratives', async () => {
@@ -137,7 +137,7 @@ describe('ContentImportPipeline', () => {
 
       const result = await pipeline.importMentalModels(data);
 
-      expect(result.errors.some(e => e.field === 'difficulty')).toBe(true);
+      expect(result.errors.some((e) => e.field === 'difficulty')).toBe(true);
     });
 
     it('validates tags as array', async () => {
@@ -152,7 +152,7 @@ describe('ContentImportPipeline', () => {
 
       const result = await pipeline.importMentalModels(data);
 
-      expect(result.errors.some(e => e.field === 'tags')).toBe(true);
+      expect(result.errors.some((e) => e.field === 'tags')).toBe(true);
     });
   });
 
@@ -185,7 +185,7 @@ describe('ContentImportPipeline', () => {
 
       expect(merged).toHaveLength(1);
       expect(merged[0].name).toBe('New');
-      expect((merged[0] as typeof existing[0]).extra).toBe('keep');
+      expect((merged[0] as (typeof existing)[0]).extra).toBe('keep');
     });
 
     it('adds new items', () => {

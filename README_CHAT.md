@@ -26,6 +26,7 @@ The HUMMBL Chat Widget provides AI-powered assistance using OpenAI's GPT-4o-mini
 ### 2. Configure Environment Variable
 
 **Local Development:**
+
 ```bash
 # Create .env file in project root
 cp .env.example .env
@@ -35,6 +36,7 @@ VITE_OPENAI_API_KEY=sk-your-actual-api-key-here
 ```
 
 **Vercel Deployment:**
+
 1. Go to your Vercel project
 2. Settings → Environment Variables
 3. Add: `VITE_OPENAI_API_KEY` with your API key
@@ -78,12 +80,14 @@ src/types/
 ## Usage
 
 The chat widget appears automatically when:
+
 - OpenAI API key is configured
 - User is on any page (Narratives or Mental Models)
 
 ### Context Provided to AI
 
 The AI assistant receives:
+
 - All available mental models (name, description, category, etc.)
 - All available narratives (title, summary, category, etc.)
 - Current user view (models or narratives)
@@ -130,16 +134,19 @@ The AI assistant receives:
 ## Cost Considerations
 
 ### GPT-4o-mini Pricing (as of 2024)
+
 - **Input:** ~$0.15 per 1M tokens
 - **Output:** ~$0.60 per 1M tokens
 
 ### Estimated Usage
+
 - Average question: ~100 tokens input
 - Average response: ~300 tokens output
 - **Cost per interaction:** ~$0.0002 (2/100th of a cent)
 - **100 questions:** ~$0.02
 
 ### Cost Control
+
 - Model: GPT-4o-mini (most cost-effective)
 - max_tokens: 1000 (limits response length)
 - Context: Only first 10 mental models/narratives sent
@@ -147,22 +154,26 @@ The AI assistant receives:
 ## Troubleshooting
 
 ### Chat button doesn't appear
+
 - Check if `VITE_OPENAI_API_KEY` is set in `.env`
 - Restart dev server after adding environment variable
 - Check browser console for errors
 
 ### "API key not configured" error
+
 - Verify API key is correct
 - Ensure `.env` file is in project root
 - API key must start with `sk-`
 
 ### Chat responses fail
+
 - Check OpenAI API key is valid
 - Verify you have API credits
 - Check network/CORS issues in console
 - Ensure API endpoint is correct
 
 ### Chat history not persisting
+
 - Check browser localStorage is enabled
 - Clear localStorage: `localStorage.clear()`
 - Check browser's storage quota
@@ -170,6 +181,7 @@ The AI assistant receives:
 ## Security Notes
 
 ⚠️ **IMPORTANT:**
+
 - Never commit `.env` file with real API keys
 - Use GitHub Secrets for CI/CD
 - API key is exposed in browser (client-side)
@@ -179,6 +191,7 @@ The AI assistant receives:
 ## Future Enhancements
 
 Potential improvements:
+
 - [ ] Backend API proxy (hide API key)
 - [ ] Multiple conversation management
 - [ ] Export chat transcripts
@@ -192,6 +205,7 @@ Potential improvements:
 ## Support
 
 For issues or questions:
+
 1. Check OpenAI status: https://status.openai.com
 2. Review OpenAI docs: https://platform.openai.com/docs
 3. Check browser console for errors

@@ -19,10 +19,13 @@ describe('useUserPreferences', () => {
     });
 
     it('loads preferences from localStorage', () => {
-      localStorage.setItem('hummbl_user_preferences', JSON.stringify({
-        lastView: 'narratives',
-        preferredExportFormat: 'csv',
-      }));
+      localStorage.setItem(
+        'hummbl_user_preferences',
+        JSON.stringify({
+          lastView: 'narratives',
+          preferredExportFormat: 'csv',
+        })
+      );
 
       const { result } = renderHook(() => useUserPreferences());
       expect(result.current.preferences.lastView).toBe('narratives');
@@ -297,13 +300,13 @@ describe('useUserPreferences', () => {
 
       // Manually update timestamp to 8 days ago
       const prefs = result.current.preferences;
-      prefs.lastViewTimestamp = Date.now() - (8 * 24 * 60 * 60 * 1000);
+      prefs.lastViewTimestamp = Date.now() - 8 * 24 * 60 * 60 * 1000;
       localStorage.setItem('hummbl_user_preferences', JSON.stringify(prefs));
 
       // Create new instance
       const { result: result2 } = renderHook(() => useUserPreferences());
       const suggestion = result2.current.getSuggestion();
-      
+
       expect(suggestion).toContain('Welcome back');
     });
   });

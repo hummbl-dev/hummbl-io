@@ -9,7 +9,11 @@ interface ChatInputProps {
   placeholder?: string;
 }
 
-export function ChatInput({ onSend, disabled = false, placeholder = 'Ask about mental models or narratives...' }: ChatInputProps) {
+export function ChatInput({
+  onSend,
+  disabled = false,
+  placeholder = 'Ask about mental models or narratives...',
+}: ChatInputProps) {
   const [input, setInput] = useState('');
 
   const handleSend = () => {

@@ -2,7 +2,11 @@
 
 import { useState, useEffect, useCallback } from 'react';
 import { getPerformanceReport, getMetrics } from '../utils/performanceMetrics';
-import { getLatestQualityMetrics, getQualityHistory, calculateQualityScore } from '../utils/codeQualityMetrics';
+import {
+  getLatestQualityMetrics,
+  getQualityHistory,
+  calculateQualityScore,
+} from '../utils/codeQualityMetrics';
 import { calculateAgentMetrics, generateAgentReport } from '../utils/agentEffectiveness';
 import { useUserAnalytics } from './useUserAnalytics';
 
@@ -45,7 +49,7 @@ export function useMetricsDashboard(refreshInterval = 30000) {
   const [metrics, setMetrics] = useState<DashboardMetrics | null>(null);
   const [loading, setLoading] = useState(true);
   const [lastUpdate, setLastUpdate] = useState<number>(0);
-  
+
   const analytics = useUserAnalytics();
 
   /**
@@ -56,7 +60,7 @@ export function useMetricsDashboard(refreshInterval = 30000) {
       // Performance metrics
       const perfReport = getPerformanceReport();
       const perfMetrics = getMetrics();
-      
+
       // Calculate performance grade
       const { avgLoadTime, avgRenderTime, cacheHitRate } = perfReport.summary;
       let perfGrade = 'N/A';
@@ -65,14 +69,15 @@ export function useMetricsDashboard(refreshInterval = 30000) {
         if (avgLoadTime > 5000) score -= 30;
         else if (avgLoadTime > 3000) score -= 20;
         else if (avgLoadTime > 2000) score -= 10;
-        
+
         if (avgRenderTime > 500) score -= 20;
         else if (avgRenderTime > 200) score -= 10;
-        
+
         if (cacheHitRate < 0.5) score -= 20;
         else if (cacheHitRate < 0.7) score -= 10;
-        
-        perfGrade = score >= 90 ? 'A' : score >= 80 ? 'B' : score >= 70 ? 'C' : score >= 60 ? 'D' : 'F';
+
+        perfGrade =
+          score >= 90 ? 'A' : score >= 80 ? 'B' : score >= 70 ? 'C' : score >= 60 ? 'D' : 'F';
       }
 
       // Quality metrics
@@ -83,7 +88,7 @@ export function useMetricsDashboard(refreshInterval = 30000) {
         buildTime: 0,
         grade: 'N/A' as string,
       };
-      
+
       if (latestQuality) {
         const qualityScore = calculateQualityScore(latestQuality);
         qualityData = {
@@ -97,7 +102,7 @@ export function useMetricsDashboard(refreshInterval = 30000) {
       // Agent metrics
       const agentMetrics = calculateAgentMetrics();
       const agentReport = generateAgentReport();
-      
+
       // User activity
       const userStats = analytics.getStats();
 
@@ -153,10 +158,12 @@ export function useMetricsDashboard(refreshInterval = 30000) {
    */
   const getQualityTrend = useCallback((): TrendData[] => {
     const history = getQualityHistory();
-    return history.map((h) => ({
-      timestamp: h.timestamp,
-      value: h.testCoverage,
-    })).slice(-20);
+    return history
+      .map((h) => ({
+        timestamp: h.timestamp,
+        value: h.testCoverage,
+      }))
+      .slice(-20);
   }, []);
 
   /**
@@ -165,10 +172,10 @@ export function useMetricsDashboard(refreshInterval = 30000) {
   const getUserActivityTrend = useCallback((): TrendData[] => {
     const userStats = analytics.getStats();
     const recentActions = analytics.getRecentActions(20);
-    
+
     // Group by hour
     const hourlyActivity = new Map<number, number>();
-    
+
     for (const action of recentActions) {
       const hour = Math.floor(action.timestamp / (60 * 60 * 1000)) * (60 * 60 * 1000);
       hourlyActivity.set(hour, (hourlyActivity.get(hour) || 0) + 1);

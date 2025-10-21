@@ -6,12 +6,7 @@ const DYNAMIC_CACHE = `${CACHE_VERSION}-dynamic`;
 const DATA_CACHE = `${CACHE_VERSION}-data`;
 
 // Static assets to cache immediately
-const STATIC_ASSETS = [
-  '/',
-  '/index.html',
-  '/manifest.json',
-  '/favicon.ico',
-];
+const STATIC_ASSETS = ['/', '/index.html', '/manifest.json', '/favicon.ico'];
 
 // Maximum cache size for dynamic content
 const MAX_CACHE_SIZE = 50;
@@ -21,14 +16,14 @@ const MAX_CACHE_SIZE = 50;
  */
 self.addEventListener('install', (event) => {
   console.log('[SW] Installing service worker...');
-  
+
   event.waitUntil(
     caches.open(STATIC_CACHE).then((cache) => {
       console.log('[SW] Caching static assets');
       return cache.addAll(STATIC_ASSETS);
     })
   );
-  
+
   self.skipWaiting();
 });
 
@@ -37,12 +32,18 @@ self.addEventListener('install', (event) => {
  */
 self.addEventListener('activate', (event) => {
   console.log('[SW] Activating service worker...');
-  
+
   event.waitUntil(
     caches.keys().then((cacheNames) => {
       return Promise.all(
         cacheNames
-          .filter((name) => name.startsWith('hummbl-') && name !== STATIC_CACHE && name !== DYNAMIC_CACHE && name !== DATA_CACHE)
+          .filter(
+            (name) =>
+              name.startsWith('hummbl-') &&
+              name !== STATIC_CACHE &&
+              name !== DYNAMIC_CACHE &&
+              name !== DATA_CACHE
+          )
           .map((name) => {
             console.log('[SW] Deleting old cache:', name);
             return caches.delete(name);
@@ -50,7 +51,7 @@ self.addEventListener('activate', (event) => {
       );
     })
   );
-  
+
   self.clients.claim();
 });
 
@@ -78,12 +79,12 @@ self.addEventListener('fetch', (event) => {
         .then((response) => {
           // Clone response before caching
           const responseClone = response.clone();
-          
+
           caches.open(DATA_CACHE).then((cache) => {
             cache.put(request, responseClone);
             limitCacheSize(DATA_CACHE, MAX_CACHE_SIZE);
           });
-          
+
           return response;
         })
         .catch(() => {
@@ -128,13 +129,11 @@ self.addEventListener('message', (event) => {
   if (event.data && event.data.type === 'SKIP_WAITING') {
     self.skipWaiting();
   }
-  
+
   if (event.data && event.data.type === 'CLEAR_CACHE') {
     event.waitUntil(
       caches.keys().then((cacheNames) => {
-        return Promise.all(
-          cacheNames.map((name) => caches.delete(name))
-        );
+        return Promise.all(cacheNames.map((name) => caches.delete(name)));
       })
     );
   }
@@ -160,7 +159,7 @@ function limitCacheSize(cacheName, maxSize) {
  */
 self.addEventListener('sync', (event) => {
   console.log('[SW] Background sync:', event.tag);
-  
+
   if (event.tag === 'sync-notes') {
     event.waitUntil(
       // This would sync queued notes when online
@@ -174,7 +173,7 @@ self.addEventListener('sync', (event) => {
  */
 self.addEventListener('push', (event) => {
   console.log('[SW] Push notification received');
-  
+
   const options = {
     body: event.data ? event.data.text() : 'New update available',
     icon: '/icon-192.png',
@@ -183,7 +182,5 @@ self.addEventListener('push', (event) => {
     tag: 'hummbl-notification',
   };
 
-  event.waitUntil(
-    self.registration.showNotification('HUMMBL', options)
-  );
+  event.waitUntil(self.registration.showNotification('HUMMBL', options));
 });

@@ -180,7 +180,7 @@ export function useExperiment(experimentId: string): {
     if (!assignment) {
       // New assignment
       const assignedVariant = assignVariant(experiment.variants, experiment.weights);
-      
+
       assignment = {
         experimentId,
         variant: assignedVariant,
@@ -205,25 +205,31 @@ export function useExperiment(experimentId: string): {
   /**
    * Track conversion event
    */
-  const trackConversion = useCallback((value?: number) => {
-    const analytics = getAnalytics();
-    analytics.trackCustom('Experiment', 'conversion', {
-      label: experimentId,
-      value,
-      metadata: { variant },
-    });
-  }, [experimentId, variant]);
+  const trackConversion = useCallback(
+    (value?: number) => {
+      const analytics = getAnalytics();
+      analytics.trackCustom('Experiment', 'conversion', {
+        label: experimentId,
+        value,
+        metadata: { variant },
+      });
+    },
+    [experimentId, variant]
+  );
 
   /**
    * Track custom event for this experiment
    */
-  const trackEvent = useCallback((action: string, metadata?: Record<string, unknown>) => {
-    const analytics = getAnalytics();
-    analytics.trackCustom('Experiment', action, {
-      label: experimentId,
-      metadata: { ...metadata, variant },
-    });
-  }, [experimentId, variant]);
+  const trackEvent = useCallback(
+    (action: string, metadata?: Record<string, unknown>) => {
+      const analytics = getAnalytics();
+      analytics.trackCustom('Experiment', action, {
+        label: experimentId,
+        metadata: { ...metadata, variant },
+      });
+    },
+    [experimentId, variant]
+  );
 
   return {
     variant,
@@ -255,9 +261,7 @@ export function useExperimentManager() {
    */
   const updateExperiment = useCallback((experimentId: string, updates: Partial<Experiment>) => {
     setExperiments((prev) => {
-      const updated = prev.map((exp) =>
-        exp.id === experimentId ? { ...exp, ...updates } : exp
-      );
+      const updated = prev.map((exp) => (exp.id === experimentId ? { ...exp, ...updates } : exp));
       saveExperiments(updated);
       return updated;
     });
@@ -343,7 +347,7 @@ export function useExperimentManager() {
  */
 export function forceVariant(experimentId: string, variant: string): void {
   const assignments = loadAssignments();
-  
+
   assignments[experimentId] = {
     experimentId,
     variant,

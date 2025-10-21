@@ -1,18 +1,18 @@
 // Tests for advanced search
 
 import { describe, it, expect } from 'vitest';
-import {
-  searchNarratives,
-  searchMentalModels,
-  getSearchSuggestions,
-} from '../advancedSearch';
-import type { Narrative } from '../../types/narrative';
+import { searchNarratives, searchMentalModels, getSearchSuggestions } from '../advancedSearch';
+import type { Narrative } from '../../../cascade/types/narrative';
 
 describe('Advanced Search', () => {
   const mockNarratives: Narrative[] = [
     {
+      id: 'N001',
       narrative_id: 'N001',
+      version: '1.0',
+      provenance_hash: 'abc123',
       title: 'Cognitive Bias in Decision Making',
+      content: 'Detailed content about cognitive biases...',
       summary: 'How cognitive biases affect our decisions',
       category: 'Psychology',
       evidence_quality: 'A',
@@ -24,10 +24,21 @@ describe('Advanced Search', () => {
       citations: [],
       examples: [],
       elicitation_methods: [],
-    } as Narrative,
+      related_frameworks: [],
+      changelog: [],
+      complexity: {
+        cognitive_load: 'Medium',
+        time_to_elicit: '1-2 hours',
+        expertise_required: 'Intermediate',
+      },
+    },
     {
+      id: 'N002',
       narrative_id: 'N002',
+      version: '1.0',
+      provenance_hash: 'def456',
       title: 'Systems Thinking Approach',
+      content: 'Detailed content about systems thinking...',
       summary: 'Understanding complex systems through holistic thinking',
       category: 'Systems Theory',
       evidence_quality: 'B',
@@ -39,7 +50,14 @@ describe('Advanced Search', () => {
       citations: [],
       examples: [],
       elicitation_methods: [],
-    } as Narrative,
+      related_frameworks: [],
+      changelog: [],
+      complexity: {
+        cognitive_load: 'Medium',
+        time_to_elicit: '1-2 hours',
+        expertise_required: 'Intermediate',
+      },
+    },
   ];
 
   describe('searchNarratives', () => {

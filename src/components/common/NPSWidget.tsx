@@ -47,7 +47,8 @@ export const NPSWidget: React.FC = () => {
         setTimeout(() => setIsVisible(true), 5000); // 5 second delay
       } else {
         const totalTime = parseInt(localStorage.getItem(TOTAL_TIME_KEY) || '0');
-        if (totalTime >= 600) { // 10 minutes = 600 seconds
+        if (totalTime >= 600) {
+          // 10 minutes = 600 seconds
           setTimeout(() => setIsVisible(true), 5000);
         }
       }
@@ -108,9 +109,9 @@ export const NPSWidget: React.FC = () => {
 
   const getFollowUpPrompt = (): string => {
     if (score === null) return '';
-    if (score <= 6) return "What would make you more likely to recommend HUMMBL?";
-    if (score <= 8) return "What can we improve?";
-    return "What do you love most about HUMMBL?";
+    if (score <= 6) return 'What would make you more likely to recommend HUMMBL?';
+    if (score <= 8) return 'What can we improve?';
+    return 'What do you love most about HUMMBL?';
   };
 
   return (
@@ -118,11 +119,7 @@ export const NPSWidget: React.FC = () => {
       <div className="nps-widget">
         {!submitted ? (
           <>
-            <button
-              className="nps-dismiss"
-              onClick={handleDismiss}
-              aria-label="Dismiss survey"
-            >
+            <button className="nps-dismiss" onClick={handleDismiss} aria-label="Dismiss survey">
               ×
             </button>
 

@@ -21,14 +21,14 @@ export interface UserPreferences {
   // View state
   lastView: ViewType;
   lastViewTimestamp: number;
-  
+
   // Filter state
   lastFilters: FilterPreferences;
   savedFilterSets: Record<string, FilterPreferences>;
-  
+
   // Sort state
   lastSort: SortPreferences;
-  
+
   // Export preferences
   preferredExportFormat: ExportFormat;
   exportHistory: Array<{
@@ -36,16 +36,16 @@ export interface UserPreferences {
     timestamp: number;
     itemCount: number;
   }>;
-  
+
   // UI preferences
   theme: 'light' | 'dark' | 'auto';
   compactMode: boolean;
   showDescriptions: boolean;
-  
+
   // Feature flags
   enableAnalytics: boolean;
   enableAutoSave: boolean;
-  
+
   // Accessibility
   reducedMotion: boolean;
   highContrast: boolean;
@@ -151,9 +151,12 @@ export function useUserPreferences() {
   /**
    * Load a saved filter set
    */
-  const loadFilterSet = useCallback((name: string): FilterPreferences | undefined => {
-    return preferences.savedFilterSets[name];
-  }, [preferences.savedFilterSets]);
+  const loadFilterSet = useCallback(
+    (name: string): FilterPreferences | undefined => {
+      return preferences.savedFilterSets[name];
+    },
+    [preferences.savedFilterSets]
+  );
 
   /**
    * Delete a saved filter set
@@ -299,9 +302,9 @@ export function useUserPreferences() {
       savePreferences(merged);
       return { success: true };
     } catch (error) {
-      return { 
-        success: false, 
-        error: error instanceof Error ? error.message : 'Invalid JSON' 
+      return {
+        success: false,
+        error: error instanceof Error ? error.message : 'Invalid JSON',
       };
     }
   }, []);
@@ -331,36 +334,36 @@ export function useUserPreferences() {
   return {
     // Current preferences
     preferences,
-    
+
     // View management
     setLastView,
-    
+
     // Filter management
     setFilters,
     saveFilterSet,
     loadFilterSet,
     deleteFilterSet,
-    
+
     // Sort management
     setSort,
-    
+
     // Export management
     setPreferredExportFormat,
     recordExport,
-    
+
     // UI preferences
     setTheme,
     toggleCompactMode,
     toggleDescriptions,
-    
+
     // Feature flags
     toggleAnalytics,
     toggleAutoSave,
-    
+
     // Accessibility
     setReducedMotion,
     setHighContrast,
-    
+
     // Utility
     resetPreferences,
     exportPreferences,

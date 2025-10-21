@@ -9,7 +9,6 @@ import path from 'path';
 
 const router = Router();
 
-
 interface TelemetryEvent {
   taskId: string;
   userId?: string;
@@ -21,21 +20,21 @@ interface TelemetryEvent {
     input?: string;
     taskType?: string;
     confidence?: number;
-    
+
     // Model selection data
     selectedModel?: string;
     modelClass?: 'execution' | 'reasoning' | 'creative';
     routingReason?: string;
-    
+
     // Performance data
     latency?: number;
     tokensUsed?: number;
     cost?: number;
-    
+
     // Error data
     error?: string;
     errorCode?: string;
-    
+
     // Context data
     userAgent?: string;
     platform?: string;
@@ -56,7 +55,7 @@ try {
   }
 
   db = new Database(dbPath);
-  
+
   // Create telemetry table
   db.exec(`
     CREATE TABLE IF NOT EXISTS telemetry_events (
@@ -127,7 +126,6 @@ router.post('/event', (req: AuthenticatedRequest, res: Response) => {
       success: true,
       message: 'Telemetry event recorded',
     });
-
   } catch (error) {
     logger.error('Failed to record telemetry event', error as Error);
     res.status(500).json({
@@ -210,7 +208,6 @@ router.post('/batch', (req: AuthenticatedRequest, res: Response) => {
         errors: errorCount,
       },
     });
-
   } catch (error) {
     logger.error('Failed to process batch telemetry', error as Error);
     res.status(500).json({
@@ -250,16 +247,22 @@ router.get('/analytics', (req: AuthenticatedRequest, res: Response) => {
     }
 
     // Get event counts by type
-    const eventCounts = db.prepare(`
+    const eventCounts = db
+      .prepare(
+        `
       SELECT event, COUNT(*) as count
       FROM telemetry_events
       ${whereClause}
       GROUP BY event
       ORDER BY count DESC
-    `).all(params);
+    `
+      )
+      .all(params);
 
     // Get model selection stats
-    const modelStats = db.prepare(`
+    const modelStats = db
+      .prepare(
+        `
       SELECT 
         JSON_EXTRACT(data, '$.selectedModel') as model,
         JSON_EXTRACT(data, '$.modelClass') as model_class,
@@ -272,10 +275,14 @@ router.get('/analytics', (req: AuthenticatedRequest, res: Response) => {
       AND JSON_EXTRACT(data, '$.selectedModel') IS NOT NULL
       GROUP BY model, model_class
       ORDER BY count DESC
-    `).all(params);
+    `
+      )
+      .all(params);
 
     // Get error rates
-    const errorStats = db.prepare(`
+    const errorStats = db
+      .prepare(
+        `
       SELECT 
         JSON_EXTRACT(data, '$.errorCode') as error_code,
         COUNT(*) as count
@@ -284,10 +291,14 @@ router.get('/analytics', (req: AuthenticatedRequest, res: Response) => {
       AND event = 'error_occurred'
       GROUP BY error_code
       ORDER BY count DESC
-    `).all(params);
+    `
+      )
+      .all(params);
 
     // Get performance metrics
-    const performanceStats = db.prepare(`
+    const performanceStats = db
+      .prepare(
+        `
       SELECT 
         AVG(CAST(JSON_EXTRACT(data, '$.latency') AS REAL)) as avg_latency,
         MIN(CAST(JSON_EXTRACT(data, '$.latency') AS REAL)) as min_latency,
@@ -298,7 +309,9 @@ router.get('/analytics', (req: AuthenticatedRequest, res: Response) => {
       ${whereClause}
       AND event = 'request_completed'
       AND JSON_EXTRACT(data, '$.latency') IS NOT NULL
-    `).get(params);
+    `
+      )
+      .get(params);
 
     res.json({
       timeframe,
@@ -311,7 +324,6 @@ router.get('/analytics', (req: AuthenticatedRequest, res: Response) => {
       },
       generatedAt: new Date().toISOString(),
     });
-
   } catch (error) {
     logger.error('Failed to generate analytics', error as Error);
     res.status(500).json({
@@ -332,12 +344,16 @@ router.get('/tasks/:taskId', (req: AuthenticatedRequest, res: Response) => {
       });
     }
 
-    const events = db.prepare(`
+    const events = db
+      .prepare(
+        `
       SELECT event, timestamp, data, created_at
       FROM telemetry_events
       WHERE task_id = ?
       ORDER BY timestamp ASC
-    `).all(taskId);
+    `
+      )
+      .all(taskId);
 
     // Parse JSON data
     const parsedEvents = events.map((event: any) => ({
@@ -350,7 +366,6 @@ router.get('/tasks/:taskId', (req: AuthenticatedRequest, res: Response) => {
       events: parsedEvents,
       eventCount: events.length,
     });
-
   } catch (error) {
     logger.error('Failed to get task telemetry', error as Error);
     res.status(500).json({

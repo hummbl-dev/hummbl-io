@@ -51,13 +51,13 @@ export interface Narrative {
   narrative_id: string;
   version: string;
   provenance_hash: string;
-  
+
   // Core content
   title: string;
   content: string;
   summary: string;
   category: string;
-  
+
   // Classification
   tags: string[];
   domain: string[];
@@ -150,7 +150,7 @@ export class ContentImportPipeline {
   async importNarratives(data: unknown[]): Promise<ImportResult<Narrative>> {
     const startTime = Date.now();
     this.errors = [];
-    
+
     const result: ImportResult<Narrative> = {
       success: true,
       data: [],
@@ -216,7 +216,7 @@ export class ContentImportPipeline {
   async importMentalModels(data: unknown[]): Promise<ImportResult<MentalModel>> {
     const startTime = Date.now();
     this.errors = [];
-    
+
     const result: ImportResult<MentalModel> = {
       success: true,
       data: [],
@@ -352,90 +352,93 @@ export class ContentImportPipeline {
       narrative_id: String(item.narrative_id || ''),
       version: String(item.version || '1.0.0'),
       provenance_hash: String(item.provenance_hash || ''),
-      
+
       // Core content
       title: String(item.title || ''),
       content: String(item.content || ''),
       summary: String(item.summary || ''),
       category: String(item.category || ''),
-      
+
       // Classification
-      tags: Array.isArray(item.tags) 
+      tags: Array.isArray(item.tags)
         ? (item.tags as unknown[]).filter((t): t is string => typeof t === 'string')
         : [],
       domain: Array.isArray(item.domain)
         ? (item.domain as unknown[]).filter((d): d is string => typeof d === 'string')
         : [],
       evidence_quality: (['A', 'B', 'C'] as const).includes(item.evidence_quality as any)
-        ? item.evidence_quality as 'A' | 'B' | 'C'
+        ? (item.evidence_quality as 'A' | 'B' | 'C')
         : 'C',
-      confidence: typeof item.confidence === 'number' ? Math.min(100, Math.max(0, item.confidence)) : 0,
+      confidence:
+        typeof item.confidence === 'number' ? Math.min(100, Math.max(0, item.confidence)) : 0,
       complexity: {
         cognitive_load: 'medium',
         time_to_elicit: 'medium',
         expertise_required: 'intermediate',
-        ...(typeof item.complexity === 'object' ? item.complexity : {})
+        ...(typeof item.complexity === 'object' ? item.complexity : {}),
       },
       examples: (() => {
         if (!Array.isArray(item.examples)) return [];
         return (item.examples as Array<unknown>)
-          .map(ex => {
+          .map((ex) => {
             if (typeof ex === 'string') return ex;
-            if (ex && typeof ex === 'object' && 
-                'scenario' in ex && 'application' in ex && 'outcome' in ex) {
+            if (
+              ex &&
+              typeof ex === 'object' &&
+              'scenario' in ex &&
+              'application' in ex &&
+              'outcome' in ex
+            ) {
               return {
                 scenario: String((ex as any).scenario || ''),
                 application: String((ex as any).application || ''),
-                outcome: String((ex as any).outcome || '')
+                outcome: String((ex as any).outcome || ''),
               } as Example;
             }
             return null;
           })
           .filter((ex): ex is Example | string => ex !== null);
       })(),
-      linked_signals: Array.isArray(item.linked_signals) 
-        ? item.linked_signals as Signal[] 
-        : [],
-      relationships: Array.isArray(item.relationships) 
-        ? item.relationships as Relationship[] 
+      linked_signals: Array.isArray(item.linked_signals) ? (item.linked_signals as Signal[]) : [],
+      relationships: Array.isArray(item.relationships)
+        ? (item.relationships as Relationship[])
         : [],
       related_frameworks: Array.isArray(item.related_frameworks)
         ? (item.related_frameworks as unknown[]).filter((f): f is string => typeof f === 'string')
         : [],
-      citations: Array.isArray(item.citations) 
-        ? (item.citations as Array<Record<string, unknown>>).map(c => ({
+      citations: Array.isArray(item.citations)
+        ? (item.citations as Array<Record<string, unknown>>).map((c) => ({
             author: String(c.author || ''),
             year: String(c.year || ''),
             title: String(c.title || ''),
-            source: String(c.source || '')
+            source: String(c.source || ''),
           }))
         : [],
       elicitation_methods: Array.isArray(item.elicitation_methods)
-        ? item.elicitation_methods as ElicitationMethod[]
+        ? (item.elicitation_methods as ElicitationMethod[])
         : [],
       methods: Array.isArray(item.methods)
-        ? (item.methods as Array<unknown>).map(method => ({
+        ? (item.methods as Array<unknown>).map((method) => ({
             method: String((method as any)?.method || ''),
             description: String((method as any)?.description || ''),
             duration: String((method as any)?.duration || ''),
-            difficulty: ['Beginner', 'Intermediate', 'Advanced'].includes((method as any)?.difficulty)
-              ? (method as any).difficulty as 'Beginner' | 'Intermediate' | 'Advanced'
-              : 'Intermediate'
+            difficulty: ['Beginner', 'Intermediate', 'Advanced'].includes(
+              (method as any)?.difficulty
+            )
+              ? ((method as any).difficulty as 'Beginner' | 'Intermediate' | 'Advanced')
+              : 'Intermediate',
           }))
         : [],
       changelog: Array.isArray(item.changelog)
-        ? (item.changelog as Array<unknown>).map(entry => ({
+        ? (item.changelog as Array<unknown>).map((entry) => ({
             version: String((entry as any)?.version || '0.0.1'),
             date: String((entry as any)?.date || new Date().toISOString()),
-            changes: String((entry as any)?.changes || 'Initial version')
+            changes: String((entry as any)?.changes || 'Initial version'),
           }))
         : [],
-      lastUpdated: typeof item.lastUpdated === 'string' 
-        ? item.lastUpdated 
-        : new Date().toISOString(),
-      approved: typeof item.approved === 'boolean' 
-        ? item.approved 
-        : false,
+      lastUpdated:
+        typeof item.lastUpdated === 'string' ? item.lastUpdated : new Date().toISOString(),
+      approved: typeof item.approved === 'boolean' ? item.approved : false,
     };
 
     return narrative;
@@ -503,10 +506,11 @@ export class ContentImportPipeline {
 
     // Handle transformations - support both 'transformation' and 'transformations' properties
     let transformations: string[] = [];
-    
+
     if (Array.isArray(item.transformations)) {
-      transformations = (item.transformations as unknown[])
-        .filter((t): t is string => typeof t === 'string' && t.length > 0);
+      transformations = (item.transformations as unknown[]).filter(
+        (t): t is string => typeof t === 'string' && t.length > 0
+      );
     } else if (item.transformation && typeof item.transformation === 'string') {
       transformations = [item.transformation as string];
     }
@@ -519,33 +523,32 @@ export class ContentImportPipeline {
       ...(item.definition ? { definition: String(item.definition) } : {}),
       ...(item.description ? { description: String(item.description) } : {}),
       category: item.category as string,
-      tags: Array.isArray(item.tags) 
+      tags: Array.isArray(item.tags)
         ? (item.tags as unknown[]).filter((t): t is string => typeof t === 'string')
         : [],
       transformations,
       sources: Array.isArray(item.sources)
         ? (item.sources as Array<unknown>)
-            .filter(s => s !== null && s !== undefined)
-            .map(s => ({
+            .filter((s) => s !== null && s !== undefined)
+            .map((s) => ({
               name: (s as any)?.name ? String((s as any).name) : 'Unknown',
-              reference: (s as any)?.reference ? String((s as any).reference) : ''
+              reference: (s as any)?.reference ? String((s as any).reference) : '',
             }))
         : [],
       ...(item.example ? { example: String(item.example) } : {}),
       meta: {
         added: new Date().toISOString(),
-        updated: typeof item.lastUpdated === 'string' 
-          ? item.lastUpdated 
-          : new Date().toISOString(),
-        difficulty: typeof item.difficulty === 'number' 
-          ? Math.min(5, Math.max(1, item.difficulty))
-          : item.complexity === 'high' 
-            ? 5 
-            : item.complexity === 'medium' 
-              ? 3 
-              : 1,
-        isCore: false
-      }
+        updated: typeof item.lastUpdated === 'string' ? item.lastUpdated : new Date().toISOString(),
+        difficulty:
+          typeof item.difficulty === 'number'
+            ? Math.min(5, Math.max(1, item.difficulty))
+            : item.complexity === 'high'
+              ? 5
+              : item.complexity === 'medium'
+                ? 3
+                : 1,
+        isCore: false,
+      },
     };
 
     return mentalModel;
@@ -554,7 +557,10 @@ export class ContentImportPipeline {
   /**
    * Import from file
    */
-  async importFromFile(file: File, type: 'narratives' | 'mentalModels'): Promise<ImportResult<Narrative | MentalModel>> {
+  async importFromFile(
+    file: File,
+    type: 'narratives' | 'mentalModels'
+  ): Promise<ImportResult<Narrative | MentalModel>> {
     return new Promise((resolve, reject) => {
       const reader = new FileReader();
 
@@ -563,22 +569,27 @@ export class ContentImportPipeline {
           if (!event.target?.result) {
             throw new Error('No content in file');
           }
-          
+
           const content = event.target.result as string;
           const data = JSON.parse(content) as unknown[];
-          
+
           if (!Array.isArray(data)) {
             throw new Error('Expected an array of items in the file');
           }
 
           // Use the appropriate import method based on type
-          const result = type === 'narratives' 
-            ? await this.importNarratives(data)
-            : await this.importMentalModels(data);
+          const result =
+            type === 'narratives'
+              ? await this.importNarratives(data)
+              : await this.importMentalModels(data);
 
           resolve(result);
         } catch (error) {
-          reject(new Error(`Failed to process file: ${error instanceof Error ? error.message : String(error)}`));
+          reject(
+            new Error(
+              `Failed to process file: ${error instanceof Error ? error.message : String(error)}`
+            )
+          );
         }
       };
 
@@ -620,7 +631,7 @@ export class ContentImportPipeline {
         allErrors.push({
           file: file.name,
           message: error instanceof Error ? error.message : 'Unknown error',
-          severity: 'error'
+          severity: 'error',
         });
         totalFailed++;
       }
@@ -635,8 +646,8 @@ export class ContentImportPipeline {
         imported: totalImported,
         skipped: totalSkipped,
         failed: totalFailed,
-        duration: Date.now() - startTime
-      }
+        duration: Date.now() - startTime,
+      },
     };
   }
 
@@ -657,7 +668,9 @@ export class ContentImportPipeline {
       URL.revokeObjectURL(url);
     } catch (error) {
       console.error('Error exporting to JSON:', error);
-      throw new Error(`Failed to export data: ${error instanceof Error ? error.message : 'Unknown error'}`);
+      throw new Error(
+        `Failed to export data: ${error instanceof Error ? error.message : 'Unknown error'}`
+      );
     }
   }
 

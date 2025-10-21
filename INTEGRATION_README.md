@@ -3,13 +3,16 @@
 ## 🚀 Quick Start
 
 ### 1. Install Dependencies
+
 ```bash
 cd /Users/others/CascadeProjects/hummbl-io
 npm install
 ```
 
 ### 2. Configure Environment
+
 Create `.env.local`:
+
 ```env
 VITE_API_BASE_URL=/api
 VITE_BUILD_OUTPUT_DIR=/data
@@ -19,6 +22,7 @@ VITE_CACHE_TTL=300000
 ```
 
 ### 3. Copy Build Outputs
+
 ```bash
 # Create public data directory
 mkdir -p public/data
@@ -32,6 +36,7 @@ cp /Users/others/Downloads/dist/sitrep/*.json public/data/
 ```
 
 ### 4. Run Development Server
+
 ```bash
 npm run dev
 ```
@@ -76,6 +81,7 @@ hummbl-io/
 ## 🔌 Using Components
 
 ### NarrativeList
+
 ```tsx
 import { NarrativeList } from './components/narratives/NarrativeList';
 
@@ -85,18 +91,19 @@ function App() {
 ```
 
 ### Custom Hook Usage
+
 ```tsx
 import { useNarratives } from './hooks/useNarratives';
 
 function MyComponent() {
   const { narratives, loading, error, refetch } = useNarratives();
-  
+
   if (loading) return <div>Loading...</div>;
   if (error) return <div>Error: {error.message}</div>;
-  
+
   return (
     <div>
-      {narratives.map(n => (
+      {narratives.map((n) => (
         <div key={n.narrative_id}>{n.title}</div>
       ))}
     </div>
@@ -109,12 +116,14 @@ function MyComponent() {
 ## 🎯 Integration Modes
 
 ### Mode 1: Static Data (Recommended for Development)
+
 - Uses pre-built JSON files from `public/data/`
 - No API server required
 - Fast and reliable
 - Set `VITE_USE_STATIC_DATA=true`
 
 ### Mode 2: API Endpoints (Production)
+
 - Fetches data from API server
 - Dynamic updates
 - Requires backend implementation
@@ -160,6 +169,7 @@ Parallel Build Pipeline
 ## 🚦 Next Steps
 
 1. **Test Static Data Mode**
+
    ```bash
    npm run dev
    # Visit http://localhost:5173
@@ -172,6 +182,7 @@ Parallel Build Pipeline
    - SITREPPanel
 
 3. **Implement Routing**
+
    ```bash
    npm install react-router-dom
    ```
@@ -191,15 +202,18 @@ Parallel Build Pipeline
 ## 🔧 Troubleshooting
 
 ### Data Not Loading
+
 - Check `public/data/` directory exists
 - Verify JSON files are valid
 - Check browser console for errors
 
 ### TypeScript Errors
+
 - Run `npm install` to ensure types are installed
 - Check `tsconfig.json` configuration
 
 ### Build Errors
+
 - Clear cache: `rm -rf node_modules/.vite`
 - Reinstall: `npm install`
 

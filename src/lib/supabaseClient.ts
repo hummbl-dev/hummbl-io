@@ -9,7 +9,9 @@ const supabaseAnonKey = import.meta.env.VITE_SUPABASE_ANON_KEY;
 const isSupabaseConfigured = !!(supabaseUrl && supabaseAnonKey);
 
 if (!isSupabaseConfigured) {
-  console.warn('⚠️ Supabase not configured. Auth features disabled. Add VITE_SUPABASE_URL and VITE_SUPABASE_ANON_KEY to enable.');
+  console.warn(
+    '⚠️ Supabase not configured. Auth features disabled. Add VITE_SUPABASE_URL and VITE_SUPABASE_ANON_KEY to enable.'
+  );
 }
 
 // Create client with dummy values if not configured (prevents crashes)

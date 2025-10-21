@@ -58,28 +58,31 @@ export function useNotes() {
   /**
    * Create a note
    */
-  const createNote = useCallback((
-    type: 'narrative' | 'mentalModel',
-    itemId: string,
-    itemTitle: string,
-    content: string,
-    options?: { tags?: string[]; color?: string }
-  ) => {
-    const note: Note = {
-      id: `note_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`,
-      type,
-      itemId,
-      itemTitle,
-      content,
-      createdAt: Date.now(),
-      updatedAt: Date.now(),
-      isPinned: false,
-      ...options,
-    };
+  const createNote = useCallback(
+    (
+      type: 'narrative' | 'mentalModel',
+      itemId: string,
+      itemTitle: string,
+      content: string,
+      options?: { tags?: string[]; color?: string }
+    ) => {
+      const note: Note = {
+        id: `note_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`,
+        type,
+        itemId,
+        itemTitle,
+        content,
+        createdAt: Date.now(),
+        updatedAt: Date.now(),
+        isPinned: false,
+        ...options,
+      };
 
-    setNotes((prev) => [note, ...prev]);
-    return note;
-  }, []);
+      setNotes((prev) => [note, ...prev]);
+      return note;
+    },
+    []
+  );
 
   /**
    * Update a note
@@ -87,9 +90,7 @@ export function useNotes() {
   const updateNote = useCallback((noteId: string, updates: Partial<Note>) => {
     setNotes((prev) =>
       prev.map((note) =>
-        note.id === noteId
-          ? { ...note, ...updates, updatedAt: Date.now() }
-          : note
+        note.id === noteId ? { ...note, ...updates, updatedAt: Date.now() } : note
       )
     );
   }, []);
@@ -137,9 +138,7 @@ export function useNotes() {
   const togglePin = useCallback((noteId: string) => {
     setNotes((prev) =>
       prev.map((note) =>
-        note.id === noteId
-          ? { ...note, isPinned: !note.isPinned, updatedAt: Date.now() }
-          : note
+        note.id === noteId ? { ...note, isPinned: !note.isPinned, updatedAt: Date.now() } : note
       )
     );
   }, []);
@@ -172,9 +171,7 @@ export function useNotes() {
    */
   const getNotesByTags = useCallback(
     (tags: string[]): Note[] => {
-      return notes.filter((note) =>
-        note.tags?.some((tag) => tags.includes(tag))
-      );
+      return notes.filter((note) => note.tags?.some((tag) => tags.includes(tag)));
     },
     [notes]
   );
@@ -184,9 +181,7 @@ export function useNotes() {
    */
   const getRecentNotes = useCallback(
     (limit = 10): Note[] => {
-      return [...notes]
-        .sort((a, b) => b.updatedAt - a.updatedAt)
-        .slice(0, limit);
+      return [...notes].sort((a, b) => b.updatedAt - a.updatedAt).slice(0, limit);
     },
     [notes]
   );
@@ -242,7 +237,7 @@ export function useNotes() {
   const importNotes = useCallback((json: string, merge = false) => {
     try {
       const imported = JSON.parse(json);
-      
+
       if (merge) {
         setNotes((prev) => [...prev, ...imported]);
       } else {

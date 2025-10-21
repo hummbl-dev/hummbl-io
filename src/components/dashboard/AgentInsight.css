@@ -103,7 +103,8 @@
 }
 
 @keyframes pulse {
-  0%, 100% {
+  0%,
+  100% {
     transform: scale(1);
     box-shadow: 0 0 0 0 rgba(59, 130, 246, 0.7);
   }
@@ -168,7 +169,8 @@
 }
 
 @keyframes fade-pulse {
-  0%, 100% {
+  0%,
+  100% {
     opacity: 0.6;
   }
   50% {
@@ -190,7 +192,9 @@
   border-radius: var(--radius-lg);
   border: 2px solid var(--border-light);
   text-align: center;
-  transition: transform 0.2s ease, box-shadow 0.2s ease;
+  transition:
+    transform 0.2s ease,
+    box-shadow 0.2s ease;
 }
 
 .metric-card:hover {
@@ -285,23 +289,23 @@
   border-radius: var(--radius-full);
 }
 
-.distribution-fill[data-type="feature"] {
+.distribution-fill[data-type='feature'] {
   background: linear-gradient(90deg, #10b981, #34d399);
 }
 
-.distribution-fill[data-type="fix"] {
+.distribution-fill[data-type='fix'] {
   background: linear-gradient(90deg, #ef4444, #f87171);
 }
 
-.distribution-fill[data-type="test"] {
+.distribution-fill[data-type='test'] {
   background: linear-gradient(90deg, #8b5cf6, #a78bfa);
 }
 
-.distribution-fill[data-type="refactor"] {
+.distribution-fill[data-type='refactor'] {
   background: linear-gradient(90deg, #f59e0b, #fbbf24);
 }
 
-.distribution-fill[data-type="docs"] {
+.distribution-fill[data-type='docs'] {
   background: linear-gradient(90deg, #06b6d4, #22d3ee);
 }
 

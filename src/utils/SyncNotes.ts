@@ -150,7 +150,7 @@ export class SyncNotes {
 
     this.syncQueue.push(operation);
     this.status.pendingChanges = this.syncQueue.filter((op) => !op.synced).length;
-    
+
     this.saveSyncQueue();
     this.saveSyncStatus();
   }
@@ -170,7 +170,7 @@ export class SyncNotes {
 
     this.syncQueue.push(operation);
     this.status.pendingChanges = this.syncQueue.filter((op) => !op.synced).length;
-    
+
     this.saveSyncQueue();
     this.saveSyncStatus();
   }
@@ -189,7 +189,7 @@ export class SyncNotes {
 
     this.syncQueue.push(operation);
     this.status.pendingChanges = this.syncQueue.filter((op) => !op.synced).length;
-    
+
     this.saveSyncQueue();
     this.saveSyncStatus();
   }
@@ -401,11 +401,15 @@ export class SyncNotes {
    * Export sync data for debugging
    */
   exportSyncData(): string {
-    return JSON.stringify({
-      queue: this.syncQueue,
-      status: this.status,
-      syncedNotes: this.loadSyncedNotes(),
-    }, null, 2);
+    return JSON.stringify(
+      {
+        queue: this.syncQueue,
+        status: this.status,
+        syncedNotes: this.loadSyncedNotes(),
+      },
+      null,
+      2
+    );
   }
 
   /**

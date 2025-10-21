@@ -11,7 +11,7 @@ describe('RecommendationEngine', () => {
   beforeEach(() => {
     localStorage.clear();
     engine = new RecommendationEngine('test-user');
-    
+
     corpus = [
       {
         id: '1',
@@ -45,7 +45,7 @@ describe('RecommendationEngine', () => {
   describe('Profile Management', () => {
     it('creates default profile', () => {
       const profile = engine.getProfile();
-      
+
       expect(profile.userId).toBe('test-user');
       expect(profile.viewedItems).toEqual([]);
       expect(profile.bookmarkedItems).toEqual([]);
@@ -53,21 +53,21 @@ describe('RecommendationEngine', () => {
 
     it('updates profile with viewed items', () => {
       engine.updateProfile({ viewedItem: '1' });
-      
+
       const profile = engine.getProfile();
       expect(profile.viewedItems).toContain('1');
     });
 
     it('updates profile with bookmarked items', () => {
       engine.updateProfile({ bookmarkedItem: '2' });
-      
+
       const profile = engine.getProfile();
       expect(profile.bookmarkedItems).toContain('2');
     });
 
     it('tracks search history', () => {
       engine.updateProfile({ searchQuery: 'test query' });
-      
+
       const profile = engine.getProfile();
       expect(profile.searchHistory).toContain('test query');
     });
@@ -75,7 +75,7 @@ describe('RecommendationEngine', () => {
     it('tracks category preferences', () => {
       engine.updateProfile({ category: 'Thinking' });
       engine.updateProfile({ category: 'Thinking' });
-      
+
       const profile = engine.getProfile();
       expect(profile.preferences.categories['Thinking']).toBe(2);
     });
@@ -83,7 +83,7 @@ describe('RecommendationEngine', () => {
     it('resets profile', () => {
       engine.updateProfile({ viewedItem: '1' });
       engine.resetProfile();
-      
+
       const profile = engine.getProfile();
       expect(profile.viewedItems).toEqual([]);
     });
@@ -92,7 +92,7 @@ describe('RecommendationEngine', () => {
   describe('Recommendations', () => {
     it('generates recommendations', async () => {
       const recommendations = await engine.getRecommendations(corpus, 2);
-      
+
       expect(recommendations.length).toBeLessThanOrEqual(2);
       expect(recommendations[0]).toHaveProperty('id');
       expect(recommendations[0]).toHaveProperty('score');
@@ -101,21 +101,21 @@ describe('RecommendationEngine', () => {
 
     it('excludes viewed items from recommendations', async () => {
       engine.updateProfile({ viewedItem: '1' });
-      
+
       const recommendations = await engine.getRecommendations(corpus, 10, 'collaborative');
-      
+
       expect(recommendations.find((r) => r.id === '1')).toBeUndefined();
     });
 
     it('uses hybrid strategy', async () => {
       const recommendations = await engine.getRecommendations(corpus, 5, 'hybrid');
-      
+
       expect(recommendations.length).toBeGreaterThan(0);
     });
 
     it('provides "because you viewed" recommendations', async () => {
       const recommendations = await engine.getBecauseYouViewed('1', corpus, 2);
-      
+
       expect(recommendations.length).toBeGreaterThan(0);
       expect(recommendations[0].id).not.toBe('1');
     });
@@ -124,7 +124,7 @@ describe('RecommendationEngine', () => {
   describe('Export/Import', () => {
     it('exports profile', () => {
       engine.updateProfile({ viewedItem: '1' });
-      
+
       const exported = engine.exportProfile();
       expect(exported).toBeTruthy();
       expect(JSON.parse(exported).viewedItems).toContain('1');
@@ -142,7 +142,7 @@ describe('RecommendationEngine', () => {
       };
 
       engine.importProfile(JSON.stringify(profile));
-      
+
       const imported = engine.getProfile();
       expect(imported.viewedItems).toEqual(['1', '2']);
     });

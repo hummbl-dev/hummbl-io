@@ -5,8 +5,8 @@ import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
 import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import MentalModelsList from '../MentalModelsList';
-import type { MentalModel } from '@/models/mentalModels';
-import type { TransformationKey } from '@/types/transformation';
+import type { MentalModel } from '@cascade/types/mental-model';
+import type { TransformationKey } from '@cascade/types/transformation';
 import * as mentalModelsService from '../../../services/mentalModelsService';
 
 /**
@@ -91,10 +91,12 @@ describeMaybe('MentalModelsList Integration Tests', () => {
       });
 
       await mentalModelsService.fetchMentalModels();
-      
+
       // Accept any absolute/relative URL that points to models.json
-      const calls = mockFetch.mock.calls.map(call => call[0]);
-      expect(calls.some((url: any) => typeof url === 'string' && url.includes('models.json'))).toBe(true);
+      const calls = mockFetch.mock.calls.map((call) => call[0]);
+      expect(calls.some((url: any) => typeof url === 'string' && url.includes('models.json'))).toBe(
+        true
+      );
     });
 
     it('handles successful data fetch and renders models', async () => {
@@ -103,12 +105,7 @@ describeMaybe('MentalModelsList Integration Tests', () => {
         json: async () => validResponse,
       });
 
-      render(
-        <MentalModelsList 
-          models={validResponse.models}
-          onSelect={mockOnSelect}
-        />
-      );
+      render(<MentalModelsList models={validResponse.models} onSelect={mockOnSelect} />);
 
       expect(screen.getByText('First Principles Thinking')).toBeInTheDocument();
       expect(screen.getByText('Second-Order Thinking')).toBeInTheDocument();
@@ -126,7 +123,7 @@ describeMaybe('MentalModelsList Integration Tests', () => {
 
       // Service should reject invalid data
       const consoleError = vi.spyOn(console, 'error').mockImplementation(() => {});
-      
+
       try {
         await mentalModelsService.fetchMentalModels();
       } catch (error) {
@@ -199,7 +196,7 @@ describeMaybe('MentalModelsList Integration Tests', () => {
     });
 
     it('invalidates stale cache after 24 hours', async () => {
-      const staleTimestamp = Date.now() - (25 * 60 * 60 * 1000); // 25 hours ago
+      const staleTimestamp = Date.now() - 25 * 60 * 60 * 1000; // 25 hours ago
       const staleData = {
         data: validResponse,
         timestamp: staleTimestamp,
@@ -219,9 +216,9 @@ describeMaybe('MentalModelsList Integration Tests', () => {
 
     it('handles corrupted cache data gracefully', async () => {
       localStorageMock.getItem.mockReturnValueOnce('invalid json');
-      
+
       const consoleWarn = vi.spyOn(console, 'warn').mockImplementation(() => {});
-      
+
       mockFetch.mockResolvedValueOnce({
         ok: true,
         json: async () => validResponse,
@@ -231,7 +228,7 @@ describeMaybe('MentalModelsList Integration Tests', () => {
 
       expect(models).toEqual(validResponse.models);
       expect(consoleWarn).toHaveBeenCalledWith('Failed to read from cache:', expect.any(Error));
-      
+
       consoleWarn.mockRestore();
     });
   });
@@ -243,23 +240,14 @@ describeMaybe('MentalModelsList Integration Tests', () => {
         json: async () => validResponse,
       });
 
-      const { rerender } = render(
-        <MentalModelsList 
-          isLoading={true}
-          onSelect={mockOnSelect}
-        />
-      );
+      const { rerender } = render(<MentalModelsList isLoading={true} onSelect={mockOnSelect} />);
 
       // Initially loading
       expect(screen.getByTestId('skeleton-grid')).toBeInTheDocument();
 
       // After data loads, use rerender to update the same component
       rerender(
-        <MentalModelsList 
-          models={validResponse.models}
-          isLoading={false}
-          onSelect={mockOnSelect}
-        />
+        <MentalModelsList models={validResponse.models} isLoading={false} onSelect={mockOnSelect} />
       );
 
       expect(screen.queryByTestId('skeleton-grid')).not.toBeInTheDocument();
@@ -269,11 +257,7 @@ describeMaybe('MentalModelsList Integration Tests', () => {
     it('transitions from error to retry to loaded state', async () => {
       // Initial error state
       const { rerender } = render(
-        <MentalModelsList 
-          error="Network error"
-          onSelect={mockOnSelect}
-          onRetry={mockOnRetry}
-        />
+        <MentalModelsList error="Network error" onSelect={mockOnSelect} onRetry={mockOnRetry} />
       );
 
       expect(screen.getByText('Network error')).toBeInTheDocument();
@@ -288,24 +272,14 @@ describeMaybe('MentalModelsList Integration Tests', () => {
         json: async () => validResponse,
       });
 
-      rerender(
-        <MentalModelsList 
-          models={validResponse.models}
-          onSelect={mockOnSelect}
-        />
-      );
+      rerender(<MentalModelsList models={validResponse.models} onSelect={mockOnSelect} />);
 
       expect(screen.queryByText('Network error')).not.toBeInTheDocument();
       expect(screen.getByText('First Principles Thinking')).toBeInTheDocument();
     });
 
     it('handles empty models array gracefully', () => {
-      render(
-        <MentalModelsList 
-          models={[]}
-          onSelect={mockOnSelect}
-        />
-      );
+      render(<MentalModelsList models={[]} onSelect={mockOnSelect} />);
 
       expect(screen.getByText('No models found')).toBeInTheDocument();
     });
@@ -313,12 +287,7 @@ describeMaybe('MentalModelsList Integration Tests', () => {
 
   describe('User Interactions', () => {
     it('calls onSelect with correct model data when card is clicked', async () => {
-      render(
-        <MentalModelsList 
-          models={validResponse.models}
-          onSelect={mockOnSelect}
-        />
-      );
+      render(<MentalModelsList models={validResponse.models} onSelect={mockOnSelect} />);
 
       await userEvent.click(screen.getByText('First Principles Thinking'));
 
@@ -333,15 +302,10 @@ describeMaybe('MentalModelsList Integration Tests', () => {
     });
 
     it('handles multiple rapid clicks gracefully', async () => {
-      render(
-        <MentalModelsList 
-          models={validResponse.models}
-          onSelect={mockOnSelect}
-        />
-      );
+      render(<MentalModelsList models={validResponse.models} onSelect={mockOnSelect} />);
 
       const card = screen.getByText('First Principles Thinking');
-      
+
       await userEvent.click(card);
       await userEvent.click(card);
       await userEvent.click(card);
@@ -350,19 +314,20 @@ describeMaybe('MentalModelsList Integration Tests', () => {
     });
 
     it('allows selection of different models in sequence', async () => {
-      render(
-        <MentalModelsList 
-          models={validResponse.models}
-          onSelect={mockOnSelect}
-        />
-      );
+      render(<MentalModelsList models={validResponse.models} onSelect={mockOnSelect} />);
 
       await userEvent.click(screen.getByText('First Principles Thinking'));
       await userEvent.click(screen.getByText('Second-Order Thinking'));
 
       expect(mockOnSelect).toHaveBeenCalledTimes(2);
-      expect(mockOnSelect).toHaveBeenNthCalledWith(1, expect.objectContaining({ id: 'first-principles' }));
-      expect(mockOnSelect).toHaveBeenNthCalledWith(2, expect.objectContaining({ id: 'second-order' }));
+      expect(mockOnSelect).toHaveBeenNthCalledWith(
+        1,
+        expect.objectContaining({ id: 'first-principles' })
+      );
+      expect(mockOnSelect).toHaveBeenNthCalledWith(
+        2,
+        expect.objectContaining({ id: 'second-order' })
+      );
     });
   });
 
@@ -486,28 +451,20 @@ describeMaybe('MentalModelsList Integration Tests', () => {
       const results = await Promise.all(promises);
 
       expect(results).toHaveLength(3);
-      results.forEach(models => {
+      results.forEach((models) => {
         expect(models).toEqual(validResponse.models);
       });
     });
 
     it('maintains data integrity across multiple renders', () => {
       const { rerender } = render(
-        <MentalModelsList 
-          models={validResponse.models}
-          onSelect={mockOnSelect}
-        />
+        <MentalModelsList models={validResponse.models} onSelect={mockOnSelect} />
       );
 
       expect(screen.getByText('First Principles Thinking')).toBeInTheDocument();
 
       // Rerender with same data
-      rerender(
-        <MentalModelsList 
-          models={validResponse.models}
-          onSelect={mockOnSelect}
-        />
-      );
+      rerender(<MentalModelsList models={validResponse.models} onSelect={mockOnSelect} />);
 
       expect(screen.getByText('First Principles Thinking')).toBeInTheDocument();
       expect(screen.getAllByTestId('model-card')).toHaveLength(2);

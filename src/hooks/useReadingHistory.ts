@@ -56,47 +56,50 @@ export function useReadingHistory() {
   /**
    * Add or update history entry
    */
-  const addToHistory = useCallback((
-    type: 'narrative' | 'mentalModel',
-    itemId: string,
-    title: string,
-    options?: { duration?: number; completed?: boolean; progress?: number }
-  ) => {
-    setHistory((prev) => {
-      // Check if entry exists recently (within last 5 entries)
-      const recentIndex = prev.slice(0, 5).findIndex((e) => e.itemId === itemId);
+  const addToHistory = useCallback(
+    (
+      type: 'narrative' | 'mentalModel',
+      itemId: string,
+      title: string,
+      options?: { duration?: number; completed?: boolean; progress?: number }
+    ) => {
+      setHistory((prev) => {
+        // Check if entry exists recently (within last 5 entries)
+        const recentIndex = prev.slice(0, 5).findIndex((e) => e.itemId === itemId);
 
-      if (recentIndex !== -1) {
-        // Update existing recent entry
-        const updated = [...prev];
-        updated[recentIndex] = {
-          ...updated[recentIndex],
+        if (recentIndex !== -1) {
+          // Update existing recent entry
+          const updated = [...prev];
+          updated[recentIndex] = {
+            ...updated[recentIndex],
+            timestamp: Date.now(),
+            ...options,
+          };
+          return updated;
+        }
+
+        // Create new entry
+        const entry: ReadingHistoryEntry = {
+          id: `history_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`,
+          type,
+          itemId,
+          title,
           timestamp: Date.now(),
           ...options,
         };
+
+        const updated = [entry, ...prev];
+
+        // Limit history size
+        if (updated.length > MAX_HISTORY) {
+          return updated.slice(0, MAX_HISTORY);
+        }
+
         return updated;
-      }
-
-      // Create new entry
-      const entry: ReadingHistoryEntry = {
-        id: `history_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`,
-        type,
-        itemId,
-        title,
-        timestamp: Date.now(),
-        ...options,
-      };
-
-      const updated = [entry, ...prev];
-
-      // Limit history size
-      if (updated.length > MAX_HISTORY) {
-        return updated.slice(0, MAX_HISTORY);
-      }
-
-      return updated;
-    });
-  }, []);
+      });
+    },
+    []
+  );
 
   /**
    * Mark item as completed
@@ -117,9 +120,7 @@ export function useReadingHistory() {
   const updateProgress = useCallback((itemId: string, progress: number) => {
     setHistory((prev) =>
       prev.map((entry) =>
-        entry.itemId === itemId
-          ? { ...entry, progress, timestamp: Date.now() }
-          : entry
+        entry.itemId === itemId ? { ...entry, progress, timestamp: Date.now() } : entry
       )
     );
   }, []);
@@ -127,9 +128,12 @@ export function useReadingHistory() {
   /**
    * Get recent history
    */
-  const getRecentHistory = useCallback((limit = 10): ReadingHistoryEntry[] => {
-    return history.slice(0, limit);
-  }, [history]);
+  const getRecentHistory = useCallback(
+    (limit = 10): ReadingHistoryEntry[] => {
+      return history.slice(0, limit);
+    },
+    [history]
+  );
 
   /**
    * Get history by type
@@ -154,10 +158,7 @@ export function useReadingHistory() {
   const getInProgressItems = useCallback((): ReadingHistoryEntry[] => {
     return history.filter(
       (entry) =>
-        entry.progress !== undefined &&
-        entry.progress > 0 &&
-        entry.progress < 1 &&
-        !entry.completed
+        entry.progress !== undefined && entry.progress > 0 && entry.progress < 1 && !entry.completed
     );
   }, [history]);
 
@@ -212,9 +213,7 @@ export function useReadingHistory() {
     };
 
     const completed = history.filter((e) => e.completed).length;
-    const inProgress = history.filter(
-      (e) => e.progress && e.progress > 0 && e.progress < 1
-    ).length;
+    const inProgress = history.filter((e) => e.progress && e.progress > 0 && e.progress < 1).length;
 
     const totalDuration = history.reduce((sum, e) => sum + (e.duration || 0), 0);
     const avgDuration =
@@ -234,9 +233,7 @@ export function useReadingHistory() {
       const dayStart = checkDate;
       const dayEnd = checkDate + 24 * 60 * 60 * 1000;
 
-      const hasActivity = history.some(
-        (e) => e.timestamp >= dayStart && e.timestamp < dayEnd
-      );
+      const hasActivity = history.some((e) => e.timestamp >= dayStart && e.timestamp < dayEnd);
 
       if (hasActivity) {
         streak++;

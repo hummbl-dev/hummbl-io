@@ -36,8 +36,8 @@ export class ContextWatcher extends EventEmitter {
       ignoreInitial: true,
       awaitWriteFinish: {
         stabilityThreshold: 200,
-        pollInterval: 100
-      }
+        pollInterval: 100,
+      },
     });
 
     this.watcher
@@ -51,7 +51,7 @@ export class ContextWatcher extends EventEmitter {
       clearTimeout(this.validationTimeout);
       this.validationTimeout = null;
     }
-    
+
     if (this.watcher) {
       await this.watcher.close();
       this.watcher = null;
@@ -64,7 +64,7 @@ export class ContextWatcher extends EventEmitter {
     }
 
     this.validationTimeout = setTimeout(() => {
-      this.validateContext().catch(error => {
+      this.validateContext().catch((error) => {
         this.emit('error', error);
       });
     }, this.DEBOUNCE_MS);
@@ -72,12 +72,12 @@ export class ContextWatcher extends EventEmitter {
 
   private async validateContext(): Promise<void> {
     const timestamp = new Date().toISOString();
-    
+
     try {
       // Read and parse the context file
       const content = await fs.readFile(this.contextPath, 'utf-8');
       let context: any;
-      
+
       // Handle both JSON and TypeScript exports
       if (this.contextPath.endsWith('.ts')) {
         // Simple TS module evaluation (in a real app, consider using ts-node or similar)
@@ -89,14 +89,14 @@ export class ContextWatcher extends EventEmitter {
 
       // Run validation
       const { valid, errors } = validateCascadeContext(context);
-      
+
       // Create validation result
       const result: ValidationResult = {
         timestamp,
         filePath: this.contextPath,
         valid,
         errors,
-        context: valid ? context : undefined
+        context: valid ? context : undefined,
       };
 
       // Emit validation event
@@ -114,7 +114,6 @@ export class ContextWatcher extends EventEmitter {
         this.emit('invalid', result);
         this.emit('error', new Error(`Context validation failed: ${errors.join(', ')}`));
       }
-
     } catch (error) {
       const errorResult: ValidationResult = {
         timestamp,
@@ -122,10 +121,10 @@ export class ContextWatcher extends EventEmitter {
         valid: false,
         errors: [error instanceof Error ? error.message : 'Unknown error'],
       };
-      
+
       this.emit('error', error);
       this.emit('validation', errorResult);
-      
+
       if (this.telemetryPath) {
         await this.logToTelemetry(errorResult);
       }
@@ -134,7 +133,7 @@ export class ContextWatcher extends EventEmitter {
 
   private async logToTelemetry(result: ValidationResult): Promise<void> {
     if (!this.telemetryPath) return;
-    
+
     try {
       const logEntry = JSON.stringify(result) + '\n';
       await fs.mkdir(path.dirname(this.telemetryPath), { recursive: true });

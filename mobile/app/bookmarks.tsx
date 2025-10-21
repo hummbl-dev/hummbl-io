@@ -16,12 +16,8 @@ export default function BookmarksScreen() {
   const renderBookmark = ({ item }: { item: Bookmark }) => (
     <TouchableOpacity style={styles.bookmarkCard}>
       <View style={styles.bookmarkHeader}>
-        <Text style={styles.bookmarkType}>
-          {item.type === 'mentalModel' ? '🧠' : '📖'}
-        </Text>
-        <Text style={styles.bookmarkDate}>
-          {new Date(item.addedAt).toLocaleDateString()}
-        </Text>
+        <Text style={styles.bookmarkType}>{item.type === 'mentalModel' ? '🧠' : '📖'}</Text>
+        <Text style={styles.bookmarkDate}>{new Date(item.addedAt).toLocaleDateString()}</Text>
       </View>
       <Text style={styles.bookmarkTitle}>{item.title}</Text>
     </TouchableOpacity>
@@ -40,9 +36,7 @@ export default function BookmarksScreen() {
         <View style={styles.emptyState}>
           <Text style={styles.emptyIcon}>⭐</Text>
           <Text style={styles.emptyText}>No bookmarks yet</Text>
-          <Text style={styles.emptyHint}>
-            Bookmark your favorite content to see it here
-          </Text>
+          <Text style={styles.emptyHint}>Bookmark your favorite content to see it here</Text>
         </View>
       )}
     </View>

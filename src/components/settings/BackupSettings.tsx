@@ -30,7 +30,7 @@ export const BackupSettings: React.FC = () => {
       downloadBackup();
       setMessage({ type: 'success', text: 'Backup downloaded successfully!' });
       setStats(getBackupStats());
-      
+
       setTimeout(() => setMessage(null), 3000);
     } catch (error) {
       setMessage({ type: 'error', text: 'Failed to create backup' });
@@ -46,11 +46,11 @@ export const BackupSettings: React.FC = () => {
 
     try {
       const result = await importBackupFromFile(file);
-      
+
       if (result.success) {
         setMessage({ type: 'success', text: 'Backup restored successfully!' });
         setStats(getBackupStats());
-        
+
         // Reload page after 2 seconds to reflect changes
         setTimeout(() => {
           window.location.reload();
@@ -72,26 +72,26 @@ export const BackupSettings: React.FC = () => {
     setAutoBackup(newValue);
     setAutoBackupState(newValue);
     setStats(getBackupStats());
-    
+
     setMessage({
       type: 'success',
       text: newValue ? 'Auto-backup enabled' : 'Auto-backup disabled',
     });
-    
+
     setTimeout(() => setMessage(null), 3000);
   };
 
   const formatDate = (date: Date | null): string => {
     if (!date) return 'Never';
-    
+
     const now = new Date();
     const diffMs = now.getTime() - date.getTime();
     const diffDays = Math.floor(diffMs / (1000 * 60 * 60 * 24));
-    
+
     if (diffDays === 0) return 'Today';
     if (diffDays === 1) return 'Yesterday';
     if (diffDays < 7) return `${diffDays} days ago`;
-    
+
     return date.toLocaleDateString();
   };
 
@@ -130,12 +130,12 @@ export const BackupSettings: React.FC = () => {
       <div className="backup-section">
         <h3>Manual Backup</h3>
         <p>Download a backup of all your data as a JSON file</p>
-        
+
         <div className="backup-actions">
           <button className="backup-btn primary" onClick={handleDownloadBackup}>
             📥 Download Backup
           </button>
-          
+
           <label className="backup-btn secondary">
             📤 Import Backup
             <input
@@ -156,19 +156,13 @@ export const BackupSettings: React.FC = () => {
       <div className="backup-section">
         <h3>Auto-Backup</h3>
         <p>Automatically download a backup every 7 days</p>
-        
+
         <div className="backup-toggle">
           <label className="toggle-switch">
-            <input
-              type="checkbox"
-              checked={autoBackup}
-              onChange={handleToggleAutoBackup}
-            />
+            <input type="checkbox" checked={autoBackup} onChange={handleToggleAutoBackup} />
             <span className="toggle-slider"></span>
           </label>
-          <span className="toggle-label">
-            {autoBackup ? 'Enabled' : 'Disabled'}
-          </span>
+          <span className="toggle-label">{autoBackup ? 'Enabled' : 'Disabled'}</span>
         </div>
 
         {stats.backupDue && autoBackup && (

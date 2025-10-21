@@ -207,7 +207,7 @@ describe('Memory Hooks', () => {
       // Use old memories (older than 24 hours) to avoid recency boost
       const oldMemories: Memory[] = memories.map((m) => ({
         ...m,
-        timestamp: Date.now() - (25 * 60 * 60 * 1000), // 25 hours ago
+        timestamp: Date.now() - 25 * 60 * 60 * 1000, // 25 hours ago
       }));
 
       const relevant = retrieveRelevantMemories('qwzxc', oldMemories, 5);

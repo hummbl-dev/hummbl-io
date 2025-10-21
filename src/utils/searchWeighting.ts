@@ -1,6 +1,6 @@
 // Semantic search weighting system for custom field ranking
 
-import type { SearchResult, SearchMatch } from './advancedSearch';
+import type { SearchResult } from './advancedSearch';
 
 export interface FieldWeight {
   field: string;
@@ -150,7 +150,8 @@ export function calculateRelevanceScore(factors: RelevanceFactors): number {
     userAffinity: 0.07,
   };
 
-  let score = factors.textMatch * weights.textMatch + factors.fieldImportance * weights.fieldImportance;
+  let score =
+    factors.textMatch * weights.textMatch + factors.fieldImportance * weights.fieldImportance;
 
   if (factors.recency !== undefined) {
     score += factors.recency * weights.recency;

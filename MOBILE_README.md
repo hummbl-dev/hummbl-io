@@ -9,6 +9,7 @@ React Native mobile app for iOS and Android using Expo.
 Native mobile application sharing core logic with the web app through a monorepo structure.
 
 **Tech Stack:**
+
 - React Native 0.73
 - Expo SDK 50
 - Expo Router (file-based routing)
@@ -95,6 +96,7 @@ npm run web
 The mobile app reuses logic from the web app through the `@hummbl/shared` package.
 
 **Shared Modules:**
+
 - `useBookmarks` - Bookmark management
 - `useNotes` - Notes system
 - `useSearchHistory` - Search history
@@ -109,9 +111,9 @@ import { useBookmarks, fuzzySearch } from '@hummbl/shared';
 
 function MyComponent() {
   const { bookmarks, addBookmark } = useBookmarks();
-  
+
   const results = fuzzySearch(query, items);
-  
+
   return <View>...</View>;
 }
 ```
@@ -121,29 +123,34 @@ function MyComponent() {
 ## 🎨 **Screens**
 
 ### **Home Screen** (`/`)
+
 - Feature cards (Mental Models, Narratives, Search, Bookmarks)
 - Statistics (200+ models, 20+ narratives)
 - Quick navigation
 
 ### **Mental Models** (`/mental-models`)
+
 - Browse all mental models
 - Filter by category
 - Search
 - View details
 
 ### **Narratives** (`/narratives`)
+
 - Browse all narratives
 - Filter by category/evidence quality
 - Read full text
 - Related content
 
 ### **Search** (`/search`)
+
 - Fuzzy search across all content
 - Real-time results
 - Score-based ranking
 - Quick filters
 
 ### **Bookmarks** (`/bookmarks`)
+
 - View saved content
 - Organize by collections
 - Quick access
@@ -270,14 +277,17 @@ eas submit --platform android
 ## 📊 **Performance**
 
 **Bundle Size Targets:**
+
 - iOS: < 20 MB
 - Android: < 15 MB
 
 **Launch Time:**
+
 - Cold start: < 3s
 - Warm start: < 1s
 
 **Optimization:**
+
 - Code splitting
 - Lazy loading
 - Image optimization
@@ -297,18 +307,21 @@ eas submit --platform android
 ## 🎨 **Design System**
 
 **Colors:**
+
 - Primary: `#3b82f6`
 - Background: `#f9fafb`
 - Text: `#1f2937`
 - Secondary Text: `#6b7280`
 
 **Typography:**
+
 - Title: 32px, bold
 - Heading: 24px, semi-bold
 - Body: 16px, regular
 - Caption: 14px, regular
 
 **Spacing:**
+
 - xs: 4px
 - sm: 8px
 - md: 16px
@@ -320,6 +333,7 @@ eas submit --platform android
 ## 📈 **Roadmap**
 
 ### **Phase 1 (Current - P5.4)**
+
 - ✅ Basic app structure
 - ✅ Home screen
 - ✅ Search screen
@@ -327,12 +341,14 @@ eas submit --platform android
 - ✅ Shared package setup
 
 ### **Phase 2 (Future)**
+
 - Mental models list
 - Narrative reader
 - Offline sync
 - Push notifications
 
 ### **Phase 3 (Future)**
+
 - Dark mode
 - Accessibility improvements
 - Performance optimization
@@ -343,16 +359,19 @@ eas submit --platform android
 ## 🐛 **Troubleshooting**
 
 **Metro bundler issues:**
+
 ```bash
 expo start --clear
 ```
 
 **iOS simulator not opening:**
+
 ```bash
 xcrun simctl list devices
 ```
 
 **Android emulator issues:**
+
 ```bash
 adb devices
 adb reverse tcp:8081 tcp:8081

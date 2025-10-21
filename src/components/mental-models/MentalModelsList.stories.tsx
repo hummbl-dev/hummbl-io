@@ -9,7 +9,7 @@ const meta: Meta<typeof MentalModelsList> = {
   parameters: {
     layout: 'fullscreen',
     // Enable Chromatic for visual regression testing
-    chromatic: { 
+    chromatic: {
       disableSnapshot: false,
       viewports: [320, 768, 1200],
     },
@@ -26,8 +26,8 @@ jest.mock('../../services/mentalModelsService', () => ({
     models: mockModels,
     isLoading: false,
     error: null,
-    refetch: () => {}
-  })
+    refetch: () => {},
+  }),
 }));
 
 export const Default: Story = {};
@@ -38,12 +38,14 @@ export const Loading: Story = {
   },
   decorators: [
     (Story) => {
-      jest.mocked(require('../../services/mentalModelsService').useMentalModels).mockReturnValueOnce({
-        models: [],
-        isLoading: true,
-        error: null,
-        refetch: () => {}
-      });
+      jest
+        .mocked(require('../../services/mentalModelsService').useMentalModels)
+        .mockReturnValueOnce({
+          models: [],
+          isLoading: true,
+          error: null,
+          refetch: () => {},
+        });
       return <Story />;
     },
   ],
@@ -55,12 +57,14 @@ export const ErrorState: Story = {
   },
   decorators: [
     (Story) => {
-      jest.mocked(require('../../services/mentalModelsService').useMentalModels).mockReturnValueOnce({
-        models: [],
-        isLoading: false,
-        error: new Error('Failed to load models'),
-        refetch: () => {}
-      });
+      jest
+        .mocked(require('../../services/mentalModelsService').useMentalModels)
+        .mockReturnValueOnce({
+          models: [],
+          isLoading: false,
+          error: new Error('Failed to load models'),
+          refetch: () => {},
+        });
       return <Story />;
     },
   ],
@@ -69,12 +73,14 @@ export const ErrorState: Story = {
 export const EmptyState: Story = {
   decorators: [
     (Story) => {
-      jest.mocked(require('../../services/mentalModelsService').useMentalModels).mockReturnValueOnce({
-        models: [],
-        isLoading: false,
-        error: null,
-        refetch: () => {}
-      });
+      jest
+        .mocked(require('../../services/mentalModelsService').useMentalModels)
+        .mockReturnValueOnce({
+          models: [],
+          isLoading: false,
+          error: null,
+          refetch: () => {},
+        });
       return <Story />;
     },
   ],

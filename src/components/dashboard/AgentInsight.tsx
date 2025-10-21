@@ -1,7 +1,12 @@
 // AgentInsight: Agentic feedback loop visualization component
 
 import React, { useEffect, useState } from 'react';
-import { generateAgentReport, getTaskTypeDistribution, getProductivityTrend, getQualityTrend } from '../../utils/agentEffectiveness';
+import {
+  generateAgentReport,
+  getTaskTypeDistribution,
+  getProductivityTrend,
+  getQualityTrend,
+} from '../../utils/agentEffectiveness';
 import './AgentInsight.css';
 
 interface FeedbackLoopStage {
@@ -75,12 +80,18 @@ export const AgentInsight: React.FC = () => {
 
   const getGradeColor = (grade: string) => {
     switch (grade) {
-      case 'A': return '#10b981';
-      case 'B': return '#3b82f6';
-      case 'C': return '#f59e0b';
-      case 'D': return '#ef4444';
-      case 'F': return '#991b1b';
-      default: return '#6b7280';
+      case 'A':
+        return '#10b981';
+      case 'B':
+        return '#3b82f6';
+      case 'C':
+        return '#f59e0b';
+      case 'D':
+        return '#ef4444';
+      case 'F':
+        return '#991b1b';
+      default:
+        return '#6b7280';
     }
   };
 
@@ -98,11 +109,7 @@ export const AgentInsight: React.FC = () => {
         <h3>Agentic Feedback Loop</h3>
         <div className="loop-stages">
           {feedbackLoop.map((stage, index) => (
-            <div
-              key={stage.name}
-              className={`loop-stage ${stage.status}`}
-              data-stage={index}
-            >
+            <div key={stage.name} className={`loop-stage ${stage.status}`} data-stage={index}>
               <div className="stage-number">{index + 1}</div>
               <div className="stage-content">
                 <div className="stage-name">{stage.name}</div>
@@ -111,16 +118,14 @@ export const AgentInsight: React.FC = () => {
                     {stage.name === 'User Feedback'
                       ? `${stage.metric.toFixed(1)}/5`
                       : stage.name === 'Quality Check'
-                      ? `${stage.metric}%`
-                      : stage.metric}
+                        ? `${stage.metric}%`
+                        : stage.metric}
                   </div>
                 )}
                 <div className="stage-description">{stage.description}</div>
               </div>
               {index < feedbackLoop.length - 1 && (
-                <div className={`stage-arrow ${animationPhase > index ? 'active' : ''}`}>
-                  →
-                </div>
+                <div className={`stage-arrow ${animationPhase > index ? 'active' : ''}`}>→</div>
               )}
             </div>
           ))}
@@ -134,9 +139,7 @@ export const AgentInsight: React.FC = () => {
       <div className="key-metrics">
         <div className="metric-card">
           <div className="metric-label">Success Rate</div>
-          <div className="metric-value">
-            {(report.metrics.successRate * 100).toFixed(1)}%
-          </div>
+          <div className="metric-value">{(report.metrics.successRate * 100).toFixed(1)}%</div>
           <div className="metric-trend">{getTrendIcon(qualityTrend)} Quality</div>
         </div>
 
@@ -150,11 +153,13 @@ export const AgentInsight: React.FC = () => {
 
         <div className="metric-card">
           <div className="metric-label">Build Pass Rate</div>
-          <div className="metric-value">
-            {(report.metrics.buildSuccessRate * 100).toFixed(1)}%
-          </div>
+          <div className="metric-value">{(report.metrics.buildSuccessRate * 100).toFixed(1)}%</div>
           <div className="metric-trend">
-            {report.metrics.buildSuccessRate >= 0.9 ? '✅' : report.metrics.buildSuccessRate >= 0.7 ? '⚠️' : '❌'}
+            {report.metrics.buildSuccessRate >= 0.9
+              ? '✅'
+              : report.metrics.buildSuccessRate >= 0.7
+                ? '⚠️'
+                : '❌'}
           </div>
         </div>
 

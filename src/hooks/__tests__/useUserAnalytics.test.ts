@@ -250,7 +250,7 @@ describe('useUserAnalytics', () => {
 
       const stored = localStorage.getItem('hummbl_user_analytics');
       expect(stored).toBeTruthy();
-      
+
       const parsed = JSON.parse(stored!);
       expect(parsed.views.narrativeViews['N001']).toBe(1);
     });
@@ -265,7 +265,7 @@ describe('useUserAnalytics', () => {
       // Create new hook instance (simulating page reload)
       const { result: result2 } = renderHook(() => useUserAnalytics());
       const stats = result2.current.getStats();
-      
+
       expect(stats.views.narrativeViews['N001']).toBe(1);
     });
   });

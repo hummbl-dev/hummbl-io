@@ -3,28 +3,28 @@ import { TransformationKey } from '../types/transformation';
 export interface MentalModel {
   /** Unique identifier for the model */
   id: string;
-  
+
   /** Human-readable name */
   name: string;
-  
+
   /** Short code/abbreviation */
   code: string;
-  
+
   /** Detailed description */
   description: string;
-  
+
   /** Optional example usage */
   example?: string;
-  
+
   /** Primary category */
   category: string;
-  
+
   /** Related categories and tags */
   tags: string[];
-  
+
   /** Associated transformation keys */
   transformations: TransformationKey[];
-  
+
   /** Source references */
   sources: {
     /** Source name */
@@ -32,7 +32,7 @@ export interface MentalModel {
     /** URL or citation */
     reference: string;
   }[];
-  
+
   /** Additional metadata */
   meta?: {
     /** When this model was added */
@@ -73,10 +73,8 @@ export function getAllMentalModels(): MentalModel[] {
 /**
  * Get mental models by transformation
  */
-export function getMentalModelsByTransformation(
-  transformation: TransformationKey
-): MentalModel[] {
-  return Object.values(mentalModelsRegistry).filter(model =>
+export function getMentalModelsByTransformation(transformation: TransformationKey): MentalModel[] {
+  return Object.values(mentalModelsRegistry).filter((model) =>
     model.transformations.includes(transformation)
   );
 }
@@ -93,23 +91,25 @@ registerMentalModel({
   id: 'first-principles',
   name: 'First Principles Thinking',
   code: 'FP',
-  description: 'Breaking down complex problems into their most basic, foundational elements and reasoning up from there.',
-  example: 'Elon Musk used first principles to reduce the cost of rocket launches by building reusable rockets.',
+  description:
+    'Breaking down complex problems into their most basic, foundational elements and reasoning up from there.',
+  example:
+    'Elon Musk used first principles to reduce the cost of rocket launches by building reusable rockets.',
   category: 'Problem Solving',
   tags: ['reasoning', 'analysis', 'decision-making'],
   transformations: ['P', 'IN', 'CO', 'DE', 'RE'],
   sources: [
     {
       name: 'Aristotle',
-      reference: 'Metaphysics'
-    }
+      reference: 'Metaphysics',
+    },
   ],
   meta: {
     isCore: true,
     difficulty: 3,
     added: '2025-01-01',
-    updated: '2025-01-01'
-  }
+    updated: '2025-01-01',
+  },
 });
 
 // Export types for use in other modules

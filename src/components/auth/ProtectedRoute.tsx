@@ -56,7 +56,7 @@ export const ProtectedRoute: React.FC<ProtectedRouteProps> = ({
           <p>This page requires admin access.</p>
           <button onClick={() => setShowLogin(true)}>Login</button>
         </div>
-        
+
         {showLogin && (
           <LoginModal
             onSuccess={handleLoginSuccess}

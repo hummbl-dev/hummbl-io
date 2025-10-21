@@ -58,7 +58,7 @@ export const AnalyticsDashboard: React.FC = () => {
             { id: 'MM-002', name: 'Second-Order Thinking', views: 980 },
             { id: 'MM-003', name: 'Inversion', views: 875 },
             { id: 'MM-004', name: 'Circle of Competence', views: 720 },
-            { id: 'MM-005', name: 'Occam\'s Razor', views: 650 },
+            { id: 'MM-005', name: "Occam's Razor", views: 650 },
           ],
           topNarratives: [
             { id: 'NAR-001', title: 'The Dunning-Kruger Effect', views: 2100 },
@@ -125,10 +125,7 @@ export const AnalyticsDashboard: React.FC = () => {
         </div>
 
         <div className="date-range-selector">
-          <button
-            className={dateRange === '7d' ? 'active' : ''}
-            onClick={() => setDateRange('7d')}
-          >
+          <button className={dateRange === '7d' ? 'active' : ''} onClick={() => setDateRange('7d')}>
             7 Days
           </button>
           <button

@@ -17,7 +17,15 @@ describe('SyncService', () => {
   describe('syncNotes', () => {
     it('syncs notes successfully', async () => {
       const mockNotes = [
-        { id: 'n1', type: 'narrative' as const, itemId: 'N001', itemTitle: 'Test', content: 'Note', createdAt: Date.now(), updatedAt: Date.now() },
+        {
+          id: 'n1',
+          type: 'narrative' as const,
+          itemId: 'N001',
+          itemTitle: 'Test',
+          content: 'Note',
+          createdAt: Date.now(),
+          updatedAt: Date.now(),
+        },
       ];
 
       (global.fetch as ReturnType<typeof vi.fn>).mockResolvedValueOnce({
@@ -44,7 +52,13 @@ describe('SyncService', () => {
   describe('syncBookmarks', () => {
     it('syncs bookmarks successfully', async () => {
       const mockBookmarks = [
-        { id: 'b1', type: 'narrative' as const, itemId: 'N001', title: 'Test', addedAt: Date.now() },
+        {
+          id: 'b1',
+          type: 'narrative' as const,
+          itemId: 'N001',
+          title: 'Test',
+          addedAt: Date.now(),
+        },
       ];
 
       (global.fetch as ReturnType<typeof vi.fn>).mockResolvedValueOnce({

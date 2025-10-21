@@ -41,7 +41,7 @@ export class OpenAIStreamingService {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
-          'Authorization': `Bearer ${this.apiKey}`,
+          Authorization: `Bearer ${this.apiKey}`,
         },
         body: JSON.stringify({
           model: MODEL,
@@ -84,7 +84,7 @@ export class OpenAIStreamingService {
 
           for (const line of lines) {
             const trimmedLine = line.trim();
-            
+
             // Skip empty lines and comments
             if (!trimmedLine || trimmedLine.startsWith(':')) {
               continue;

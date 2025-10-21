@@ -36,7 +36,7 @@ export const authGuard = (req: AuthenticatedRequest, res: Response, next: NextFu
     }
 
     const token = authHeader.substring(7); // Remove 'Bearer ' prefix
-    
+
     // Verify JWT token
     const jwtSecret = process.env.JWT_SECRET;
     if (!jwtSecret) {
@@ -47,7 +47,7 @@ export const authGuard = (req: AuthenticatedRequest, res: Response, next: NextFu
     }
 
     const decoded = jwt.verify(token, jwtSecret) as any;
-    
+
     // Attach user info to request
     req.user = {
       id: decoded.sub || decoded.id,
@@ -85,7 +85,7 @@ export const authGuard = (req: AuthenticatedRequest, res: Response, next: NextFu
 // Optional auth middleware (doesn't block if no token provided)
 export const optionalAuth = (req: AuthenticatedRequest, res: Response, next: NextFunction) => {
   const authHeader = req.headers.authorization;
-  
+
   if (!authHeader || !authHeader.startsWith('Bearer ')) {
     return next(); // Continue without authentication
   }
@@ -94,7 +94,7 @@ export const optionalAuth = (req: AuthenticatedRequest, res: Response, next: Nex
   try {
     const token = authHeader.substring(7);
     const jwtSecret = process.env.JWT_SECRET;
-    
+
     if (jwtSecret) {
       const decoded = jwt.verify(token, jwtSecret) as any;
       req.user = {

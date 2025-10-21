@@ -29,11 +29,11 @@ describe('Model Router System', () => {
         projectType: 'frontend',
         urgency: 'medium',
         complexity: 'moderate',
-        userIntent: 'Edit the React component file'
+        userIntent: 'Edit the React component file',
       };
 
       const decision = router.route(context);
-      
+
       expect(decision.selectedModel.modelClass).toBe('execution');
       expect(decision.confidence).toBeGreaterThan(0.7);
       expect(decision.reasoning).toContain('environment access');
@@ -59,11 +59,11 @@ describe('Model Router System', () => {
         projectType: 'fullstack',
         urgency: 'high',
         complexity: 'simple',
-        userIntent: 'Commit and push changes'
+        userIntent: 'Commit and push changes',
       };
 
       const decision = router.route(context);
-      
+
       expect(decision.selectedModel.modelClass).toBe('execution');
       expect(decision.selectedModel.supportsCodeExecution).toBe(true);
     });
@@ -90,11 +90,11 @@ describe('Model Router System', () => {
         projectType: 'backend',
         urgency: 'low',
         complexity: 'complex',
-        userIntent: 'Analyze the best database architecture for our use case'
+        userIntent: 'Analyze the best database architecture for our use case',
       };
 
       const decision = router.route(context);
-      
+
       expect(decision.selectedModel.modelClass).toBe('reasoning');
       expect(decision.confidence).toBeGreaterThanOrEqual(0.6);
     });
@@ -119,11 +119,11 @@ describe('Model Router System', () => {
         projectType: 'other',
         urgency: 'medium',
         complexity: 'enterprise',
-        userIntent: 'Design a microservices architecture'
+        userIntent: 'Design a microservices architecture',
       };
 
       const decision = router.route(context);
-      
+
       expect(decision.selectedModel.modelClass).toBe('reasoning');
       expect(decision.selectedModel.maxTokens).toBeGreaterThan(100000);
     });
@@ -150,11 +150,11 @@ describe('Model Router System', () => {
         projectType: 'other',
         urgency: 'medium',
         complexity: 'simple',
-        userIntent: 'Write marketing copy for our landing page'
+        userIntent: 'Write marketing copy for our landing page',
       };
 
       const decision = router.route(context);
-      
+
       expect(decision.selectedModel.modelClass).toBe('creative');
     });
   });
@@ -165,15 +165,16 @@ describe('Model Router System', () => {
         'Add streaming responses to the chat widget',
         'Fix the build error in package.json',
         'Deploy the latest changes to production',
-        'Run the test suite and fix any failures'
+        'Run the test suite and fix any failures',
       ];
 
-      testCases.forEach(input => {
+      testCases.forEach((input) => {
         const result = classifier.classify(input);
-        const hasExecution = result.context.requiresFileAccess ||
-                           result.context.requiresCommandExecution ||
-                           result.context.requiresGitOperations;
-        
+        const hasExecution =
+          result.context.requiresFileAccess ||
+          result.context.requiresCommandExecution ||
+          result.context.requiresGitOperations;
+
         expect(hasExecution).toBe(true);
         expect(result.detectedIntents.length).toBeGreaterThan(0);
       });
@@ -184,16 +185,17 @@ describe('Model Router System', () => {
         'Explain the differences between SQL and NoSQL databases',
         'Analyze the performance implications of this algorithm',
         'Compare React vs Vue for our use case',
-        'Design a scalable authentication system'
+        'Design a scalable authentication system',
       ];
 
-      testCases.forEach(input => {
+      testCases.forEach((input) => {
         const result = classifier.classify(input);
-        const hasReasoning = result.context.requiresDeepAnalysis ||
-                           result.context.requiresResearch ||
-                           result.context.requiresComparison ||
-                           result.context.requiresArchitecturalDesign;
-        
+        const hasReasoning =
+          result.context.requiresDeepAnalysis ||
+          result.context.requiresResearch ||
+          result.context.requiresComparison ||
+          result.context.requiresArchitecturalDesign;
+
         expect(hasReasoning).toBe(true);
       });
     });
@@ -203,17 +205,18 @@ describe('Model Router System', () => {
         'Write a blog post about our new features',
         'Create user stories for the mobile app',
         'Brainstorm ideas for improving user engagement',
-        'Write marketing copy for our product launch'
+        'Write marketing copy for our product launch',
       ];
 
-      testCases.forEach(input => {
+      testCases.forEach((input) => {
         const result = classifier.classify(input);
-        const hasCreative = result.context.requiresContentGeneration ||
-                          result.context.requiresCreativeWriting ||
-                          result.context.requiresMarketingCopy ||
-                          result.context.requiresUserStories ||
-                          result.context.requiresBrainstorming;
-        
+        const hasCreative =
+          result.context.requiresContentGeneration ||
+          result.context.requiresCreativeWriting ||
+          result.context.requiresMarketingCopy ||
+          result.context.requiresUserStories ||
+          result.context.requiresBrainstorming;
+
         expect(hasCreative).toBe(true);
       });
     });
@@ -223,7 +226,7 @@ describe('Model Router System', () => {
     test('should provide complete routing analysis', async () => {
       const input = 'Add authentication to the React app with Supabase';
       const result = await intelligentRouting.route(input);
-      
+
       expect(result.classification).toBeDefined();
       expect(result.routing).toBeDefined();
       expect(result.executionPlan).toBeDefined();
@@ -236,20 +239,20 @@ describe('Model Router System', () => {
         'npm install react-router-dom',
         'Create a new component file',
         'Push changes to GitHub',
-        'Start the development server'
+        'Start the development server',
       ];
 
-      executionTasks.forEach(task => {
+      executionTasks.forEach((task) => {
         expect(requiresExecution(task)).toBe(true);
       });
 
       const nonExecutionTasks = [
         'What is React?',
         'Explain how JWT tokens work',
-        'Compare different state management libraries'
+        'Compare different state management libraries',
       ];
 
-      nonExecutionTasks.forEach(task => {
+      nonExecutionTasks.forEach((task) => {
         expect(requiresExecution(task)).toBe(false);
       });
     });
@@ -271,7 +274,7 @@ describe('Model Router System', () => {
     test('should handle mixed requirements', () => {
       const input = 'Analyze the current authentication system and then implement improvements';
       const result = classifier.classify(input);
-      
+
       expect(result.context.requiresDeepAnalysis).toBe(true);
       expect(result.context.requiresFileAccess).toBe(true);
       expect(result.detectedIntents.length).toBeGreaterThan(1);
@@ -286,22 +289,22 @@ export const exampleScenarios = {
     'Fix the TypeScript errors in the auth service',
     'Deploy the latest changes to Vercel',
     'Create a new React component for user profiles',
-    'Run the test suite and commit the changes'
+    'Run the test suite and commit the changes',
   ],
-  
+
   reasoning: [
     'Explain the trade-offs between different state management approaches',
     'Analyze the security implications of our current API design',
     'Compare Supabase vs Firebase for our authentication needs',
     'Design a scalable architecture for real-time notifications',
-    'Document the best practices for our React component structure'
+    'Document the best practices for our React component structure',
   ],
-  
+
   creative: [
     'Write user stories for the new dashboard feature',
     'Create marketing copy for our landing page',
     'Brainstorm ideas for improving user onboarding',
     'Write a blog post about our development process',
-    'Generate creative names for our new product features'
-  ]
+    'Generate creative names for our new product features',
+  ],
 };

@@ -7,9 +7,9 @@ import { ChatSettings } from './ChatSettings';
 import { getOpenAIService } from '../../services/openaiService';
 import { getStreamingService } from '../../services/openaiStreamingService';
 import { chatStorage } from '../../services/chatStorageService';
-import type { ChatConversation } from '../../types/chat';
-import type { ChatContext } from '../../types/chatContext';
-import { buildContextDescription } from '../../types/chatContext';
+import type { ChatConversation } from '../../../cascade/types/chat';
+import type { ChatContext } from '../../../cascade/types/chatContext';
+import { buildContextDescription } from '../../../cascade/types/chatContext';
 import './ChatWidget.css';
 interface ChatWidgetProps {
   mentalModels?: any[];
@@ -34,17 +34,17 @@ export function ChatWidget({ mentalModels, narratives, apiKey, context }: ChatWi
   useEffect(() => {
     const loadedConversations = chatStorage.loadConversations();
     setConversations(loadedConversations);
-    
+
     const currentId = chatStorage.loadCurrentConversationId();
-    
+
     if (currentId) {
-      const existing = loadedConversations.find(c => c.id === currentId);
+      const existing = loadedConversations.find((c) => c.id === currentId);
       if (existing) {
         setConversation(existing);
         return;
       }
     }
-    
+
     // Create new conversation
     const newConv = chatStorage.createConversation();
     setConversation(newConv);
@@ -63,7 +63,7 @@ export function ChatWidget({ mentalModels, narratives, apiKey, context }: ChatWi
 
   // Conversation management functions
   const handleSelectConversation = (id: string) => {
-    const selected = conversations.find(c => c.id === id);
+    const selected = conversations.find((c) => c.id === id);
     if (selected) {
       setConversation(selected);
       chatStorage.saveCurrentConversationId(id);
@@ -73,10 +73,10 @@ export function ChatWidget({ mentalModels, narratives, apiKey, context }: ChatWi
   };
 
   const handleDeleteConversation = (id: string) => {
-    const updated = conversations.filter(c => c.id !== id);
+    const updated = conversations.filter((c) => c.id !== id);
     setConversations(updated);
     chatStorage.saveConversations(updated);
-    
+
     // If deleting current conversation, create a new one
     if (conversation?.id === id) {
       const newConv = chatStorage.createConversation();
@@ -131,14 +131,10 @@ export function ChatWidget({ mentalModels, narratives, apiKey, context }: ChatWi
       // Build system context with current view context
       const openAI = getOpenAIService();
       const contextDescription = buildContextDescription(context || null);
-      const systemContext = openAI.buildSystemContext(
-        mentalModels, 
-        narratives,
-        contextDescription
-      );
+      const systemContext = openAI.buildSystemContext(mentalModels, narratives, contextDescription);
 
       // Prepare messages for API
-      const apiMessages = updatedConv.messages.map(msg => ({
+      const apiMessages = updatedConv.messages.map((msg) => ({
         role: msg.role,
         content: msg.content,
       }));
@@ -147,42 +143,38 @@ export function ChatWidget({ mentalModels, narratives, apiKey, context }: ChatWi
       const streamingService = getStreamingService(apiKey);
       let accumulatedResponse = '';
 
-      await streamingService.sendMessageStream(
-        apiMessages,
-        systemContext,
-        {
-          onToken: (token: string) => {
-            accumulatedResponse += token;
-            setStreamingResponse(accumulatedResponse);
-          },
-          onComplete: () => {
-            streamingRef.current = false;
-            
-            // Add complete AI response to conversation
-            const finalConv = chatStorage.addMessage(updatedConv, 'assistant', accumulatedResponse);
-            setConversation(finalConv);
+      await streamingService.sendMessageStream(apiMessages, systemContext, {
+        onToken: (token: string) => {
+          accumulatedResponse += token;
+          setStreamingResponse(accumulatedResponse);
+        },
+        onComplete: () => {
+          streamingRef.current = false;
 
-            // Save to localStorage and update state
-            const updatedConversations = conversations.map(c => 
-              c.id === finalConv.id ? finalConv : c
-            );
-            setConversations(updatedConversations);
-            chatStorage.saveConversations(updatedConversations);
+          // Add complete AI response to conversation
+          const finalConv = chatStorage.addMessage(updatedConv, 'assistant', accumulatedResponse);
+          setConversation(finalConv);
 
-            // Clear streaming state
-            setStreamingResponse('');
-            setIsLoading(false);
-          },
-          onError: (err: Error) => {
-            streamingRef.current = false;
-            console.error('Streaming error:', err);
-            setError(err.message);
-            setTimeout(() => setError(null), 5000);
-            setIsLoading(false);
-            setStreamingResponse('');
-          }
-        }
-      );
+          // Save to localStorage and update state
+          const updatedConversations = conversations.map((c) =>
+            c.id === finalConv.id ? finalConv : c
+          );
+          setConversations(updatedConversations);
+          chatStorage.saveConversations(updatedConversations);
+
+          // Clear streaming state
+          setStreamingResponse('');
+          setIsLoading(false);
+        },
+        onError: (err: Error) => {
+          streamingRef.current = false;
+          console.error('Streaming error:', err);
+          setError(err.message);
+          setTimeout(() => setError(null), 5000);
+          setIsLoading(false);
+          setStreamingResponse('');
+        },
+      });
     } catch (err) {
       streamingRef.current = false;
       console.error('Chat error:', err);
@@ -201,11 +193,7 @@ export function ChatWidget({ mentalModels, narratives, apiKey, context }: ChatWi
   return (
     <>
       {/* Floating Button */}
-      <button
-        className="chat-widget-button"
-        onClick={() => setIsOpen(true)}
-        aria-label="Open chat"
-      >
+      <button className="chat-widget-button" onClick={() => setIsOpen(true)} aria-label="Open chat">
         <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
           <path
             d="M21 15C21 15.5304 20.7893 16.0391 20.4142 16.4142C20.0391 16.7893 19.5304 17 19 17H7L3 21V5C3 4.46957 3.21071 3.96086 3.58579 3.58579C3.96086 3.21071 4.46957 3 5 3H19C19.5304 3 20.0391 3.21071 20.4142 3.58579C20.7893 3.96086 21 4.46957 21 5V15Z"

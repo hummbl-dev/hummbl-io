@@ -22,7 +22,14 @@ describe('AuthService', () => {
   describe('register', () => {
     it('registers a new user', async () => {
       const mockResponse = {
-        user: { id: '1', email: 'test@example.com', name: 'Test', role: 'user' as const, createdAt: Date.now(), updatedAt: Date.now() },
+        user: {
+          id: '1',
+          email: 'test@example.com',
+          name: 'Test',
+          role: 'user' as const,
+          createdAt: Date.now(),
+          updatedAt: Date.now(),
+        },
         tokens: { accessToken: 'token', refreshToken: 'refresh', expiresIn: 3600 },
       };
 
@@ -56,7 +63,14 @@ describe('AuthService', () => {
   describe('login', () => {
     it('logs in successfully', async () => {
       const mockResponse = {
-        user: { id: '1', email: 'test@example.com', name: 'Test', role: 'user' as const, createdAt: Date.now(), updatedAt: Date.now() },
+        user: {
+          id: '1',
+          email: 'test@example.com',
+          name: 'Test',
+          role: 'user' as const,
+          createdAt: Date.now(),
+          updatedAt: Date.now(),
+        },
         tokens: { accessToken: 'token', refreshToken: 'refresh', expiresIn: 3600 },
       };
 
@@ -78,10 +92,13 @@ describe('AuthService', () => {
   describe('logout', () => {
     it('clears authentication', async () => {
       // Setup authenticated state
-      localStorage.setItem('hummbl_auth', JSON.stringify({
-        user: { id: '1', email: 'test@example.com' },
-        tokens: { accessToken: 'token', refreshToken: 'refresh' },
-      }));
+      localStorage.setItem(
+        'hummbl_auth',
+        JSON.stringify({
+          user: { id: '1', email: 'test@example.com' },
+          tokens: { accessToken: 'token', refreshToken: 'refresh' },
+        })
+      );
 
       (global.fetch as ReturnType<typeof vi.fn>).mockResolvedValueOnce({
         ok: true,
@@ -96,10 +113,13 @@ describe('AuthService', () => {
 
   describe('token management', () => {
     it('gets access token', () => {
-      localStorage.setItem('hummbl_auth', JSON.stringify({
-        user: { id: '1' },
-        tokens: { accessToken: 'test-token', refreshToken: 'refresh' },
-      }));
+      localStorage.setItem(
+        'hummbl_auth',
+        JSON.stringify({
+          user: { id: '1' },
+          tokens: { accessToken: 'test-token', refreshToken: 'refresh' },
+        })
+      );
 
       expect(authService.getAccessToken()).toBe('test-token');
     });

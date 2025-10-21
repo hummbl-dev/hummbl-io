@@ -1,11 +1,11 @@
 // Narrative export utilities
 
-import type { Narrative } from '../types/narrative';
+import type { Narrative } from '../../cascade/types/narrative';
 
 /**
  * Export narratives as JSON file
  */
-export function exportToJSON(narratives: Narrative[], filename: string = 'narratives.json') {
+export function exportToJSON(narratives: Narrative[], filename: string = 'narratives.json'): void {
   const dataStr = JSON.stringify(narratives, null, 2);
   downloadFile(dataStr, filename, 'application/json');
 }
@@ -13,7 +13,7 @@ export function exportToJSON(narratives: Narrative[], filename: string = 'narrat
 /**
  * Export narratives as CSV file
  */
-export function exportToCSV(narratives: Narrative[], filename: string = 'narratives.csv') {
+export function exportToCSV(narratives: Narrative[], filename: string = 'narratives.csv'): void {
   const headers = [
     'ID',
     'Title',
@@ -31,13 +31,13 @@ export function exportToCSV(narratives: Narrative[], filename: string = 'narrati
     'Citations Count',
   ];
 
-  const rows = narratives.map((n) => [
+  const rows = narratives.map((n: Narrative) => [
     n.narrative_id,
     `"${n.title.replace(/"/g, '""')}"`,
     n.category,
     n.evidence_quality,
     n.confidence || 0,
-    `"${n.summary.replace(/"/g, '""')}"`,
+    `"${(n.summary || '').replace(/"/g, '""')}"`,
     `"${n.domain?.join(', ') || ''}"`,
     `"${n.tags?.join(', ') || ''}"`,
     n.complexity?.cognitive_load || '',
@@ -55,8 +55,11 @@ export function exportToCSV(narratives: Narrative[], filename: string = 'narrati
 /**
  * Export narratives as Markdown file
  */
-export function exportToMarkdown(narratives: Narrative[], filename: string = 'narratives.md') {
-  const sections = narratives.map((n) => {
+export function exportToMarkdown(
+  narratives: Narrative[],
+  filename: string = 'narratives.md'
+): void {
+  const markdown = narratives.map((n: Narrative) => {
     const lines = [
       `# ${n.title}`,
       '',
@@ -67,7 +70,7 @@ export function exportToMarkdown(narratives: Narrative[], filename: string = 'na
       '',
       '## Summary',
       '',
-      n.summary,
+      (typeof n.summary === 'string' ? n.summary : '').trim(),
       '',
     ];
 
@@ -83,36 +86,40 @@ export function exportToMarkdown(narratives: Narrative[], filename: string = 'na
     }
 
     if (n.domain && n.domain.length > 0) {
-      lines.push('## Domains', '', n.domain.map((d) => `- ${d}`).join('\n'), '');
+      lines.push('## Domains', '', n.domain?.map((d: string) => `- ${d}`).join('\n'), '');
     }
 
     if (n.tags && n.tags.length > 0) {
-      lines.push('## Tags', '', n.tags.map((t) => `\`${t}\``).join(', '), '');
+      lines.push('## Tags', '', n.tags.map((t: string) => `\`${t}\``).join(', '), '');
     }
 
     if (n.citations && n.citations.length > 0) {
       lines.push(
         '## Citations',
         '',
-        ...n.citations.map((c, idx) => `${idx + 1}. ${c.author} (${c.year}). *${c.title}*. ${c.source}`),
+        ...n.citations.map((c: { author: string; year: number | string; title: string; source: string }, idx: number) => {
+          // Handle both string and number years
+          const year = typeof c.year === 'number' ? c.year : c.year.toString();
+          return `${idx + 1}. ${c.author} (${year}). *${c.title}*. ${c.source}`;
+        }),
         ''
       );
     }
 
     if (n.examples && n.examples.length > 0) {
       lines.push('## Examples', '');
-      n.examples.forEach((ex, idx) => {
-        lines.push(
-          `### Example ${idx + 1}`,
-          '',
-          `**Scenario:** ${ex.scenario}`,
-          '',
-          `**Application:** ${ex.application}`,
-          '',
-          `**Outcome:** ${ex.outcome}`,
-          ''
-        );
-      });
+      n.examples.forEach(
+        (ex: string | { scenario: string; application: string; outcome: string }, idx: number) => {
+          lines.push(
+            `### Example ${idx + 1}`,
+            '',
+            `**Scenario:** ${typeof ex === 'string' ? ex : ex.scenario}`,
+            `**Application:** ${typeof ex === 'string' ? '' : ex.application}`,
+            `**Outcome:** ${typeof ex === 'string' ? '' : ex.outcome}`,
+            ''
+          );
+        }
+      );
     }
 
     if (n.elicitation_methods && n.elicitation_methods.length > 0) {
@@ -120,7 +127,8 @@ export function exportToMarkdown(narratives: Narrative[], filename: string = 'na
         '## Elicitation Methods',
         '',
         ...n.elicitation_methods.map(
-          (m) => `- **${m.method}**: ${m.duration} (${m.difficulty} difficulty)`
+          (m: { method: string; duration: string; difficulty: string }) =>
+            `- **${m.method}**: ${m.duration} (${m.difficulty} difficulty)`
         ),
         ''
       );
@@ -130,7 +138,10 @@ export function exportToMarkdown(narratives: Narrative[], filename: string = 'na
       lines.push(
         '## Relationships',
         '',
-        ...n.relationships.map((r) => `- **${r.type}** → ${r.target}: ${r.description}`),
+        ...(n.relationships || []).map(
+          (r: { type: string; target: string; description: string }) =>
+            `- **${r.type}** → ${r.target}: ${r.description}`
+        ),
         ''
       );
     }
@@ -139,7 +150,7 @@ export function exportToMarkdown(narratives: Narrative[], filename: string = 'na
     return lines.join('\n');
   });
 
-  const markdown = [
+  const markdownContent = [
     `# HUMMBL Narratives Export`,
     '',
     `**Generated:** ${new Date().toISOString()}  `,
@@ -147,16 +158,16 @@ export function exportToMarkdown(narratives: Narrative[], filename: string = 'na
     '',
     '---',
     '',
-    ...sections,
+    ...markdown,
   ].join('\n');
 
-  downloadFile(markdown, filename, 'text/markdown');
+  downloadFile(markdownContent, filename, 'text/markdown');
 }
 
 /**
  * Trigger file download in browser
  */
-function downloadFile(content: string, filename: string, mimeType: string) {
+export function downloadFile(content: string, filename: string, mimeType: string): void {
   const blob = new Blob([content], { type: mimeType });
   const url = URL.createObjectURL(blob);
   const link = document.createElement('a');
@@ -171,7 +182,10 @@ function downloadFile(content: string, filename: string, mimeType: string) {
 /**
  * Get export filename with timestamp
  */
-export function getExportFilename(format: 'json' | 'csv' | 'md', prefix: string = 'hummbl-narratives'): string {
+export function getExportFilename(
+  format: 'json' | 'csv' | 'md',
+  prefix: string = 'hummbl-narratives'
+): string {
   const timestamp = new Date().toISOString().split('T')[0];
   return `${prefix}-${timestamp}.${format}`;
 }

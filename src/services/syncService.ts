@@ -37,7 +37,7 @@ export class SyncService {
     const token = this.authService.getAccessToken();
     return {
       'Content-Type': 'application/json',
-      ...(token ? { 'Authorization': `Bearer ${token}` } : {}),
+      ...(token ? { Authorization: `Bearer ${token}` } : {}),
     };
   }
 
@@ -90,9 +90,7 @@ export class SyncService {
    */
   async fetchNotes(since?: number): Promise<SyncResult<Note[]>> {
     try {
-      const url = since
-        ? `${this.baseUrl}/notes?since=${since}`
-        : `${this.baseUrl}/notes`;
+      const url = since ? `${this.baseUrl}/notes?since=${since}` : `${this.baseUrl}/notes`;
 
       const response = await fetch(url, {
         headers: this.getAuthHeaders(),
@@ -175,7 +173,9 @@ export class SyncService {
   /**
    * Sync bookmarks to backend
    */
-  async syncBookmarks(bookmarks: Bookmark[]): Promise<SyncResult<{ synced: number; conflicts: number }>> {
+  async syncBookmarks(
+    bookmarks: Bookmark[]
+  ): Promise<SyncResult<{ synced: number; conflicts: number }>> {
     try {
       const response = await fetch(`${this.baseUrl}/bookmarks/sync`, {
         method: 'POST',
@@ -198,9 +198,7 @@ export class SyncService {
    */
   async fetchBookmarks(since?: number): Promise<SyncResult<Bookmark[]>> {
     try {
-      const url = since
-        ? `${this.baseUrl}/bookmarks?since=${since}`
-        : `${this.baseUrl}/bookmarks`;
+      const url = since ? `${this.baseUrl}/bookmarks?since=${since}` : `${this.baseUrl}/bookmarks`;
 
       const response = await fetch(url, {
         headers: this.getAuthHeaders(),
@@ -285,9 +283,7 @@ export class SyncService {
    */
   async fetchHistory(since?: number): Promise<SyncResult<ReadingHistoryEntry[]>> {
     try {
-      const url = since
-        ? `${this.baseUrl}/history?since=${since}`
-        : `${this.baseUrl}/history`;
+      const url = since ? `${this.baseUrl}/history?since=${since}` : `${this.baseUrl}/history`;
 
       const response = await fetch(url, {
         headers: this.getAuthHeaders(),
@@ -370,11 +366,13 @@ export class SyncService {
   /**
    * Pull all user data from backend
    */
-  async pullAll(since?: number): Promise<SyncResult<{
-    notes: Note[];
-    bookmarks: Bookmark[];
-    history: ReadingHistoryEntry[];
-  }>> {
+  async pullAll(since?: number): Promise<
+    SyncResult<{
+      notes: Note[];
+      bookmarks: Bookmark[];
+      history: ReadingHistoryEntry[];
+    }>
+  > {
     try {
       const [notesResult, bookmarksResult, historyResult] = await Promise.all([
         this.fetchNotes(since),

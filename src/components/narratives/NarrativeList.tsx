@@ -8,7 +8,7 @@ import { NarrativeCardSkeleton } from './NarrativeCardSkeleton';
 import { NarrativeHero } from './NarrativeHero';
 import { NarrativeDetailModal } from './NarrativeDetailModal';
 import { NarrativeFilters } from './NarrativeFilters';
-import type { Narrative } from '../../types/narrative';
+import type { Narrative } from '../../../cascade/types/narrative';
 import './NarrativeList.css';
 
 export function NarrativeList() {
@@ -61,7 +61,9 @@ export function NarrativeList() {
   if (error) {
     return (
       <div className="narrative-error">
-        <div className="error-icon" aria-hidden="true">⚠️</div>
+        <div className="error-icon" aria-hidden="true">
+          ⚠️
+        </div>
         <h2 className="error-title">Unable to Load Narratives</h2>
         <p className="error-message">
           {error.message || 'An unexpected error occurred while loading the narratives.'}
@@ -78,7 +80,9 @@ export function NarrativeList() {
       <>
         <NarrativeHero narrativeCount={0} />
         <div className="narrative-empty">
-          <div className="empty-state-icon" aria-hidden="true">📚</div>
+          <div className="empty-state-icon" aria-hidden="true">
+            📚
+          </div>
           <h2 className="empty-state-title">No Narratives Found</h2>
           <p className="empty-state-description">
             There are currently no narratives available. Please check back later.
@@ -118,7 +122,9 @@ export function NarrativeList() {
           </div>
         ) : (
           <div className="narrative-empty">
-            <div className="empty-state-icon" aria-hidden="true">🔍</div>
+            <div className="empty-state-icon" aria-hidden="true">
+              🔍
+            </div>
             <h2 className="empty-state-title">No Narratives Found</h2>
             <p className="empty-state-description">
               Try adjusting your search terms or filters to find what you're looking for.

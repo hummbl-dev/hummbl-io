@@ -21,7 +21,6 @@ interface ProxyRequest {
   taskId?: string;
 }
 
-
 // Rate limiting per user/IP
 const userRateLimits = new Map<string, { count: number; resetTime: number }>();
 
@@ -48,7 +47,7 @@ const checkUserRateLimit = (userId: string | undefined, ip: string | undefined):
 // POST /api/proxy - Main AI model proxy endpoint
 router.post('/', optionalAuth, async (req: AuthenticatedRequest, res: Response) => {
   const startTime = Date.now();
-  
+
   try {
     const {
       provider,
@@ -57,7 +56,7 @@ router.post('/', optionalAuth, async (req: AuthenticatedRequest, res: Response) 
       temperature = 0.7,
       max_tokens = 1000,
       stream = false,
-      taskId
+      taskId,
     }: ProxyRequest = req.body;
 
     // Validate request
@@ -94,7 +93,7 @@ router.post('/', optionalAuth, async (req: AuthenticatedRequest, res: Response) 
       case 'openai':
         apiUrl = 'https://api.openai.com/v1/chat/completions';
         headers = {
-          'Authorization': `Bearer ${process.env.OPENAI_API_KEY}`,
+          Authorization: `Bearer ${process.env.OPENAI_API_KEY}`,
           'Content-Type': 'application/json',
         };
         break;
@@ -113,7 +112,7 @@ router.post('/', optionalAuth, async (req: AuthenticatedRequest, res: Response) 
         // but with specific model routing logic
         apiUrl = 'https://api.openai.com/v1/chat/completions';
         headers = {
-          'Authorization': `Bearer ${process.env.OPENAI_API_KEY}`,
+          Authorization: `Bearer ${process.env.OPENAI_API_KEY}`,
           'Content-Type': 'application/json',
         };
         break;
@@ -126,10 +125,9 @@ router.post('/', optionalAuth, async (req: AuthenticatedRequest, res: Response) 
     }
 
     // Check if API key is configured
-    const apiKey = provider === 'anthropic' 
-      ? process.env.ANTHROPIC_API_KEY 
-      : process.env.OPENAI_API_KEY;
-    
+    const apiKey =
+      provider === 'anthropic' ? process.env.ANTHROPIC_API_KEY : process.env.OPENAI_API_KEY;
+
     if (!apiKey) {
       logger.error(`${provider.toUpperCase()} API key not configured`);
       return res.status(503).json({
@@ -140,13 +138,13 @@ router.post('/', optionalAuth, async (req: AuthenticatedRequest, res: Response) 
 
     // Prepare request body based on provider
     let requestBody: any;
-    
+
     if (provider === 'anthropic') {
       // Convert OpenAI format to Anthropic format
       requestBody = {
         model: model,
         max_tokens: Math.min(max_tokens, 4000),
-        messages: messages.map(msg => ({
+        messages: messages.map((msg) => ({
           role: msg.role === 'system' ? 'user' : msg.role,
           content: msg.content,
         })),
@@ -191,14 +189,14 @@ router.post('/', optionalAuth, async (req: AuthenticatedRequest, res: Response) 
       res.setHeader('Content-Type', 'text/event-stream');
       res.setHeader('Cache-Control', 'no-cache');
       res.setHeader('Connection', 'keep-alive');
-      
+
       response.body?.pipe(res);
       return;
     }
 
     // Handle regular response
     const data = await response.json();
-    
+
     // Log successful request
     const responseData = data as any;
     logger.telemetry('AI_REQUEST_COMPLETED', {
@@ -211,10 +209,9 @@ router.post('/', optionalAuth, async (req: AuthenticatedRequest, res: Response) 
     });
 
     res.json(responseData);
-
   } catch (error) {
     const latency = Date.now() - startTime;
-    
+
     logger.error('Proxy request failed', {
       error: error as Error,
       latency,
@@ -231,22 +228,9 @@ router.post('/', optionalAuth, async (req: AuthenticatedRequest, res: Response) 
 // GET /api/proxy/models - List available models
 router.get('/models', optionalAuth, (req: AuthenticatedRequest, res: Response) => {
   const models = {
-    openai: [
-      'gpt-4',
-      'gpt-4-turbo-preview',
-      'gpt-3.5-turbo',
-      'gpt-3.5-turbo-16k',
-    ],
-    anthropic: [
-      'claude-3-opus-20240229',
-      'claude-3-sonnet-20240229',
-      'claude-3-haiku-20240307',
-    ],
-    cascade: [
-      'cascade-execution',
-      'cascade-reasoning',
-      'cascade-creative',
-    ],
+    openai: ['gpt-4', 'gpt-4-turbo-preview', 'gpt-3.5-turbo', 'gpt-3.5-turbo-16k'],
+    anthropic: ['claude-3-opus-20240229', 'claude-3-sonnet-20240229', 'claude-3-haiku-20240307'],
+    cascade: ['cascade-execution', 'cascade-reasoning', 'cascade-creative'],
   };
 
   res.json({

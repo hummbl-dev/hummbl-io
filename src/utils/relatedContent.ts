@@ -1,6 +1,6 @@
 // Related content recommendation engine
 
-import type { Narrative } from '../types/narrative';
+import type { Narrative } from '../../cascade/types/narrative';
 import type { MentalModel } from '../types/mental-model';
 
 export interface RelatedItem {
@@ -60,29 +60,20 @@ export function findRelatedNarratives(
     }
 
     // Tag similarity
-    const tagSimilarity = arraySimilarity(
-      currentNarrative.tags || [],
-      narrative.tags || []
-    );
+    const tagSimilarity = arraySimilarity(currentNarrative.tags || [], narrative.tags || []);
     if (tagSimilarity > 0) {
       score += tagSimilarity * 0.3;
       reasons.push('similar tags');
     }
 
     // Domain similarity
-    const domainSimilarity = arraySimilarity(
-      currentNarrative.domain || [],
-      narrative.domain || []
-    );
+    const domainSimilarity = arraySimilarity(currentNarrative.domain || [], narrative.domain || []);
     if (domainSimilarity > 0) {
       score += domainSimilarity * 0.2;
     }
 
     // Summary similarity
-    const summarySimilarity = textSimilarity(
-      currentNarrative.summary,
-      narrative.summary
-    );
+    const summarySimilarity = textSimilarity(currentNarrative.summary, narrative.summary);
     if (summarySimilarity > 0.05) {
       score += summarySimilarity * 0.1;
       reasons.push('similar content');
@@ -132,20 +123,14 @@ export function findRelatedMentalModels(
     }
 
     // Tag similarity
-    const tagSimilarity = arraySimilarity(
-      currentModel.tags || [],
-      model.tags || []
-    );
+    const tagSimilarity = arraySimilarity(currentModel.tags || [], model.tags || []);
     if (tagSimilarity > 0) {
       score += tagSimilarity * 0.3;
       reasons.push('similar tags');
     }
 
     // Description similarity
-    const descSimilarity = textSimilarity(
-      currentModel.definition || '',
-      model.definition || ''
-    );
+    const descSimilarity = textSimilarity(currentModel.definition || '', model.definition || '');
     if (descSimilarity > 0.05) {
       score += descSimilarity * 0.2;
       reasons.push('similar description');
@@ -176,7 +161,13 @@ export function findRelatedMentalModels(
  */
 export function findCrossTypeRelated(
   currentItem: { title: string; category?: string; tags?: string[]; description?: string },
-  otherItems: Array<{ id: string; title: string; category?: string; tags?: string[]; type: 'narrative' | 'mentalModel' }>,
+  otherItems: Array<{
+    id: string;
+    title: string;
+    category?: string;
+    tags?: string[];
+    type: 'narrative' | 'mentalModel';
+  }>,
   limit = 3
 ): RelatedItem[] {
   const related: RelatedItem[] = [];
@@ -224,7 +215,12 @@ export function findCrossTypeRelated(
  * Get recommendations based on user history
  */
 export function getHistoryBasedRecommendations(
-  viewedItems: Array<{ type: 'narrative' | 'mentalModel'; itemId: string; tags?: string[]; category?: string }>,
+  viewedItems: Array<{
+    type: 'narrative' | 'mentalModel';
+    itemId: string;
+    tags?: string[];
+    category?: string;
+  }>,
   allNarratives: Narrative[],
   allModels: MentalModel[],
   limit = 5
@@ -271,7 +267,7 @@ export function getHistoryBasedRecommendations(
     }
 
     // Tag match
-    const matchingTags = (narrative.tags || []).filter((tag) => topTags.includes(tag));
+    const matchingTags = (narrative.tags || []).filter((tag: string) => topTags.includes(tag));
     score += matchingTags.length * 0.2;
 
     if (score > 0) {
@@ -292,7 +288,7 @@ export function getHistoryBasedRecommendations(
     let score = 0;
 
     // Category match
-    if (topCategories.includes(model.transformation)) {
+    if (model.transformation && topCategories.includes(model.transformation)) {
       score += 0.5;
     }
 
@@ -318,10 +314,21 @@ export function getHistoryBasedRecommendations(
  * Get "you might also like" recommendations
  */
 export function getYouMightAlsoLike(
-  currentItem: { id: string; type: 'narrative' | 'mentalModel'; category?: string; tags?: string[] },
+  currentItem: {
+    id: string;
+    type: 'narrative' | 'mentalModel';
+    category?: string;
+    tags?: string[];
+  },
   bookmarkedItems: string[],
   recentlyViewed: string[],
-  allItems: Array<{ id: string; type: 'narrative' | 'mentalModel'; title: string; category?: string; tags?: string[] }>,
+  allItems: Array<{
+    id: string;
+    type: 'narrative' | 'mentalModel';
+    title: string;
+    category?: string;
+    tags?: string[];
+  }>,
   limit = 4
 ): RelatedItem[] {
   const excludeIds = new Set([

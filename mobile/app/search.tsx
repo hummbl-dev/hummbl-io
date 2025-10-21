@@ -1,14 +1,7 @@
 // Search screen for mobile app
 
 import { useState } from 'react';
-import {
-  View,
-  Text,
-  TextInput,
-  StyleSheet,
-  FlatList,
-  TouchableOpacity,
-} from 'react-native';
+import { View, Text, TextInput, StyleSheet, FlatList, TouchableOpacity } from 'react-native';
 
 interface SearchResult {
   id: string;
@@ -24,7 +17,7 @@ export default function SearchScreen() {
 
   const handleSearch = (text: string) => {
     setQuery(text);
-    
+
     // TODO: Implement actual search using shared fuzzy search
     // For now, show placeholder
     if (text.length > 2) {

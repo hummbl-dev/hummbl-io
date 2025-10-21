@@ -1,8 +1,12 @@
 // Narrative Detail Modal Component
 
 import { useEffect, useState } from 'react';
-import type { Narrative } from '../../types/narrative';
-import { generateScholarUrl, getDirectSourceUrl, copyCitationToClipboard } from '../../utils/citationLinks';
+import type { Narrative } from '../../../cascade/types/narrative';
+import {
+  generateScholarUrl,
+  getDirectSourceUrl,
+  copyCitationToClipboard,
+} from '../../utils/citationLinks';
 import './NarrativeDetailModal.css';
 
 interface NarrativeDetailModalProps {
@@ -57,8 +61,8 @@ export function NarrativeDetailModal({ narrative, isOpen, onClose }: NarrativeDe
   };
 
   return (
-    <div 
-      className="modal-overlay" 
+    <div
+      className="modal-overlay"
       onClick={handleOverlayClick}
       role="dialog"
       aria-modal="true"
@@ -69,21 +73,21 @@ export function NarrativeDetailModal({ narrative, isOpen, onClose }: NarrativeDe
         <header className="modal-header">
           <div className="modal-title-section">
             <div className="modal-id">{narrative.narrative_id}</div>
-            <h2 id="modal-title" className="modal-title">{narrative.title}</h2>
+            <h2 id="modal-title" className="modal-title">
+              {narrative.title}
+            </h2>
           </div>
           <div className="modal-badges">
             <span className={`evidence-badge grade-${narrative.evidence_quality.toLowerCase()}`}>
               {narrative.evidence_quality}
             </span>
-            <span className={`category-badge category-${narrative.category.toLowerCase().replace(/\s+/g, '-')}`}>
+            <span
+              className={`category-badge category-${narrative.category.toLowerCase().replace(/\s+/g, '-')}`}
+            >
               {narrative.category}
             </span>
           </div>
-          <button 
-            className="modal-close-button" 
-            onClick={onClose}
-            aria-label="Close modal"
-          >
+          <button className="modal-close-button" onClick={onClose} aria-label="Close modal">
             ✕
           </button>
         </header>
@@ -185,7 +189,9 @@ export function NarrativeDetailModal({ narrative, isOpen, onClose }: NarrativeDe
                   </div>
                   <div className="complexity-item">
                     <span className="complexity-label">Expertise Required</span>
-                    <span className={`complexity-value ${narrative.complexity?.expertise_required}`}>
+                    <span
+                      className={`complexity-value ${narrative.complexity?.expertise_required}`}
+                    >
                       {narrative.complexity?.expertise_required || 'N/A'}
                     </span>
                   </div>
@@ -196,7 +202,9 @@ export function NarrativeDetailModal({ narrative, isOpen, onClose }: NarrativeDe
                 <h3 className="section-title">Domains</h3>
                 <div className="tag-list">
                   {narrative.domain?.map((domain) => (
-                    <span key={domain} className="domain-tag">{domain}</span>
+                    <span key={domain} className="domain-tag">
+                      {domain}
+                    </span>
                   ))}
                 </div>
               </section>
@@ -205,7 +213,9 @@ export function NarrativeDetailModal({ narrative, isOpen, onClose }: NarrativeDe
                 <h3 className="section-title">Tags</h3>
                 <div className="tag-list">
                   {narrative.tags?.map((tag) => (
-                    <span key={tag} className="tag">{tag}</span>
+                    <span key={tag} className="tag">
+                      {tag}
+                    </span>
                   ))}
                 </div>
               </section>
@@ -215,7 +225,9 @@ export function NarrativeDetailModal({ narrative, isOpen, onClose }: NarrativeDe
                   <h3 className="section-title">Related Frameworks</h3>
                   <ul className="framework-list">
                     {narrative.related_frameworks.map((framework, idx) => (
-                      <li key={idx} className="framework-item">{framework}</li>
+                      <li key={idx} className="framework-item">
+                        {framework}
+                      </li>
                     ))}
                   </ul>
                 </section>
@@ -259,7 +271,7 @@ export function NarrativeDetailModal({ narrative, isOpen, onClose }: NarrativeDe
                   {narrative.citations.map((citation, idx) => {
                     const scholarUrl = generateScholarUrl(citation);
                     const directUrl = getDirectSourceUrl(citation);
-                    
+
                     return (
                       <div key={idx} className="citation-card">
                         <div className="citation-number">{idx + 1}</div>
@@ -277,9 +289,16 @@ export function NarrativeDetailModal({ narrative, isOpen, onClose }: NarrativeDe
                               className="citation-link scholar-link"
                               aria-label={`Search for "${citation.title}" on Google Scholar`}
                             >
-                              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                                <circle cx="11" cy="11" r="8"/>
-                                <path d="m21 21-4.35-4.35"/>
+                              <svg
+                                width="16"
+                                height="16"
+                                viewBox="0 0 24 24"
+                                fill="none"
+                                stroke="currentColor"
+                                strokeWidth="2"
+                              >
+                                <circle cx="11" cy="11" r="8" />
+                                <path d="m21 21-4.35-4.35" />
                               </svg>
                               Google Scholar
                             </a>
@@ -291,9 +310,16 @@ export function NarrativeDetailModal({ narrative, isOpen, onClose }: NarrativeDe
                                 className="citation-link direct-link"
                                 aria-label={`Direct link to ${citation.title}`}
                               >
-                                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                                  <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
-                                  <polyline points="14 2 14 8 20 8"/>
+                                <svg
+                                  width="16"
+                                  height="16"
+                                  viewBox="0 0 24 24"
+                                  fill="none"
+                                  stroke="currentColor"
+                                  strokeWidth="2"
+                                >
+                                  <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z" />
+                                  <polyline points="14 2 14 8 20 8" />
                                 </svg>
                                 Direct Link
                               </a>
@@ -303,9 +329,16 @@ export function NarrativeDetailModal({ narrative, isOpen, onClose }: NarrativeDe
                               onClick={() => copyCitationToClipboard(citation)}
                               aria-label={`Copy citation for "${citation.title}"`}
                             >
-                              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                                <rect x="9" y="9" width="13" height="13" rx="2" ry="2"/>
-                                <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/>
+                              <svg
+                                width="16"
+                                height="16"
+                                viewBox="0 0 24 24"
+                                fill="none"
+                                stroke="currentColor"
+                                strokeWidth="2"
+                              >
+                                <rect x="9" y="9" width="13" height="13" rx="2" ry="2" />
+                                <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1" />
                               </svg>
                               Copy
                             </button>

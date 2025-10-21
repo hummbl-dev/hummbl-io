@@ -17,11 +17,13 @@ This document outlines the strategy for scaling HUMMBL's content library from it
 ## 🎯 Expansion Goals
 
 ### Phase 1 (P5.3 - Current)
+
 - **Mental Models:** 120 → 200 (+80 models)
 - **Narratives:** 6 → 20 (+14 narratives)
 - **New Categories:** Technology, Philosophy, Leadership, Decision-Making
 
 ### Phase 2 (Future)
+
 - **Mental Models:** 200 → 500
 - **Narratives:** 20 → 50
 - **Interactive Elements:** Case studies, exercises, quizzes
@@ -33,6 +35,7 @@ This document outlines the strategy for scaling HUMMBL's content library from it
 ### New Categories & Distribution
 
 **Technology & Innovation (15 models)**
+
 1. Network Effects
 2. Platform Economics
 3. Moore's Law
@@ -49,80 +52,15 @@ This document outlines the strategy for scaling HUMMBL's content library from it
 14. A/B Testing Mindset
 15. Data-Driven Decision Making
 
-**Philosophy & Ethics (12 models)**
-16. Occam's Razor
-17. Hanlon's Razor
-18. Chesterton's Fence
-19. The Veil of Ignorance
-20. Trolley Problem Framework
-21. Utilitarianism
-22. Deontological Ethics
-23. Virtue Ethics
-24. Social Contract Theory
-25. Categorical Imperative
-26. Moral Relativism
-27. Ethical Egoism
+**Philosophy & Ethics (12 models)** 16. Occam's Razor 17. Hanlon's Razor 18. Chesterton's Fence 19. The Veil of Ignorance 20. Trolley Problem Framework 21. Utilitarianism 22. Deontological Ethics 23. Virtue Ethics 24. Social Contract Theory 25. Categorical Imperative 26. Moral Relativism 27. Ethical Egoism
 
-**Leadership & Management (15 models)**
-28. Servant Leadership
-29. Situational Leadership
-30. Transformational Leadership
-31. Delegation Matrix
-32. Eisenhower Matrix
-33. OKRs (Objectives & Key Results)
-34. SMART Goals
-35. Radical Candor
-36. Feedback Loops
-37. One-on-One Framework
-38. Skip-Level Meetings
-39. Blameless Post-Mortems
-40. Growth Mindset
-41. Fixed vs Growth Mindset
-42. Psychological Safety
+**Leadership & Management (15 models)** 28. Servant Leadership 29. Situational Leadership 30. Transformational Leadership 31. Delegation Matrix 32. Eisenhower Matrix 33. OKRs (Objectives & Key Results) 34. SMART Goals 35. Radical Candor 36. Feedback Loops 37. One-on-One Framework 38. Skip-Level Meetings 39. Blameless Post-Mortems 40. Growth Mindset 41. Fixed vs Growth Mindset 42. Psychological Safety
 
-**Decision-Making (15 models)**
-43. OODA Loop (Observe, Orient, Decide, Act)
-44. Pre-Mortem Analysis
-45. Second-Order Thinking
-46. Inversion
-47. Regret Minimization Framework
-48. Expected Value Calculation
-49. Opportunity Cost
-50. Sunk Cost Fallacy
-51. Reversible vs Irreversible Decisions
-52. Decision Trees
-53. Bayesian Thinking
-54. Probabilistic Thinking
-55. Mental Simulation
-56. Scenario Planning
-57. Red Team/Blue Team
+**Decision-Making (15 models)** 43. OODA Loop (Observe, Orient, Decide, Act) 44. Pre-Mortem Analysis 45. Second-Order Thinking 46. Inversion 47. Regret Minimization Framework 48. Expected Value Calculation 49. Opportunity Cost 50. Sunk Cost Fallacy 51. Reversible vs Irreversible Decisions 52. Decision Trees 53. Bayesian Thinking 54. Probabilistic Thinking 55. Mental Simulation 56. Scenario Planning 57. Red Team/Blue Team
 
-**Communication (10 models)**
-58. Active Listening
-59. Nonviolent Communication
-60. Socratic Method
-61. Elevator Pitch
-62. Storytelling Framework
-63. Pyramid Principle
-64. Argument Mapping
-65. Steelman vs Strawman
-66. Crucial Conversations
-67. Difficult Conversations Framework
+**Communication (10 models)** 58. Active Listening 59. Nonviolent Communication 60. Socratic Method 61. Elevator Pitch 62. Storytelling Framework 63. Pyramid Principle 64. Argument Mapping 65. Steelman vs Strawman 66. Crucial Conversations 67. Difficult Conversations Framework
 
-**Productivity & Learning (13 models)**
-68. Deep Work
-69. Flow State
-70. Pomodoro Technique
-71. Time Blocking
-72. Pareto Principle (80/20 Rule)
-73. Parkinson's Law
-74. Eat the Frog
-75. Getting Things Done (GTD)
-76. Zettelkasten Method
-77. Spaced Repetition
-78. Feynman Technique
-79. Deliberate Practice
-80. Learning Transfer
+**Productivity & Learning (13 models)** 68. Deep Work 69. Flow State 70. Pomodoro Technique 71. Time Blocking 72. Pareto Principle (80/20 Rule) 73. Parkinson's Law 74. Eat the Frog 75. Getting Things Done (GTD) 76. Zettelkasten Method 77. Spaced Repetition 78. Feynman Technique 79. Deliberate Practice 80. Learning Transfer
 
 ---
 
@@ -131,11 +69,11 @@ This document outlines the strategy for scaling HUMMBL's content library from it
 ### New Narrative Topics
 
 **Technology Narratives (3)**
+
 1. **"The Rise of AI: From Symbolic Systems to Neural Networks"**
    - Category: Technology
    - Tags: AI, Machine Learning, History
    - Evidence: High
-   
 2. **"Cryptocurrency and the Decentralization Movement"**
    - Category: Technology/Economics
    - Tags: Blockchain, Finance, Innovation
@@ -146,11 +84,11 @@ This document outlines the strategy for scaling HUMMBL's content library from it
    - Tags: Software, Collaboration, Community
    - Evidence: High
 
-**Business & Economics (4)**
-4. **"The Gig Economy: Flexibility vs Security"**
-   - Category: Economics
-   - Tags: Labor, Platform Economy, Future of Work
-   - Evidence: Medium
+**Business & Economics (4)** 4. **"The Gig Economy: Flexibility vs Security"**
+
+- Category: Economics
+- Tags: Labor, Platform Economy, Future of Work
+- Evidence: Medium
 
 5. **"Subscription Models: The Shift from Ownership to Access"**
    - Category: Business
@@ -167,11 +105,11 @@ This document outlines the strategy for scaling HUMMBL's content library from it
    - Tags: Distributed Teams, Productivity, Culture
    - Evidence: High
 
-**Psychology & Society (4)**
-8. **"Social Media and Mental Health"**
-   - Category: Psychology
-   - Tags: Technology, Well-being, Youth
-   - Evidence: High
+**Psychology & Society (4)** 8. **"Social Media and Mental Health"**
+
+- Category: Psychology
+- Tags: Technology, Well-being, Youth
+- Evidence: High
 
 9. **"The Loneliness Epidemic"**
    - Category: Psychology/Society
@@ -188,11 +126,7 @@ This document outlines the strategy for scaling HUMMBL's content library from it
     - Tags: Behavior Change, Neuroscience
     - Evidence: High
 
-**Science & Environment (3)**
-12. **"Climate Change: Scientific Consensus and Action"**
-    - Category: Science/Environment
-    - Tags: Climate, Policy, Sustainability
-    - Evidence: High
+**Science & Environment (3)** 12. **"Climate Change: Scientific Consensus and Action"** - Category: Science/Environment - Tags: Climate, Policy, Sustainability - Evidence: High
 
 13. **"The Microbiome Revolution"**
     - Category: Science/Health
@@ -237,14 +171,8 @@ const merged = pipeline.mergeContent(existing, imported, 'replace');
   "category": "Category",
   "description": "Brief description of the mental model",
   "definition": "Formal definition",
-  "keyPrinciples": [
-    "Principle 1",
-    "Principle 2"
-  ],
-  "applications": [
-    "Application area 1",
-    "Application area 2"
-  ],
+  "keyPrinciples": ["Principle 1", "Principle 2"],
+  "applications": ["Application area 1", "Application area 2"],
   "examples": [
     {
       "context": "Example context",
@@ -276,10 +204,7 @@ const merged = pipeline.mergeContent(existing, imported, 'replace');
   "tags": ["tag1", "tag2"],
   "evidence_quality": "High|Medium|Low|Preliminary",
   "confidence_level": 0.8,
-  "key_claims": [
-    "Claim 1",
-    "Claim 2"
-  ],
+  "key_claims": ["Claim 1", "Claim 2"],
   "sources": [
     {
       "citation": "Full citation",
@@ -298,6 +223,7 @@ const merged = pipeline.mergeContent(existing, imported, 'replace');
 ## ✅ Validation Checklist
 
 Before importing content:
+
 - [ ] All required fields present
 - [ ] Enums match allowed values
 - [ ] IDs are unique
@@ -335,12 +261,14 @@ Before importing content:
 ## 🔄 Continuous Improvement
 
 **Monthly:**
+
 - Review analytics
 - Identify low-engagement content
 - Add requested topics
 - Update evidence quality
 
 **Quarterly:**
+
 - Major content expansion
 - Category restructuring
 - Cross-linking optimization
@@ -351,6 +279,7 @@ Before importing content:
 ## 🎓 Content Guidelines
 
 ### Mental Models
+
 - Clear, jargon-free definitions
 - Real-world examples
 - Practical applications
@@ -358,6 +287,7 @@ Before importing content:
 - Progressive difficulty levels
 
 ### Narratives
+
 - Evidence-based claims
 - Multiple perspectives
 - Current, relevant topics

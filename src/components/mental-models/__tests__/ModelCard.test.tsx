@@ -5,8 +5,8 @@ import { describe, it, expect, vi } from 'vitest';
 import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import ModelCard from '../ModelCard';
-import type { MentalModel } from '@/models/mentalModels';
-import type { TransformationKey } from '@/types/transformation';
+import type { MentalModel } from '@cascade/types/mental-model';
+import type { TransformationKey } from '@cascade/types/transformation';
 
 const mockModel: MentalModel = {
   id: '1',
@@ -26,9 +26,9 @@ describe('ModelCard', () => {
     render(<ModelCard model={mockModel} onSelect={() => {}} />);
     expect(screen.getByText('First Principles')).toBeInTheDocument();
     expect(screen.getByText('FP')).toBeInTheDocument();
-    expect(screen.getByText('P')).toBeInTheDocument();
     expect(screen.getByText(/Breaking down problems/i)).toBeInTheDocument();
     expect(screen.getByText(/Start from foundational truths/i)).toBeInTheDocument();
+    expect(screen.getByText('1 source')).toBeInTheDocument();
   });
 
   it('calls onSelect when clicked', async () => {
@@ -48,7 +48,7 @@ describe('ModelCard', () => {
       tags: [],
       transformations: ['P'] as TransformationKey[],
       sources: [],
-      meta: { isCore: true, difficulty: 3 }
+      meta: { isCore: true, difficulty: 3 },
     };
     render(<ModelCard model={minimal} onSelect={() => {}} />);
     expect(screen.getByText('First Principles')).toBeInTheDocument();

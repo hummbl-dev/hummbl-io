@@ -1,7 +1,7 @@
 import ModelCard from './ModelCard';
 import SkeletonGrid from './SkeletonGrid';
 import ErrorState from './ErrorState';
-import type { MentalModel } from '@/models/mentalModels';
+import type { MentalModel } from '@cascade/types/mental-model';
 import './MentalModelsList.css';
 
 type MentalModelsListProps = {
@@ -29,10 +29,7 @@ const MentalModelsList = ({
     );
 
   return (
-    <div
-      data-testid="mental-models-list"
-      className="models-grid"
-    >
+    <div data-testid="mental-models-list" className="models-grid">
       {models.map((model) => (
         <ModelCard key={model.id} model={model} onSelect={onSelect} />
       ))}

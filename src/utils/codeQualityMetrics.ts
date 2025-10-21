@@ -58,19 +58,19 @@ export function calculateQualityScore(metrics: CodeQualityMetrics): QualityScore
     metrics.averageFileSize < 200
       ? 15
       : metrics.averageFileSize < 300
-      ? 12
-      : metrics.averageFileSize < 400
-      ? 10
-      : 5;
+        ? 12
+        : metrics.averageFileSize < 400
+          ? 10
+          : 5;
 
   const tsUsageScore =
     metrics.typeScriptUsage >= 90
       ? 10
       : metrics.typeScriptUsage >= 80
-      ? 8
-      : metrics.typeScriptUsage >= 70
-      ? 6
-      : 4;
+        ? 8
+        : metrics.typeScriptUsage >= 70
+          ? 6
+          : 4;
 
   scores.structure = avgSizeScore + tsUsageScore;
 
@@ -83,22 +83,16 @@ export function calculateQualityScore(metrics: CodeQualityMetrics): QualityScore
 
   // Performance score (20 points)
   const buildTimeScore =
-    metrics.buildTime < 2000
-      ? 10
-      : metrics.buildTime < 3000
-      ? 8
-      : metrics.buildTime < 5000
-      ? 6
-      : 4;
+    metrics.buildTime < 2000 ? 10 : metrics.buildTime < 3000 ? 8 : metrics.buildTime < 5000 ? 6 : 4;
 
   const bundleSizeScore =
     metrics.bundleSize < 200000
       ? 10
       : metrics.bundleSize < 300000
-      ? 8
-      : metrics.bundleSize < 400000
-      ? 6
-      : 4;
+        ? 8
+        : metrics.bundleSize < 400000
+          ? 6
+          : 4;
 
   scores.performance = buildTimeScore + bundleSizeScore;
 
@@ -185,7 +179,9 @@ export function getLatestQualityMetrics(): CodeQualityMetrics | null {
 /**
  * Get quality trend
  */
-export function getQualityTrend(metric: keyof CodeQualityMetrics): 'improving' | 'declining' | 'stable' {
+export function getQualityTrend(
+  metric: keyof CodeQualityMetrics
+): 'improving' | 'declining' | 'stable' {
   const history = getQualityHistory();
   if (history.length < 2) return 'stable';
 

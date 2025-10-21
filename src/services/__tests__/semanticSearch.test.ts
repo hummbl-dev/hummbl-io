@@ -49,14 +49,12 @@ describe('Vector Utilities', () => {
     it('normalizes vector to unit length', () => {
       const vec = [3, 4];
       const normalized = normalizeVector(vec);
-      
+
       expect(normalized[0]).toBeCloseTo(0.6);
       expect(normalized[1]).toBeCloseTo(0.8);
-      
+
       // Check magnitude is 1
-      const magnitude = Math.sqrt(
-        normalized.reduce((sum, val) => sum + val * val, 0)
-      );
+      const magnitude = Math.sqrt(normalized.reduce((sum, val) => sum + val * val, 0));
       expect(magnitude).toBeCloseTo(1.0);
     });
   });
@@ -73,17 +71,17 @@ describe('SemanticSearch', () => {
   describe('Embedding Generation', () => {
     it('generates embeddings', async () => {
       const embedding = await search.generateEmbedding('test text');
-      
+
       expect(embedding).toBeInstanceOf(Array);
       expect(embedding.length).toBe(64);
     });
 
     it('caches embeddings', async () => {
       const text = 'cached text';
-      
+
       const embedding1 = await search.generateEmbedding(text);
       const embedding2 = await search.generateEmbedding(text);
-      
+
       expect(embedding1).toEqual(embedding2);
       expect(search.getCacheSize()).toBeGreaterThan(0);
     });
@@ -91,7 +89,7 @@ describe('SemanticSearch', () => {
     it('generates consistent embeddings for same text', async () => {
       const embedding1 = await search.generateEmbedding('consistent');
       const embedding2 = await search.generateEmbedding('consistent');
-      
+
       expect(embedding1).toEqual(embedding2);
     });
   });
@@ -105,7 +103,7 @@ describe('SemanticSearch', () => {
       ];
 
       const results = await search.search('artificial intelligence', corpus, 2, 0);
-      
+
       expect(results.length).toBeGreaterThan(0);
       expect(results[0].id).toBeDefined();
       expect(results[0].score).toBeGreaterThanOrEqual(0);
@@ -120,7 +118,7 @@ describe('SemanticSearch', () => {
       ];
 
       const results = await search.findSimilar('1', 'Python programming', corpus, 2);
-      
+
       expect(results.length).toBeGreaterThan(0);
       expect(results[0].id).not.toBe('1'); // Excludes self
     });
@@ -130,20 +128,20 @@ describe('SemanticSearch', () => {
     it('clears cache', async () => {
       await search.generateEmbedding('test');
       expect(search.getCacheSize()).toBeGreaterThan(0);
-      
+
       search.clearCache();
       expect(search.getCacheSize()).toBe(0);
     });
 
     it('exports and imports cache', async () => {
       await search.generateEmbedding('export test');
-      
+
       const exported = search.exportCache();
       expect(exported).toBeTruthy();
-      
+
       search.clearCache();
       search.importCache(exported);
-      
+
       expect(search.getCacheSize()).toBeGreaterThan(0);
     });
   });

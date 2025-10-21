@@ -95,7 +95,10 @@ export class AuthService {
   /**
    * OAuth2 login (Google, GitHub, etc.)
    */
-  async loginWithOAuth(provider: 'google' | 'github', code: string): Promise<{ user: User; tokens: AuthTokens }> {
+  async loginWithOAuth(
+    provider: 'google' | 'github',
+    code: string
+  ): Promise<{ user: User; tokens: AuthTokens }> {
     const response = await fetch(`${this.baseUrl}/auth/oauth/${provider}`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
@@ -124,7 +127,7 @@ export class AuthService {
         await fetch(`${this.baseUrl}/user/logout`, {
           method: 'POST',
           headers: {
-            'Authorization': `Bearer ${tokens.accessToken}`,
+            Authorization: `Bearer ${tokens.accessToken}`,
           },
         });
       } catch (error) {
@@ -180,7 +183,7 @@ export class AuthService {
 
     const response = await fetch(`${this.baseUrl}/user/profile`, {
       headers: {
-        'Authorization': `Bearer ${tokens.accessToken}`,
+        Authorization: `Bearer ${tokens.accessToken}`,
       },
     });
 
@@ -212,7 +215,7 @@ export class AuthService {
     const response = await fetch(`${this.baseUrl}/user/profile`, {
       method: 'PATCH',
       headers: {
-        'Authorization': `Bearer ${tokens.accessToken}`,
+        Authorization: `Bearer ${tokens.accessToken}`,
         'Content-Type': 'application/json',
       },
       body: JSON.stringify(updates),
@@ -317,7 +320,7 @@ export class AuthService {
   private scheduleTokenRefresh(expiresIn: number): void {
     this.clearRefreshTimer();
 
-    const refreshTime = (expiresIn * 1000) - TOKEN_REFRESH_THRESHOLD;
+    const refreshTime = expiresIn * 1000 - TOKEN_REFRESH_THRESHOLD;
 
     if (refreshTime > 0) {
       this.refreshTimer = window.setTimeout(() => {

@@ -11,11 +11,11 @@ class Logger {
   private formatMessage(level: string, message: string, context?: LogContext): string {
     const timestamp = new Date().toISOString();
     const baseLog = `[${timestamp}] [${level.toUpperCase()}] ${message}`;
-    
+
     if (context && Object.keys(context).length > 0) {
       return `${baseLog} ${JSON.stringify(context)}`;
     }
-    
+
     return baseLog;
   }
 
@@ -31,7 +31,7 @@ class Logger {
 
   error(message: string, error?: Error | LogContext): void {
     let context: LogContext = {};
-    
+
     if (error instanceof Error) {
       context = {
         name: error.name,
@@ -41,7 +41,7 @@ class Logger {
     } else if (error) {
       context = error;
     }
-    
+
     const formatted = this.formatMessage('error', message, context);
     console.error(formatted);
   }

@@ -1,16 +1,18 @@
 // Round-trip tests for export/import functionality
 
-import { describe, it, expect } from 'vitest';
-import type { Narrative } from '../../types/narrative';
-import { exportToJSON, exportToCSV, exportToMarkdown } from '../exportNarratives';
-import { parseJSONImport, parseCSVImport, parseMarkdownImport, compareNarratives } from '../importParsers';
-import { validateJSONExport, validateCSVExport, validateMarkdownExport } from '../exportValidation';
+import { describe, it, expect, vi } from 'vitest';
+import type { Narrative } from '@cascade/types/narrative';
+import { validateJSONExport } from '../exportValidation';
 
 // Test data
 const mockNarratives: Narrative[] = [
   {
+    id: 'N001',
     narrative_id: 'N001',
+    version: '1.0',
+    provenance_hash: 'testhash123',
     title: 'Test Narrative One',
+    content: 'Detailed content with special characters: <>&"\' and line breaks\n\nSecond paragraph',
     summary: 'This is a test summary with "quotes" and special chars: <>&',
     category: 'Test Category',
     evidence_quality: 'A',
@@ -34,10 +36,22 @@ const mockNarratives: Narrative[] = [
       time_to_elicit: '15-30 minutes',
       expertise_required: 'intermediate',
     },
+    related_frameworks: [],
+    changelog: [
+      {
+        version: '1.0',
+        date: '2024-01-01',
+        changes: 'Initial version',
+      },
+    ],
   },
   {
+    id: 'N002',
     narrative_id: 'N002',
+    version: '1.0',
+    provenance_hash: 'testhash456',
     title: 'Test Narrative Two',
+    content: 'Another test with commas, semicolons; and newlines\n\nSecond paragraph',
     summary: 'Another test with commas, semicolons; and newlines\nin the text',
     category: 'Another Category',
     evidence_quality: 'B',
@@ -49,6 +63,19 @@ const mockNarratives: Narrative[] = [
     citations: [],
     examples: [],
     elicitation_methods: [],
+    complexity: {
+      cognitive_load: 'low',
+      time_to_elicit: '5-10 minutes',
+      expertise_required: 'beginner',
+    },
+    related_frameworks: [],
+    changelog: [
+      {
+        version: '1.0',
+        date: '2024-01-02',
+        changes: 'Initial version',
+      },
+    ],
   },
 ];
 
@@ -77,20 +104,20 @@ describe('JSON Round-Trip', () => {
   it('exports and imports JSON without data loss', () => {
     // Export
     const exported = JSON.stringify(mockNarratives, null, 2);
-    
+
     // Validate export
     const validation = validateJSONExport(JSON.parse(exported));
     expect(validation.isValid).toBe(true);
-    
+
     // Import
     const parseResult = parseJSONImport(exported);
     expect(parseResult.success).toBe(true);
     expect(parseResult.data).toBeDefined();
-    
+
     // Compare
     if (parseResult.data) {
       expect(parseResult.data.length).toBe(mockNarratives.length);
-      
+
       mockNarratives.forEach((original, index) => {
         const parsed = parseResult.data![index];
         const differences = compareNarratives(original, parsed);
@@ -100,15 +127,17 @@ describe('JSON Round-Trip', () => {
   });
 
   it('handles special characters in JSON', () => {
-    const specialChars: Narrative[] = [{
-      ...mockNarratives[0],
-      title: 'Test with "quotes" and \'apostrophes\'',
-      summary: 'Contains <tags>, &amp; ampersands, and unicode: café',
-    }];
+    const specialChars: Narrative[] = [
+      {
+        ...mockNarratives[0],
+        title: 'Test with "quotes" and \'apostrophes\'',
+        summary: 'Contains <tags>, &amp; ampersands, and unicode: café',
+      },
+    ];
 
     const exported = JSON.stringify(specialChars, null, 2);
     const parseResult = parseJSONImport(exported);
-    
+
     expect(parseResult.success).toBe(true);
     expect(parseResult.data?.[0].title).toBe(specialChars[0].title);
     expect(parseResult.data?.[0].summary).toBe(specialChars[0].summary);
@@ -120,7 +149,7 @@ describe('CSV Round-Trip', () => {
     // Create a mock CSV export
     const csvContent = `ID,Title,Category,Evidence Grade,Confidence,Summary
 N001,"Test Title","Test Category",A,95,"Test summary"`;
-    
+
     const result = validateCSVExport(csvContent);
     expect(result.isValid).toBe(true);
   });
@@ -134,7 +163,7 @@ N001,"Test Title","Test Category",A,95,"Test summary"`;
   it('handles quoted values in CSV', () => {
     const csvContent = `ID,Title,Category,Evidence Grade,Confidence,Summary
 N001,"Title with ""quotes""","Category",A,95,"Summary with, comma"`;
-    
+
     const parseResult = parseCSVImport(csvContent);
     expect(parseResult.success).toBe(true);
     expect(parseResult.data?.[0].title).toBe('Title with "quotes"');
@@ -144,7 +173,7 @@ N001,"Title with ""quotes""","Category",A,95,"Summary with, comma"`;
   it('parses CSV arrays correctly', () => {
     const csvContent = `ID,Title,Category,Evidence Grade,Confidence,Summary,Domains,Tags
 N001,"Test","Category",A,95,"Summary","Domain1, Domain2","tag1, tag2"`;
-    
+
     const parseResult = parseCSVImport(csvContent);
     expect(parseResult.success).toBe(true);
     expect(parseResult.data?.[0].domain).toEqual(['Domain1', 'Domain2']);

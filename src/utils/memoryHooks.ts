@@ -49,8 +49,7 @@ export function createUserAnalyticsMemory(analytics: UserAnalytics): Memory {
     .slice(0, 3)
     .map(([query, count]) => `"${query}" (${count}x)`);
 
-  const topFormat = Object.entries(analytics.exports.formatUsage)
-    .sort(([, a], [, b]) => b - a)[0];
+  const topFormat = Object.entries(analytics.exports.formatUsage).sort(([, a], [, b]) => b - a)[0];
 
   const content = `User analytics summary:
 - Total views: ${analytics.views.totalViews}
@@ -89,15 +88,15 @@ export function extractUserContext(analytics: UserAnalytics): UserContext {
 
   // Identify usage patterns
   const usagePatterns: string[] = [];
-  
+
   if (analytics.searches.totalSearches > analytics.views.totalViews * 0.5) {
     usagePatterns.push('heavy_searcher');
   }
-  
+
   if (analytics.exports.totalExports > 5) {
     usagePatterns.push('frequent_exporter');
   }
-  
+
   const sessionMinutes = analytics.sessionDuration / 60000;
   if (sessionMinutes > 30) {
     usagePatterns.push('engaged_user');
@@ -116,11 +115,7 @@ export function extractUserContext(analytics: UserAnalytics): UserContext {
 /**
  * Retrieve relevant memories based on current context
  */
-export function retrieveRelevantMemories(
-  context: string,
-  memories: Memory[],
-  limit = 5
-): Memory[] {
+export function retrieveRelevantMemories(context: string, memories: Memory[], limit = 5): Memory[] {
   const contextLower = context.toLowerCase();
   const keywords = contextLower.split(/\s+/).filter((w) => w.length > 3);
 
@@ -212,16 +207,14 @@ export function generateInsight(analytics: UserAnalytics): string | null {
     ...views.narrativeViews,
     ...views.modelViews,
   };
-  const topView = Object.entries(allViews)
-    .sort(([, a], [, b]) => b - a)[0];
+  const topView = Object.entries(allViews).sort(([, a], [, b]) => b - a)[0];
 
   if (topView && topView[1] > 3) {
     return `You've viewed "${topView[0]}" ${topView[1]} times - seems like a favorite!`;
   }
 
   // Search patterns
-  const topSearch = Object.entries(searches.queryCount)
-    .sort(([, a], [, b]) => b - a)[0];
+  const topSearch = Object.entries(searches.queryCount).sort(([, a], [, b]) => b - a)[0];
 
   if (topSearch && topSearch[1] > 3) {
     return `"${topSearch[0]}" is your most searched term`;

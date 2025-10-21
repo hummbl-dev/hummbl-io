@@ -34,7 +34,7 @@ jobs:
         run: |
           # Run the performance test with a 30-minute timeout
           timeout 1800 pnpm test:perf || echo "::warning::Performance test timed out after 30 minutes"
-          
+
           # Check for threshold violations
           if grep -q "validation > 100 ms" logs/watcher-summary.log || \
              grep -q "latency > 120 ms" logs/watcher-summary.log || \
@@ -57,7 +57,7 @@ jobs:
         run: |
           # Update the performance baseline in the documentation
           cp logs/watcher-summary.log docs/performance/watcher-latest.log
-          
+
           # Create a simple performance report
           echo "# Performance Test Results - $(date -u +'%Y-%m-%d')" > performance-report.md
           echo "## Watcher Subsystem" >> performance-report.md
