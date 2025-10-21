@@ -5,7 +5,7 @@
   "type": "module",
   "lint-staged": {
     "*.{js,jsx,ts,tsx}": [
-      "eslint --fix",
+      "eslint --fix --config .eslintrc.cjs",
       "prettier --write"
     ],
     "*.{json,md,yml,yaml,css,scss}": [

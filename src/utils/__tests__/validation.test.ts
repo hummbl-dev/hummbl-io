@@ -1,3 +1,4 @@
+// Test file for validation utilities - updated to test pre-push hook
 import { describe, it, expect } from 'vitest';
 import { validateMentalModel, validateMentalModels } from '../validation';
 
