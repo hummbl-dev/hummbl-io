@@ -27,7 +27,7 @@
     "format": "prettier --write .",
     "lint": "eslint . --ext .js,.jsx,.ts,.tsx --fix --no-error-on-unmatched-pattern",
     "typecheck": "tsc --noEmit",
-    "prepare": "simple-git-hooks",
+    "prepare": "if [ -z \"$VERCEL\" ]; then simple-git-hooks; fi",
     "test": "NODE_OPTIONS='--max-old-space-size=4096 --expose-gc' vitest run --no-watch --silent --run",
     "test:memory-optimized": "NODE_OPTIONS='--max-old-space-size=2048 --expose-gc' vitest run --no-watch --silent --run --pool=forks --poolOptions.forks.singleFork",
     "test:memory-profile": "NODE_OPTIONS='--max-old-space-size=4096 --expose-gc --inspect-brk' vitest run --no-watch --silent --run",
