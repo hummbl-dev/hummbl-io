@@ -8,6 +8,10 @@ A modern web application for exploring and searching the HUMMBL (Highly Useful M
 
 ---
 
+## 📚 Documentation
+
+For detailed development setup and guidelines, see the [Development Guide](docs/DEVELOPMENT.md).
+
 ## 🎯 Overview
 
 HUMMBL provides an interactive interface to browse, search, and learn about 120 mental models that enhance strategic thinking and decision-making. Each model includes:
