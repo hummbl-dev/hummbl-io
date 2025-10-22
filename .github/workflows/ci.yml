@@ -33,11 +33,16 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v4
+        with:
+          version: 8
+
       - name: Use Node.js 20.x
         uses: actions/setup-node@v4
         with:
           node-version: '20.x'
-          cache: 'npm'
+          cache: 'pnpm'
 
       - name: Cache node modules
         id: cache-deps
@@ -46,16 +51,16 @@ jobs:
           path: |
             node_modules
             .next/cache
-          key: ${{ runner.os }}-node-${{ hashFiles('**/package-lock.json') }}
+          key: ${{ runner.os }}-node-${{ hashFiles('**/pnpm-lock.yaml') }}
 
       - name: Install dependencies
-        run: npm ci --prefer-offline
+        run: pnpm install --frozen-lockfile
 
       - name: Ensure test directories exist
         run: |
           mkdir -p src/__mocks__
           mkdir -p test-results
-          
+
       - name: Ensure compliance-report.json exists
         run: |
           if [ -f src/__mocks__/compliance-report.json ]; then
@@ -78,10 +83,14 @@ jobs:
 
     steps:
       - uses: actions/checkout@v4
+      - uses: pnpm/action-setup@v4
+        with:
+          version: 8
+
       - uses: actions/setup-node@v4
         with:
           node-version: '20.x'
-          cache: 'npm'
+          cache: 'pnpm'
 
       - name: Restore cached dependencies
         uses: actions/cache@v4
@@ -90,6 +99,8 @@ jobs:
             node_modules
             .next/cache
           key: ${{ needs.test-base.outputs.cache-key }}
+          restore-keys: |
+            ${{ runner.os }}-node-
 
       - name: Run Analytics Tests
         run: npx vitest run src/utils/__tests__/analytics*.test.ts --no-watch --silent --run --sourcemap=false
@@ -104,10 +115,14 @@ jobs:
 
     steps:
       - uses: actions/checkout@v4
+      - uses: pnpm/action-setup@v4
+        with:
+          version: 8
+
       - uses: actions/setup-node@v4
         with:
           node-version: '20.x'
-          cache: 'npm'
+          cache: 'pnpm'
 
       - name: Restore cached dependencies
         uses: actions/cache@v4
@@ -116,6 +131,8 @@ jobs:
             node_modules
             .next/cache
           key: ${{ needs.test-base.outputs.cache-key }}
+          restore-keys: |
+            ${{ runner.os }}-node-
 
       - name: Run Code Quality Tests
         run: npx vitest run src/utils/__tests__/codeQualityMetrics.test.ts --no-watch --silent --run --sourcemap=false
@@ -130,10 +147,14 @@ jobs:
 
     steps:
       - uses: actions/checkout@v4
+      - uses: pnpm/action-setup@v4
+        with:
+          version: 8
+
       - uses: actions/setup-node@v4
         with:
           node-version: '20.x'
-          cache: 'npm'
+          cache: 'pnpm'
 
       - name: Restore cached dependencies
         uses: actions/cache@v4
@@ -142,20 +163,22 @@ jobs:
             node_modules
             .next/cache
           key: ${{ needs.test-base.outputs.cache-key }}
+          restore-keys: |
+            ${{ runner.os }}-node-
 
       - name: Run Agent Tests
         run: npx vitest run src/utils/__tests__/agentEffectiveness.test.ts --no-watch --silent --run --sourcemap=false
 
       - name: Install dependencies
         run: |
-          npm ci --prefer-offline
-          npm list --depth=0
+          pnpm install --frozen-lockfile
+          pnpm list --depth=0
 
       - name: Check Node.js version
         run: node --version
 
       - name: Run type checking
-        run: npm run typecheck
+        run: pnpm run typecheck
 
       - name: Run tests with detailed output
         id: tests
@@ -263,13 +286,13 @@ jobs:
         uses: actions/setup-node@v4
         with:
           node-version: '20.x'
-          cache: 'npm'
+          cache: 'pnpm'
 
       - name: Install dependencies
-        run: npm ci
+        run: pnpm install --frozen-lockfile
 
       - name: Build
-        run: npm run build
+        run: pnpm run build
 
       - name: Upload build artifacts
         uses: actions/upload-artifact@v4
@@ -343,10 +366,10 @@ jobs:
         uses: actions/setup-node@v4
         with:
           node-version: '20.x'
-          cache: 'npm'
+          cache: 'pnpm'
 
       - name: Install dependencies
-        run: npm ci
+        run: pnpm install --frozen-lockfile
 
       - name: Download build artifacts
         uses: actions/download-artifact@v4
