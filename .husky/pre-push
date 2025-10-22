@@ -1,6 +1,12 @@
-#!/usr/bin/env sh
-. "$(dirname -- "$0")/_/husky.sh"
+#!/bin/sh
 
-echo "Skipping tests in pre-push hook due to memory issues. Run tests manually with 'npm test'"
-# Temporarily disabled tests due to memory issues
-# NODE_OPTIONS='--max-old-space-size=8192' npm test
+if [ "$SKIP_SIMPLE_GIT_HOOKS" = "1" ]; then
+    echo "[INFO] SKIP_SIMPLE_GIT_HOOKS is set to 1, skipping hook."
+    exit 0
+fi
+
+if [ -f "$SIMPLE_GIT_HOOKS_RC" ]; then
+    . "$SIMPLE_GIT_HOOKS_RC"
+fi
+
+echo 'Skipping tests in pre-push hook for now'
