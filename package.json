@@ -54,8 +54,7 @@
     "validate:models": "node ./scripts/validate-models.mjs",
     "audit": "node ./scripts/audit.mjs",
     "telemetry": "node ./scripts/telemetry.mjs",
-    "clean": "rimraf node_modules dist build coverage .cache .temp .tmp",
-    "preinstall": "npx only-allow pnpm"
+    "clean": "rimraf node_modules dist build coverage .cache .temp .tmp"
   },
   "dependencies": {
     "@sentry/browser": "^10.20.0",
