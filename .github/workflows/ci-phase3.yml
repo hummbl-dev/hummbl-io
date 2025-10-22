@@ -75,14 +75,14 @@ jobs:
         run: |
           echo "=== Environment Information ==="
           node --version
-          npm --version
+          pnpm --version
           echo "============================="
 
           echo "Running Phase 3 tests with memory optimization..."
           mkdir -p test-results
 
           # Run tests with JUnit reporter for better CI integration
-          if npm run test:memory-optimized -- --reporter=junit --reporter-options="outputFile=test-results/junit-phase3.xml" --verbose; then
+          if pnpm run test:memory-optimized -- --reporter=junit --reporter-options="outputFile=test-results/junit-phase3.xml" --verbose; then
             echo "test_status=success" >> $GITHUB_OUTPUT
           else
             echo "Tests failed with exit code $?"
