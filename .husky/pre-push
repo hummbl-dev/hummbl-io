@@ -1,6 +1,6 @@
 #!/usr/bin/env sh
 . "$(dirname -- "$0")/_/husky.sh"
 
-echo "Skipping tests in pre-push hook due to memory issues. Run tests manually with 'npm test'"
+echo "Skipping tests in pre-push hook due to memory issues. Run tests manually with 'pnpm test'"
 # Temporarily disabled tests due to memory issues
-# NODE_OPTIONS='--max-old-space-size=8192' npm test
+# NODE_OPTIONS='--max-old-space-size=8192' pnpm test
