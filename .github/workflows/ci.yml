@@ -98,7 +98,7 @@ jobs:
           path: |
             node_modules
             .next/cache
-          key: ${{ needs.test-base.outputs.cache-key }}
+          key: ${{ runner.os }}-node-${{ hashFiles('**/pnpm-lock.yaml') }}
           restore-keys: |
             ${{ runner.os }}-node-
 
@@ -130,7 +130,7 @@ jobs:
           path: |
             node_modules
             .next/cache
-          key: ${{ needs.test-base.outputs.cache-key }}
+          key: ${{ runner.os }}-node-${{ hashFiles('**/pnpm-lock.yaml') }}
           restore-keys: |
             ${{ runner.os }}-node-
 
@@ -162,7 +162,7 @@ jobs:
           path: |
             node_modules
             .next/cache
-          key: ${{ needs.test-base.outputs.cache-key }}
+          key: ${{ runner.os }}-node-${{ hashFiles('**/pnpm-lock.yaml') }}
           restore-keys: |
             ${{ runner.os }}-node-
 
