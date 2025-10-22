@@ -22,7 +22,7 @@
   "scripts": {
     "dev": "vite",
     "build": "vite build",
-    "vercel-build": "node vercel-build.js",
+    "vercel-build": "npm run build",
     "preview": "vite preview",
     "format": "prettier --write .",
     "lint": "eslint . --ext .js,.jsx,.ts,.tsx --fix --no-error-on-unmatched-pattern",
