@@ -170,7 +170,7 @@ jobs:
         run: npx vitest run src/utils/__tests__/agentEffectiveness.test.ts --no-watch --silent --run --sourcemap=false
 
       - name: Install dependencies
-        run: |
+      run: |
           pnpm install --frozen-lockfile
           pnpm list --depth=0
 
@@ -178,7 +178,7 @@ jobs:
         run: node --version
 
       - name: Build TypeScript types
-        run: |
+      run: |
           mkdir -p dist/types
           pnpm run build:types
 
@@ -189,7 +189,7 @@ jobs:
         id: tests
         continue-on-error: false
         timeout-minutes: 10
-        run: |
+      run: |
           echo "=== Environment Information ==="
           node --version
           npm --version
@@ -216,7 +216,7 @@ jobs:
       - name: Check for compliance report
         id: check_compliance
         continue-on-error: true
-        run: |
+      run: |
           if [ -f "compliance-report.json" ]; then
             echo "compliance_report_exists=true" >> $GITHUB_OUTPUT
           else
@@ -225,7 +225,7 @@ jobs:
           fi
 
       - name: Run verification
-        run: |
+      run: |
           npm run build
 
           # Ensure compliance-report.json exists
@@ -321,7 +321,7 @@ jobs:
           path: dist/
 
       - name: Check bundle size
-        run: |
+      run: |
           echo "Checking bundle sizes..."
           MAIN_JS_SIZE=$(stat -f%z dist/assets/*.js 2>/dev/null || stat -c%s dist/assets/*.js)
           MAIN_CSS_SIZE=$(stat -f%z dist/assets/*.css 2>/dev/null || stat -c%s dist/assets/*.css)
@@ -384,7 +384,7 @@ jobs:
 
       - name: Run accessibility audit
         continue-on-error: true
-        run: |
+      run: |
           echo "Running accessibility checks..."
           npx serve -s dist -p 3000 &
           sleep 5
@@ -446,6 +446,6 @@ jobs:
 
       - name: Notify deployment success
         if: success()
-        run: |
+      run: |
           echo "✅ Production deployment successful!"
           echo "URL: https://hummbl.io"
