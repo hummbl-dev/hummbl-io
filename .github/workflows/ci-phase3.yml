@@ -68,10 +68,9 @@ jobs:
         run: node --version
 
       - name: Build TypeScript types
-  run: |
-    mkdir -p dist/types
-    pnpm run build:types
-        run: pnpm run build:types
+        run: |
+          mkdir -p dist/types
+          pnpm run build:types
 
       - name: Run type checking
         run: pnpm run typecheck
