@@ -321,7 +321,7 @@ jobs:
           path: dist/
 
       - name: Check bundle size
-      run: |
+        run: |
           echo "Checking bundle sizes..."
           MAIN_JS_SIZE=$(stat -f%z dist/assets/*.js 2>/dev/null || stat -c%s dist/assets/*.js)
           MAIN_CSS_SIZE=$(stat -f%z dist/assets/*.css 2>/dev/null || stat -c%s dist/assets/*.css)
