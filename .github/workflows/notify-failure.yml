@@ -1,28 +1,44 @@
 name: Notify on Workflow Failure
 
 on:
+  # Trigger on workflow_run for the Integrity Check Runner
   workflow_run:
     workflows: ["Integrity Check Runner"]
     types: [completed]
     branches: [main, develop]
+  
+  # Also trigger on push to test-workflow-trigger for testing
+  push:
+    branches:
+      - test-workflow-trigger
 
 jobs:
   notify-on-failure:
-    if: >
-      github.event.workflow_run.conclusion == 'failure' ||
-      github.event.workflow_run.conclusion == 'cancelled'
+    # Run on push to test-workflow-trigger or when Integrity Check Runner fails/cancels
+    if: |
+      (github.event_name == 'push' && github.ref == 'refs/heads/test-workflow-trigger') ||
+      (github.event_name == 'workflow_run' && 
+       (github.event.workflow_run.conclusion == 'failure' || 
+        github.event.workflow_run.conclusion == 'cancelled'))
     
     runs-on: ubuntu-latest
     steps:
       - name: Prepare notification
         id: prepare
         run: |
-          # Get workflow run details
-          RUN_URL="${{ github.event.workflow_run.html_url }}"
-          COMMIT_SHA="${{ github.event.workflow_run.head_sha }}"
-          COMMIT_MSG=$(curl -s -H "Authorization: token ${{ secrets.GITHUB_TOKEN }}" \
-            "https://api.github.com/repos/${{ github.repository }}/commits/$COMMIT_SHA" | \
-            jq -r '.commit.message | split("\n")[0]')
+          # Set default values for push event
+          if [[ "${{ github.event_name }}" == "push" ]]; then
+            RUN_URL="${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}"
+            COMMIT_SHA="${{ github.sha }}"
+            COMMIT_MSG="${{ github.event.head_commit.message }}"
+          else
+            # For workflow_run event
+            RUN_URL="${{ github.event.workflow_run.html_url }}"
+            COMMIT_SHA="${{ github.event.workflow_run.head_sha }}"
+            COMMIT_MSG=$(curl -s -H "Authorization: token ${{ secrets.GITHUB_TOKEN }}" \
+              "https://api.github.com/repos/${{ github.repository }}/commits/$COMMIT_SHA" | \
+              jq -r '.commit.message | split("\n")[0]')
+          fi
           
           # Prepare message
           # Prepare message with proper escaping for YAML and Slack formatting
