@@ -50,31 +50,44 @@ jobs:
 
       - name: Create verification log
         if: github.event_name == 'pull_request'
+        id: verification
         run: |
-          # Create a verification log for the comment
-          node scripts/verify_production_integrity.mjs > verification.log 2>&1 || true
+          # Run verification and capture the output
+          node scripts/verify_production_integrity.mjs > verification.log 2>&1 || echo "verification_failed=true" >> $GITHUB_OUTPUT
+
+          # Output the verification result
+          echo "verification_passed=${{ !steps.verification.outputs.verification_failed }}" >> $GITHUB_OUTPUT
+
+          # Always exit successfully to allow the comment step to run
+          exit 0
 
       - name: Comment on PR
-        if: github.event_name == 'pull_request'
+        if: github.event_name == 'pull_request' && steps.verification.outputs.verification_passed == 'true'
+        continue-on-error: true # Don't fail the workflow if comment fails
         uses: actions/github-script@v6
         with:
           script: |
             const fs = require('fs');
             let verificationOutput = '(No verification log found)';
 
-            if (fs.existsSync('verification.log')) {
-              verificationOutput = fs.readFileSync('verification.log', 'utf8');
+            try {
+              if (fs.existsSync('verification.log')) {
+                verificationOutput = fs.readFileSync('verification.log', 'utf8');
+              }
+
+              await github.rest.issues.createComment({
+                issue_number: context.issue.number,
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                body: `### 🔍 Pre-Deploy Verification Results\n\n\`\`\`\n${verificationOutput}\n\`\`\`\n\n✅ Build and verification completed successfully.`
+              });
+            } catch (error) {
+              console.log('Warning: Could not post comment to PR. This is non-fatal.');
+              console.log('Error details:', error.message);
             }
 
-            await github.rest.issues.createComment({
-              issue_number: context.issue.number,
-              owner: context.repo.owner,
-              repo: context.repo.repo,
-              body: `### 🔍 Pre-Deploy Verification Results\n\n\`\`\`\n${verificationOutput}\n\`\`\`\n\n✅ Build and verification completed successfully.`
-            });
-
       - name: Fail if verification failed
-        if: failure()
+        if: steps.verification.outputs.verification_failed == 'true'
         run: |
           echo "❌ Verification failed. Check the logs for details."
           exit 1
