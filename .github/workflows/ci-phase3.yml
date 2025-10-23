@@ -28,12 +28,8 @@ jobs:
     timeout-minutes: 20
 
     env:
-      NODE_OPTIONS: '--max-old-space-size=2048'
-
-    strategy:
-      matrix:
-        node-version: [20.x]
-        os: [ubuntu-latest]
+      NODE_ENV: test
+      CI: true
 
     steps:
       - uses: actions/checkout@v4
@@ -43,16 +39,17 @@ jobs:
         with:
           version: 10
 
-      - name: Use Node.js
+      - name: Use Node.js 20.x
         uses: actions/setup-node@v4
         with:
           node-version: '20.x'
           cache: 'pnpm'
 
-      - name: Cache node_modules
-        uses: actions/cache@v3
+      - name: Cache node modules
+        uses: actions/cache@v4
         with:
           path: |
+            ~/.pnpm-store
             node_modules
             .next/cache
           key: ${{ runner.os }}-node-${{ hashFiles('**/pnpm-lock.yaml') }}
@@ -92,26 +89,20 @@ jobs:
           npm run test:memory-optimized -- --reporter=junit --reporter-options="outputFile=test-results/junit-phase3.xml" --verbose || {
             echo "Tests failed with exit code $?"
             # Don't fail here, we'll handle it after collecting artifacts
-            echo "::set-output name=status::failure"
+            echo "test_status=failure" >> $GITHUB_OUTPUT
             exit 0
           }
-          echo "::set-output name=status::success"
-        env:
-          NODE_ENV: test
-          CI: true
-          VITE_ADMIN_PASSWORD: test_password_for_ci
-          VITE_API_URL: https://api.hummbl.io
-          VITE_ENVIRONMENT: ci
+          echo "test_status=success" >> $GITHUB_OUTPUT
 
-      - name: Check for compliance report (Phase 3)
-        id: check_compliance_phase3
+      - name: Check for compliance report
+        id: check_compliance
         continue-on-error: true
         run: |
           if [ -f "compliance-report.json" ]; then
             echo "compliance_report_exists=true" >> $GITHUB_OUTPUT
           else
             echo "compliance_report_exists=false" >> $GITHUB_OUTPUT
-            echo "Warning: compliance-report.json not found in Phase 3, continuing without it"
+            echo "Warning: compliance-report.json not found, continuing without it"
           fi
 
       - name: Upload test results and artifacts
@@ -123,12 +114,12 @@ jobs:
             coverage/
             test-results/
             .next/logs/
-            ${{ steps.check_compliance_phase3.outputs.compliance_report_exists == 'true' && 'compliance-report.json' || '' }}
+            ${{ steps.check_compliance.outputs.compliance_report_exists == 'true' && 'compliance-report.json' || '' }}
           retention-days: 7
           if-no-files-found: warn
 
-      - name: Upload coverage to Codecov (Phase 3)
-        if: steps.tests.outputs.status == 'success'
+      - name: Upload coverage to Codecov
+        if: steps.tests.outputs.test_status == 'success'
         uses: codecov/codecov-action@v4
         with:
           token: ${{ secrets.CODECOV_TOKEN || 'none' }}
@@ -139,7 +130,7 @@ jobs:
           name: ${{ github.workflow }}-${{ github.ref_name }}
 
       - name: Set test status
-        if: steps.tests.outputs.status == 'failure'
+        if: steps.tests.outputs.test_status == 'failure'
         run: exit 1
       - name: Upload test summary
         if: always()
