@@ -1,7 +1,7 @@
 // Tests for useSearchHistory hook
 
 import { describe, it, expect, beforeEach } from 'vitest';
-import { renderHook, act } from '@testing-library/react';
+import { renderHook, act, waitFor } from '@testing-library/react';
 import { useSearchHistory } from '../useSearchHistory';
 
 describe('useSearchHistory', () => {
@@ -86,33 +86,46 @@ describe('useSearchHistory', () => {
   });
 
   describe('removeFromHistory', () => {
-    it('removes specific entry', () => {
+    it('removes specific entry', async () => {
       const { result } = renderHook(() => useSearchHistory());
 
-      act(() => {
+      // Add first entry
+      await act(async () => {
         result.current.addToHistory({ query: 'test1' });
       });
 
-      // Small delay between additions to ensure different timestamps
-      act(() => {
+      // Verify first entry was added
+      expect(result.current.history).toHaveLength(1);
+      const firstEntry = result.current.history[0];
+
+      // Add second entry with a different query
+      await act(async () => {
         result.current.addToHistory({ query: 'test2' });
       });
 
-      // Verify we have 2 entries
-      expect(result.current.history.length).toBeGreaterThanOrEqual(1);
+      // Verify we have exactly 2 entries
+      expect(result.current.history).toHaveLength(2);
+      
+      // Get the second entry
+      const secondEntry = result.current.history.find(
+        entry => entry.query === 'test2'
+      );
+      
+      // Make sure we found the second entry
+      expect(secondEntry).toBeDefined();
+      expect(secondEntry?.query).toBe('test2');
+      
+      // Remove the second entry
+      await act(async () => {
+        if (secondEntry) {
+          result.current.removeFromHistory(secondEntry.timestamp);
+        }
+      });
 
-      if (result.current.history.length >= 2) {
-        const timestamp = result.current.history[1].timestamp;
-
-        act(() => {
-          result.current.removeFromHistory(timestamp);
-        });
-
-        expect(result.current.history).toHaveLength(1);
-      } else {
-        // If duplicate prevention kicked in, verify we have at least 1
-        expect(result.current.history).toHaveLength(1);
-      }
+      // Verify only the first entry remains
+      expect(result.current.history).toHaveLength(1);
+      expect(result.current.history[0].query).toBe('test1');
+      expect(result.current.history[0].timestamp).toBe(firstEntry.timestamp);
     });
   });
 
@@ -190,28 +203,50 @@ describe('useSearchHistory', () => {
       expect(result.current.savedSearches[0].query).toBe('test query');
     });
 
-    it('deletes a saved search', () => {
+    it('deletes a saved search', async () => {
       const { result } = renderHook(() => useSearchHistory());
 
-      act(() => {
-        result.current.saveSearch('Search 1', 'query1');
+      // Add first search
+      await act(async () => {
+        await result.current.saveSearch('Search 1', 'query1');
       });
 
-      act(() => {
-        result.current.saveSearch('Search 2', 'query2');
+      // Wait for the first search to be added
+      await waitFor(() => {
+        expect(result.current.savedSearches).toHaveLength(1);
       });
 
-      expect(result.current.savedSearches).toHaveLength(2);
+      // Get the ID of the first search
+      const search1Id = result.current.savedSearches[0]?.id;
+      expect(search1Id).toBeDefined();
 
-      // Get the ID of the first saved search (Search 1, which is at index [1])
-      const idToDelete = result.current.savedSearches[1].id;
-
-      act(() => {
-        result.current.deleteSavedSearch(idToDelete);
+      // Add second search
+      await act(async () => {
+        await result.current.saveSearch('Search 2', 'query2');
       });
 
-      expect(result.current.savedSearches).toHaveLength(1);
-      expect(result.current.savedSearches[0].name).toBe('Search 2');
+      // Verify both searches were added
+      await waitFor(() => {
+        expect(result.current.savedSearches).toHaveLength(2);
+      });
+      
+      // Delete the first search
+      await act(async () => {
+        await result.current.deleteSavedSearch(search1Id);
+      });
+
+      // Wait for state updates and verify
+      await waitFor(() => {
+        // Verify the search was deleted by checking the saved searches array
+        expect(result.current.savedSearches).toHaveLength(1);
+        
+        // Verify the remaining search is the second one
+        expect(result.current.savedSearches[0].name).toBe('Search 2');
+        
+        // Verify the deleted search is gone
+        const deletedSearch = result.current.savedSearches.find(s => s.id === search1Id);
+        expect(deletedSearch).toBeUndefined();
+      });
     });
 
     it('updates a saved search', () => {

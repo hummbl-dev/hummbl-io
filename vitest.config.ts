@@ -45,19 +45,45 @@ export default defineConfig({
     // Optimize coverage settings
     coverage: {
       provider: 'v8',
-      reporter: ['text', 'json', 'html', 'json-summary'],
-      all: false, // Only instrument files that are tested
+      reporter: ['text-summary', 'html'], // Faster CI with essential reports
+      all: true, // Check all files, not just tested ones
       clean: true, // Clean coverage results before running
-      cleanOnRerun: true, // Clean coverage results on watch mode
+      include: ['src/**/*.{ts,tsx}'],
       exclude: [
+        // Test files and utilities
+        '**/__tests__/**',
+        '**/*.test.*',
+        '**/test-utils/**',
+        '**/setupTests.*',
+        
+        // Generated code and types
+        '**/generated/**',
+        '**/types/**',
+        '**/*.d.ts',
+        
+        // Configuration and tooling
+        '**/vite.config.*',
+        '**/vitest.config.*',
+        '**/jest.config.*',
+        
+        // Storybook and documentation
+        '**/*.stories.*',
+        '**/.storybook/**',
+        
+        // Build outputs and dependencies
         '**/node_modules/**',
         '**/dist/**',
         '**/coverage/**',
-        '**/*.d.ts',
-        '**/*.test.{js,jsx,ts,tsx}',
-        '**/__tests__/**',
-        '**/test-utils/**',
       ],
+      // Enforce minimum coverage thresholds
+      thresholds: {
+        lines: 85,
+        functions: 85,
+        branches: 80,
+        statements: 85,
+      },
+      // Show uncovered files in the report
+      reportOnFailure: true,
       // Thresholds disabled for now
       // thresholds: {
       //   lines: 7,

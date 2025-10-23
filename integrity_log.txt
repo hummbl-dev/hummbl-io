@@ -1,0 +1,155 @@
+integrity-check / Verify Production Integrity	UNKNOWN STEP	﻿2025-10-21T20:02:05.5777016Z Current runner version: '2.329.0'
+integrity-check / Verify Production Integrity	UNKNOWN STEP	2025-10-21T20:02:05.5804352Z ##[group]Runner Image Provisioner
+integrity-check / Verify Production Integrity	UNKNOWN STEP	2025-10-21T20:02:05.5805222Z Hosted Compute Agent
+integrity-check / Verify Production Integrity	UNKNOWN STEP	2025-10-21T20:02:05.5805899Z Version: 20250912.392
+integrity-check / Verify Production Integrity	UNKNOWN STEP	2025-10-21T20:02:05.5806488Z Commit: d921fda672a98b64f4f82364647e2f10b2267d0b
+integrity-check / Verify Production Integrity	UNKNOWN STEP	2025-10-21T20:02:05.5807229Z Build Date: 2025-09-12T15:23:14Z
+integrity-check / Verify Production Integrity	UNKNOWN STEP	2025-10-21T20:02:05.5807883Z ##[endgroup]
+integrity-check / Verify Production Integrity	UNKNOWN STEP	2025-10-21T20:02:05.5808418Z ##[group]Operating System
+integrity-check / Verify Production Integrity	UNKNOWN STEP	2025-10-21T20:02:05.5809008Z Ubuntu
+integrity-check / Verify Production Integrity	UNKNOWN STEP	2025-10-21T20:02:05.5809487Z 24.04.3
+integrity-check / Verify Production Integrity	UNKNOWN STEP	2025-10-21T20:02:05.5809915Z LTS
+integrity-check / Verify Production Integrity	UNKNOWN STEP	2025-10-21T20:02:05.5810403Z ##[endgroup]
+integrity-check / Verify Production Integrity	UNKNOWN STEP	2025-10-21T20:02:05.5810883Z ##[group]Runner Image
+integrity-check / Verify Production Integrity	UNKNOWN STEP	2025-10-21T20:02:05.5811468Z Image: ubuntu-24.04
+integrity-check / Verify Production Integrity	UNKNOWN STEP	2025-10-21T20:02:05.5812012Z Version: 20250929.60.1
+integrity-check / Verify Production Integrity	UNKNOWN STEP	2025-10-21T20:02:05.5813331Z Included Software: https://github.com/actions/runner-images/blob/ubuntu24/20250929.60/images/ubuntu/Ubuntu2404-Readme.md
+integrity-check / Verify Production Integrity	UNKNOWN STEP	2025-10-21T20:02:05.5814842Z Image Release: https://github.com/actions/runner-images/releases/tag/ubuntu24%2F20250929.60
+integrity-check / Verify Production Integrity	UNKNOWN STEP	2025-10-21T20:02:05.5815925Z ##[endgroup]
+integrity-check / Verify Production Integrity	UNKNOWN STEP	2025-10-21T20:02:05.5816982Z ##[group]GITHUB_TOKEN Permissions
+integrity-check / Verify Production Integrity	UNKNOWN STEP	2025-10-21T20:02:05.5819202Z Contents: read
+integrity-check / Verify Production Integrity	UNKNOWN STEP	2025-10-21T20:02:05.5819741Z Metadata: read
+integrity-check / Verify Production Integrity	UNKNOWN STEP	2025-10-21T20:02:05.5820329Z Packages: read
+integrity-check / Verify Production Integrity	UNKNOWN STEP	2025-10-21T20:02:05.5820832Z ##[endgroup]
+integrity-check / Verify Production Integrity	UNKNOWN STEP	2025-10-21T20:02:05.5823433Z Secret source: Actions
+integrity-check / Verify Production Integrity	UNKNOWN STEP	2025-10-21T20:02:05.5824508Z Prepare workflow directory
+integrity-check / Verify Production Integrity	UNKNOWN STEP	2025-10-21T20:02:05.6160294Z Prepare all required actions
+integrity-check / Verify Production Integrity	UNKNOWN STEP	2025-10-21T20:02:05.6202012Z Getting action download info
+integrity-check / Verify Production Integrity	UNKNOWN STEP	2025-10-21T20:02:06.0621224Z Download action repository 'actions/checkout@v4' (SHA:08eba0b27e820071cde6df949e0beb9ba4906955)
+integrity-check / Verify Production Integrity	UNKNOWN STEP	2025-10-21T20:02:06.2328874Z Download action repository 'actions/setup-node@v4' (SHA:49933ea5288caeca8642d1e84afbd3f7d6820020)
+integrity-check / Verify Production Integrity	UNKNOWN STEP	2025-10-21T20:02:06.3259398Z Download action repository 'pnpm/action-setup@v2' (SHA:eae0cfeb286e66ffb5155f1a79b90583a127a68b)
+integrity-check / Verify Production Integrity	UNKNOWN STEP	2025-10-21T20:02:07.2063993Z Download action repository 'actions/github-script@v7' (SHA:f28e40c7f34bde8b3046d885e986cb6290c5673b)
+integrity-check / Verify Production Integrity	UNKNOWN STEP	2025-10-21T20:02:07.7380900Z Uses: hummbl-dev/hummbl-io/.github/workflows/integrity.yml@refs/pull/10/merge (c277517ec315612235510051c794343e80509e1b)
+integrity-check / Verify Production Integrity	UNKNOWN STEP	2025-10-21T20:02:07.7387345Z ##[group] Inputs
+integrity-check / Verify Production Integrity	UNKNOWN STEP	2025-10-21T20:02:07.7388301Z   reason: Scheduled run
+integrity-check / Verify Production Integrity	UNKNOWN STEP	2025-10-21T20:02:07.7389346Z   production_url: https://www.hummbl.io
+integrity-check / Verify Production Integrity	UNKNOWN STEP	2025-10-21T20:02:07.7390494Z ##[endgroup]
+integrity-check / Verify Production Integrity	UNKNOWN STEP	2025-10-21T20:02:07.7391642Z Complete job name: integrity-check / Verify Production Integrity
+integrity-check / Verify Production Integrity	UNKNOWN STEP	2025-10-21T20:02:07.8271696Z ##[group]Run actions/checkout@v4
+integrity-check / Verify Production Integrity	UNKNOWN STEP	2025-10-21T20:02:07.8273379Z with:
+integrity-check / Verify Production Integrity	UNKNOWN STEP	2025-10-21T20:02:07.8274166Z   fetch-depth: 0
+integrity-check / Verify Production Integrity	UNKNOWN STEP	2025-10-21T20:02:07.8275043Z   repository: hummbl-dev/hummbl-io
+integrity-check / Verify Production Integrity	UNKNOWN STEP	2025-10-21T20:02:07.8276464Z   token: ***
+integrity-check / Verify Production Integrity	UNKNOWN STEP	2025-10-21T20:02:07.8277279Z   ssh-strict: true
+integrity-check / Verify Production Integrity	UNKNOWN STEP	2025-10-21T20:02:07.8278074Z   ssh-user: git
+integrity-check / Verify Production Integrity	UNKNOWN STEP	2025-10-21T20:02:07.8278902Z   persist-credentials: true
+integrity-check / Verify Production Integrity	UNKNOWN STEP	2025-10-21T20:02:07.8279821Z   clean: true
+integrity-check / Verify Production Integrity	UNKNOWN STEP	2025-10-21T20:02:07.8280660Z   sparse-checkout-cone-mode: true
+integrity-check / Verify Production Integrity	UNKNOWN STEP	2025-10-21T20:02:07.8281660Z   fetch-tags: false
+integrity-check / Verify Production Integrity	UNKNOWN STEP	2025-10-21T20:02:07.8282688Z   show-progress: true
+integrity-check / Verify Production Integrity	UNKNOWN STEP	2025-10-21T20:02:07.8283582Z   lfs: false
+integrity-check / Verify Production Integrity	UNKNOWN STEP	2025-10-21T20:02:07.8284338Z   submodules: false
+integrity-check / Verify Production Integrity	UNKNOWN STEP	2025-10-21T20:02:07.8285187Z   set-safe-directory: true
+integrity-check / Verify Production Integrity	UNKNOWN STEP	2025-10-21T20:02:07.8286359Z ##[endgroup]
+integrity-check / Verify Production Integrity	UNKNOWN STEP	2025-10-21T20:02:07.9531765Z Syncing repository: hummbl-dev/hummbl-io
+integrity-check / Verify Production Integrity	UNKNOWN STEP	2025-10-21T20:02:07.9534838Z ##[group]Getting Git version info
+integrity-check / Verify Production Integrity	UNKNOWN STEP	2025-10-21T20:02:07.9536213Z Working directory is '/home/runner/work/hummbl-io/hummbl-io'
+integrity-check / Verify Production Integrity	UNKNOWN STEP	2025-10-21T20:02:07.9538268Z [command]/usr/bin/git version
+integrity-check / Verify Production Integrity	UNKNOWN STEP	2025-10-21T20:02:08.1346141Z git version 2.51.0
+integrity-check / Verify Production Integrity	UNKNOWN STEP	2025-10-21T20:02:08.1384834Z ##[endgroup]
+integrity-check / Verify Production Integrity	UNKNOWN STEP	2025-10-21T20:02:08.1400622Z Temporarily overriding HOME='/home/runner/work/_temp/bb88fb8f-3841-4f67-9cdd-3cd269604dc5' before making global git config changes
+integrity-check / Verify Production Integrity	UNKNOWN STEP	2025-10-21T20:02:08.1403789Z Adding repository directory to the temporary git global config as a safe directory
+integrity-check / Verify Production Integrity	UNKNOWN STEP	2025-10-21T20:02:08.1406506Z [command]/usr/bin/git config --global --add safe.directory /home/runner/work/hummbl-io/hummbl-io
+integrity-check / Verify Production Integrity	UNKNOWN STEP	2025-10-21T20:02:08.1696745Z Deleting the contents of '/home/runner/work/hummbl-io/hummbl-io'
+integrity-check / Verify Production Integrity	UNKNOWN STEP	2025-10-21T20:02:08.1702117Z ##[group]Initializing the repository
+integrity-check / Verify Production Integrity	UNKNOWN STEP	2025-10-21T20:02:08.1708522Z [command]/usr/bin/git init /home/runner/work/hummbl-io/hummbl-io
+integrity-check / Verify Production Integrity	UNKNOWN STEP	2025-10-21T20:02:08.1866460Z hint: Using 'master' as the name for the initial branch. This default branch name
+integrity-check / Verify Production Integrity	UNKNOWN STEP	2025-10-21T20:02:08.1869448Z hint: is subject to change. To configure the initial branch name to use in all
+integrity-check / Verify Production Integrity	UNKNOWN STEP	2025-10-21T20:02:08.1872046Z hint: of your new repositories, which will suppress this warning, call:
+integrity-check / Verify Production Integrity	UNKNOWN STEP	2025-10-21T20:02:08.1873798Z hint:
+integrity-check / Verify Production Integrity	UNKNOWN STEP	2025-10-21T20:02:08.1874843Z hint: 	git config --global init.defaultBranch <name>
+integrity-check / Verify Production Integrity	UNKNOWN STEP	2025-10-21T20:02:08.1876094Z hint:
+integrity-check / Verify Production Integrity	UNKNOWN STEP	2025-10-21T20:02:08.1877306Z hint: Names commonly chosen instead of 'master' are 'main', 'trunk' and
+integrity-check / Verify Production Integrity	UNKNOWN STEP	2025-10-21T20:02:08.1879907Z hint: 'development'. The just-created branch can be renamed via this command:
+integrity-check / Verify Production Integrity	UNKNOWN STEP	2025-10-21T20:02:08.1881801Z hint:
+integrity-check / Verify Production Integrity	UNKNOWN STEP	2025-10-21T20:02:08.1882843Z hint: 	git branch -m <name>
+integrity-check / Verify Production Integrity	UNKNOWN STEP	2025-10-21T20:02:08.1884136Z hint:
+integrity-check / Verify Production Integrity	UNKNOWN STEP	2025-10-21T20:02:08.1885632Z hint: Disable this message with "git config set advice.defaultBranchName false"
+integrity-check / Verify Production Integrity	UNKNOWN STEP	2025-10-21T20:02:08.1888281Z Initialized empty Git repository in /home/runner/work/hummbl-io/hummbl-io/.git/
+integrity-check / Verify Production Integrity	UNKNOWN STEP	2025-10-21T20:02:08.1892245Z [command]/usr/bin/git remote add origin https://github.com/hummbl-dev/hummbl-io
+integrity-check / Verify Production Integrity	UNKNOWN STEP	2025-10-21T20:02:08.1939898Z ##[endgroup]
+integrity-check / Verify Production Integrity	UNKNOWN STEP	2025-10-21T20:02:08.1942096Z ##[group]Disabling automatic garbage collection
+integrity-check / Verify Production Integrity	UNKNOWN STEP	2025-10-21T20:02:08.1944487Z [command]/usr/bin/git config --local gc.auto 0
+integrity-check / Verify Production Integrity	UNKNOWN STEP	2025-10-21T20:02:08.2172037Z ##[endgroup]
+integrity-check / Verify Production Integrity	UNKNOWN STEP	2025-10-21T20:02:08.2173706Z ##[group]Setting up auth
+integrity-check / Verify Production Integrity	UNKNOWN STEP	2025-10-21T20:02:08.2187036Z [command]/usr/bin/git config --local --name-only --get-regexp core\.sshCommand
+integrity-check / Verify Production Integrity	UNKNOWN STEP	2025-10-21T20:02:08.2240683Z [command]/usr/bin/git submodule foreach --recursive sh -c "git config --local --name-only --get-regexp 'core\.sshCommand' && git config --local --unset-all 'core.sshCommand' || :"
+integrity-check / Verify Production Integrity	UNKNOWN STEP	2025-10-21T20:02:08.4113842Z [command]/usr/bin/git config --local --name-only --get-regexp http\.https\:\/\/github\.com\/\.extraheader
+integrity-check / Verify Production Integrity	UNKNOWN STEP	2025-10-21T20:02:08.4153863Z [command]/usr/bin/git submodule foreach --recursive sh -c "git config --local --name-only --get-regexp 'http\.https\:\/\/github\.com\/\.extraheader' && git config --local --unset-all 'http.https://github.com/.extraheader' || :"
+integrity-check / Verify Production Integrity	UNKNOWN STEP	2025-10-21T20:02:08.4407215Z [command]/usr/bin/git config --local http.https://github.com/.extraheader AUTHORIZATION: basic ***
+integrity-check / Verify Production Integrity	UNKNOWN STEP	2025-10-21T20:02:08.5713853Z ##[endgroup]
+integrity-check / Verify Production Integrity	UNKNOWN STEP	2025-10-21T20:02:08.5714561Z ##[group]Fetching the repository
+integrity-check / Verify Production Integrity	UNKNOWN STEP	2025-10-21T20:02:08.5723156Z [command]/usr/bin/git -c protocol.version=2 fetch --prune --no-recurse-submodules origin +refs/heads/*:refs/remotes/origin/* +refs/tags/*:refs/tags/* +c277517ec315612235510051c794343e80509e1b:refs/remotes/pull/10/merge
+integrity-check / Verify Production Integrity	UNKNOWN STEP	2025-10-21T20:02:09.2473277Z From https://github.com/hummbl-dev/hummbl-io
+integrity-check / Verify Production Integrity	UNKNOWN STEP	2025-10-21T20:02:09.2474392Z  * [new branch]      add-actions-checklist                    -> origin/add-actions-checklist
+integrity-check / Verify Production Integrity	UNKNOWN STEP	2025-10-21T20:02:09.2475335Z  * [new branch]      chore/optimize-test-lint                 -> origin/chore/optimize-test-lint
+integrity-check / Verify Production Integrity	UNKNOWN STEP	2025-10-21T20:02:09.2476348Z  * [new branch]      feature/ci-workflow-enhancements         -> origin/feature/ci-workflow-enhancements
+integrity-check / Verify Production Integrity	UNKNOWN STEP	2025-10-21T20:02:09.2477046Z  * [new branch]      main                                     -> origin/main
+integrity-check / Verify Production Integrity	UNKNOWN STEP	2025-10-21T20:02:09.2477400Z  * [new tag]         v2.0                                     -> v2.0
+integrity-check / Verify Production Integrity	UNKNOWN STEP	2025-10-21T20:02:09.2477799Z  * [new ref]         c277517ec315612235510051c794343e80509e1b -> pull/10/merge
+integrity-check / Verify Production Integrity	UNKNOWN STEP	2025-10-21T20:02:09.2529361Z ##[endgroup]
+integrity-check / Verify Production Integrity	UNKNOWN STEP	2025-10-21T20:02:09.2530215Z ##[group]Determining the checkout info
+integrity-check / Verify Production Integrity	UNKNOWN STEP	2025-10-21T20:02:09.2531154Z ##[endgroup]
+integrity-check / Verify Production Integrity	UNKNOWN STEP	2025-10-21T20:02:09.2538433Z [command]/usr/bin/git sparse-checkout disable
+integrity-check / Verify Production Integrity	UNKNOWN STEP	2025-10-21T20:02:09.2587534Z [command]/usr/bin/git config --local --unset-all extensions.worktreeConfig
+integrity-check / Verify Production Integrity	UNKNOWN STEP	2025-10-21T20:02:09.2620078Z ##[group]Checking out the ref
+integrity-check / Verify Production Integrity	UNKNOWN STEP	2025-10-21T20:02:09.2625445Z [command]/usr/bin/git checkout --progress --force refs/remotes/pull/10/merge
+integrity-check / Verify Production Integrity	UNKNOWN STEP	2025-10-21T20:02:09.2892110Z Note: switching to 'refs/remotes/pull/10/merge'.
+integrity-check / Verify Production Integrity	UNKNOWN STEP	2025-10-21T20:02:09.2893187Z 
+integrity-check / Verify Production Integrity	UNKNOWN STEP	2025-10-21T20:02:09.2893648Z You are in 'detached HEAD' state. You can look around, make experimental
+integrity-check / Verify Production Integrity	UNKNOWN STEP	2025-10-21T20:02:09.2895804Z changes and commit them, and you can discard any commits you make in this
+integrity-check / Verify Production Integrity	UNKNOWN STEP	2025-10-21T20:02:09.2896613Z state without impacting any branches by switching back to a branch.
+integrity-check / Verify Production Integrity	UNKNOWN STEP	2025-10-21T20:02:09.2897054Z 
+integrity-check / Verify Production Integrity	UNKNOWN STEP	2025-10-21T20:02:09.2897362Z If you want to create a new branch to retain commits you create, you may
+integrity-check / Verify Production Integrity	UNKNOWN STEP	2025-10-21T20:02:09.2898001Z do so (now or later) by using -c with the switch command. Example:
+integrity-check / Verify Production Integrity	UNKNOWN STEP	2025-10-21T20:02:09.2898374Z 
+integrity-check / Verify Production Integrity	UNKNOWN STEP	2025-10-21T20:02:09.2898544Z   git switch -c <new-branch-name>
+integrity-check / Verify Production Integrity	UNKNOWN STEP	2025-10-21T20:02:09.2898804Z 
+integrity-check / Verify Production Integrity	UNKNOWN STEP	2025-10-21T20:02:09.2898952Z Or undo this operation with:
+integrity-check / Verify Production Integrity	UNKNOWN STEP	2025-10-21T20:02:09.2899175Z 
+integrity-check / Verify Production Integrity	UNKNOWN STEP	2025-10-21T20:02:09.2899256Z   git switch -
+integrity-check / Verify Production Integrity	UNKNOWN STEP	2025-10-21T20:02:09.2899375Z 
+integrity-check / Verify Production Integrity	UNKNOWN STEP	2025-10-21T20:02:09.2899606Z Turn off this advice by setting config variable advice.detachedHead to false
+integrity-check / Verify Production Integrity	UNKNOWN STEP	2025-10-21T20:02:09.2899898Z 
+integrity-check / Verify Production Integrity	UNKNOWN STEP	2025-10-21T20:02:09.2900220Z HEAD is now at c277517 Merge 5e9158fdf74579a3d5b40c2796eac71da8848618 into da3c3740feb607e33e159fa2291f86cc5c738899
+integrity-check / Verify Production Integrity	UNKNOWN STEP	2025-10-21T20:02:09.2903662Z ##[endgroup]
+integrity-check / Verify Production Integrity	UNKNOWN STEP	2025-10-21T20:02:09.2950660Z [command]/usr/bin/git log -1 --format=%H
+integrity-check / Verify Production Integrity	UNKNOWN STEP	2025-10-21T20:02:09.2978423Z c277517ec315612235510051c794343e80509e1b
+integrity-check / Verify Production Integrity	UNKNOWN STEP	2025-10-21T20:02:09.3209609Z ##[group]Run actions/setup-node@v4
+integrity-check / Verify Production Integrity	UNKNOWN STEP	2025-10-21T20:02:09.3209911Z with:
+integrity-check / Verify Production Integrity	UNKNOWN STEP	2025-10-21T20:02:09.3210085Z   node-version: 20.x
+integrity-check / Verify Production Integrity	UNKNOWN STEP	2025-10-21T20:02:09.3210283Z   cache: pnpm
+integrity-check / Verify Production Integrity	UNKNOWN STEP	2025-10-21T20:02:09.3210465Z   always-auth: false
+integrity-check / Verify Production Integrity	UNKNOWN STEP	2025-10-21T20:02:09.3210823Z   check-latest: false
+integrity-check / Verify Production Integrity	UNKNOWN STEP	2025-10-21T20:02:09.3211149Z   token: ***
+integrity-check / Verify Production Integrity	UNKNOWN STEP	2025-10-21T20:02:09.3211329Z ##[endgroup]
+integrity-check / Verify Production Integrity	UNKNOWN STEP	2025-10-21T20:02:09.5028040Z Found in cache @ /opt/hostedtoolcache/node/20.19.5/x64
+integrity-check / Verify Production Integrity	UNKNOWN STEP	2025-10-21T20:02:09.5034825Z ##[group]Environment details
+integrity-check / Verify Production Integrity	UNKNOWN STEP	2025-10-21T20:02:09.9273783Z node: v20.19.5
+integrity-check / Verify Production Integrity	UNKNOWN STEP	2025-10-21T20:02:09.9274371Z npm: 10.8.2
+integrity-check / Verify Production Integrity	UNKNOWN STEP	2025-10-21T20:02:09.9274661Z yarn: 1.22.22
+integrity-check / Verify Production Integrity	UNKNOWN STEP	2025-10-21T20:02:09.9275368Z ##[endgroup]
+integrity-check / Verify Production Integrity	UNKNOWN STEP	2025-10-21T20:02:09.9324233Z ##[error]Unable to locate executable file: pnpm. Please verify either the file path exists or the file can be found within a directory specified by the PATH environment variable. Also check the file mode to verify the file is executable.
+integrity-check / Verify Production Integrity	UNKNOWN STEP	2025-10-21T20:02:09.9496955Z Post job cleanup.
+integrity-check / Verify Production Integrity	UNKNOWN STEP	2025-10-21T20:02:10.0480845Z [command]/usr/bin/git version
+integrity-check / Verify Production Integrity	UNKNOWN STEP	2025-10-21T20:02:10.0517713Z git version 2.51.0
+integrity-check / Verify Production Integrity	UNKNOWN STEP	2025-10-21T20:02:10.0570253Z Temporarily overriding HOME='/home/runner/work/_temp/ceb462bf-cea8-4855-96ce-d794eaf10b10' before making global git config changes
+integrity-check / Verify Production Integrity	UNKNOWN STEP	2025-10-21T20:02:10.0571634Z Adding repository directory to the temporary git global config as a safe directory
+integrity-check / Verify Production Integrity	UNKNOWN STEP	2025-10-21T20:02:10.0576761Z [command]/usr/bin/git config --global --add safe.directory /home/runner/work/hummbl-io/hummbl-io
+integrity-check / Verify Production Integrity	UNKNOWN STEP	2025-10-21T20:02:10.0614138Z [command]/usr/bin/git config --local --name-only --get-regexp core\.sshCommand
+integrity-check / Verify Production Integrity	UNKNOWN STEP	2025-10-21T20:02:10.0647528Z [command]/usr/bin/git submodule foreach --recursive sh -c "git config --local --name-only --get-regexp 'core\.sshCommand' && git config --local --unset-all 'core.sshCommand' || :"
+integrity-check / Verify Production Integrity	UNKNOWN STEP	2025-10-21T20:02:10.0882237Z [command]/usr/bin/git config --local --name-only --get-regexp http\.https\:\/\/github\.com\/\.extraheader
+integrity-check / Verify Production Integrity	UNKNOWN STEP	2025-10-21T20:02:10.0905479Z http.https://github.com/.extraheader
+integrity-check / Verify Production Integrity	UNKNOWN STEP	2025-10-21T20:02:10.0919014Z [command]/usr/bin/git config --local --unset-all http.https://github.com/.extraheader
+integrity-check / Verify Production Integrity	UNKNOWN STEP	2025-10-21T20:02:10.0952303Z [command]/usr/bin/git submodule foreach --recursive sh -c "git config --local --name-only --get-regexp 'http\.https\:\/\/github\.com\/\.extraheader' && git config --local --unset-all 'http.https://github.com/.extraheader' || :"
+integrity-check / Verify Production Integrity	UNKNOWN STEP	2025-10-21T20:02:10.1316621Z Cleaning up orphan processes

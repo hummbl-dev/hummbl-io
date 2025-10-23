@@ -1,0 +1,77 @@
+# Branch Protection Configuration
+# This file documents the branch protection rules for this repository.
+# To apply these rules, use the GitHub CLI command provided in the comment below.
+# Last updated: 2025-10-21
+
+# Default protection rules that apply to all protected branches
+defaults:
+  # Don't enforce rules on admins (set to true in production)
+  enforce_admins: false
+  
+  # Require at least 1 approving review
+  required_approving_review_count: 1
+  
+  # Dismiss stale pull request approvals when new commits are pushed
+  dismiss_stale_reviews: true
+  
+  # Require review from code owners
+  require_code_owner_reviews: true
+
+# Branch-specific rules
+branches:
+  - name: main
+    protection:
+      # Require status checks to pass before merging
+      required_status_checks:
+        # Require branches to be up to date before merging
+        strict: true
+        # Required status checks
+        contexts:
+          - "Integrity Check Runner"
+          - "Test / test (18.x)"
+          - "Test / test (20.x)"
+      
+      # Pull request review settings
+      required_pull_request_reviews:
+        required_approving_review_count: 1
+        dismiss_stale_reviews: true
+        require_code_owner_reviews: true
+      
+      # No restrictions on who can push to matching branches
+      restrictions: null
+      
+      # Don't enforce rules on admins
+      enforce_admins: false
+      
+      # Require linear history (no merge commits)
+      required_linear_history: true
+      
+      # Prevent force pushes
+      allow_force_pushes: false
+      
+      # Prevent branch deletion
+      allow_deletions: false
+      
+      # Prevent creation of matching branches by users without push access
+      block_creations: true
+      
+      # Require all conversations on code to be resolved before merging
+      required_conversation_resolution: true
+
+# To apply these settings, run:
+# gh api \
+#   --method PUT \
+#   -H "Accept: application/vnd.github+json" \
+#   /repos/hummbl-dev/hummbl-io/branches/main/protection \
+#   -f required_status_checks.strict=true \
+#   -f 'required_status_checks.contexts=["Integrity Check Runner","Test / test (18.x)","Test / test (20.x)"]' \
+#   -f enforce_admins=false \
+#   -f required_pull_request_reviews.required_approving_review_count=1 \
+#   -f required_pull_request_reviews.dismiss_stale_reviews=true \
+#   -f required_pull_request_reviews.require_code_owner_reviews=true \
+#   -f required_linear_history=true \
+#   -f allow_force_pushes=false \
+#   -f allow_deletions=false \
+#   -f block_creations=true \
+#   -f required_conversation_resolution=true \
+#   -f restrictions={}
