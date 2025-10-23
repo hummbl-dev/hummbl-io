@@ -25,12 +25,13 @@ jobs:
             jq -r '.commit.message | split("\n")[0]')
           
           # Prepare message
+          # Prepare message with proper escaping for YAML and Slack formatting
           MESSAGE="❌ *Workflow Failed*: \`${{ github.workflow }} #${{ github.run_number }}\`"
-          MESSAGE+="\n*Repository*: ${{ github.repository }}"
-          MESSAGE+="\n*Branch*: \`${{ github.ref_name }}\`"
-          MESSAGE+="\n*Commit*: \`${COMMIT_SHA:0:7}\` ${COMMIT_MSG}"
-          MESSAGE+="\n*Triggered by*: ${{ github.actor }}"
-          MESSAGE+="\n*View Logs*: $RUN_URL"
+          MESSAGE+="\\n*Repository*: ${{ github.repository }}"
+          MESSAGE+="\\n*Branch*: \`${{ github.ref_name }}\`"
+          MESSAGE+="\\n*Commit*: \`${COMMIT_SHA:0:7}\` ${COMMIT_MSG//$'\n'/ }"  # Remove newlines from commit message
+          MESSAGE+="\\n*Triggered by*: ${{ github.actor }}"
+          MESSAGE+="\\n*View Logs*: $RUN_URL"
           
           # Set outputs for other steps
           echo "MESSAGE<<EOF" >> $GITHUB_ENV
