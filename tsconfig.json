@@ -4,14 +4,13 @@
     "useDefineForClassFields": true,
     "lib": ["ES2020", "DOM", "DOM.Iterable"],
     "module": "ESNext",
+    "moduleResolution": "node",
+    "esModuleInterop": true,
     "skipLibCheck": true,
-    "moduleResolution": "bundler",
-    "allowImportingTsExtensions": true,
-    "resolveJsonModule": true,
-    "isolatedModules": true,
+    "forceConsistentCasingInFileNames": true,
+    "strict": true,
     "noEmit": true,
     "jsx": "react-jsx",
-    "strict": true,
     "noUnusedLocals": true,
     "noUnusedParameters": true,
     "noFallthroughCasesInSwitch": true,
@@ -26,24 +25,28 @@
       "node",
       "jsdom",
       "@testing-library/jest-dom",
-      "vitest/globals",
-      "@testing-library/jest-dom/vitest"
+      "vitest/globals"
     ]
   },
   "include": [
-    "src",
-    "scripts",
-    "hummbl/devops/agents",
-    "vitest.setup.ts",
-    "**/*.test.ts",
-    "**/*.test.tsx",
-    "**/__tests__/**/*.ts",
-    "**/__tests__/**/*.tsx"
+    "src/**/*.ts",
+    "src/**/*.tsx",
+    "scripts/**/*.ts",
+    "hummbl/devops/agents/**/*.ts",
+    "vitest.setup.ts"
   ],
-  "exclude": ["node_modules", "**/*.stories.ts", "**/*.stories.tsx"],
-  "references": [{ "path": "./tsconfig.node.json" }],
+  "exclude": [
+    "node_modules",
+    "**/*.stories.ts",
+    "**/*.stories.tsx",
+    "**/*.test.ts",
+    "**/*.test.tsx"
+  ],
   "ts-node": {
     "esm": true,
     "experimentalSpecifierResolution": "node"
-  }
+  },
+  "references": [
+    { "path": "./tsconfig.node.json" }
+  ]
 }
