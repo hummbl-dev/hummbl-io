@@ -366,12 +366,13 @@ jobs:
           # Ensure compliance-report.json exists (simplified version)
           if [ ! -f "compliance-report.json" ]; then
             GENERATED_AT=$(date -u +%Y-%m-%dT%H:%M:%SZ)
-            printf '{
+            cat > compliance-report.json << JSONEOF
+{
   "metadata": {
-    "generated_at": "%s",
+    "generated_at": "$GENERATED_AT",
     "environment": "ci",
-    "commit_sha": "%s",
-    "run_id": "%s"
+    "commit_sha": "${{ github.sha }}",
+    "run_id": "${{ github.run_id }}"
   },
   "summary": {
     "total_checks": 0,
@@ -380,7 +381,8 @@ jobs:
     "success_rate": 1.0
   },
   "checks": []
-}' "$GENERATED_AT" "${{ github.sha }}" "${{ github.run_id }}" > compliance-report.json
+}
+JSONEOF
           fi
 
           # Run verification if the script exists
