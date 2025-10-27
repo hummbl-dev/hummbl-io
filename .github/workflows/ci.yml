@@ -44,14 +44,21 @@ jobs:
           node-version: '20.x'
           cache: 'pnpm'
 
-      - name: Cache node modules
+      - name: Cache dependencies (optimized for workspaces)
         id: cache-deps
         uses: actions/cache@v4
         with:
           path: |
+            ~/.pnpm-store
             node_modules
+            shared/node_modules
+            server/node_modules
+            infrastructure/node_modules
+            mobile/node_modules
             .next/cache
-          key: ${{ runner.os }}-node-${{ hashFiles('**/pnpm-lock.yaml') }}
+          key: ${{ runner.os }}-pnpm-${{ hashFiles('**/pnpm-lock.yaml') }}
+          restore-keys: |
+            ${{ runner.os }}-pnpm-
 
       - name: Install dependencies
         run: pnpm install --frozen-lockfile
@@ -83,24 +90,17 @@ jobs:
 
     steps:
       - uses: actions/checkout@v4
-      - uses: pnpm/action-setup@v4
+
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v4
         with:
           version: 10
 
-      - uses: actions/setup-node@v4
+      - name: Use Node.js 20.x
+        uses: actions/setup-node@v4
         with:
           node-version: '20.x'
           cache: 'pnpm'
-
-      - name: Restore cached dependencies
-        uses: actions/cache@v4
-        with:
-          path: |
-            node_modules
-            .next/cache
-          key: ${{ runner.os }}-node-${{ hashFiles('**/pnpm-lock.yaml') }}
-          restore-keys: |
-            ${{ runner.os }}-node-
 
       - name: Run Analytics Tests
         run: npx vitest run src/utils/__tests__/analytics*.test.ts --no-watch --silent --run --sourcemap=false
@@ -115,27 +115,165 @@ jobs:
 
     steps:
       - uses: actions/checkout@v4
-      - uses: pnpm/action-setup@v4
+
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v4
         with:
           version: 10
 
-      - uses: actions/setup-node@v4
+      - name: Use Node.js 20.x
+        uses: actions/setup-node@v4
         with:
           node-version: '20.x'
           cache: 'pnpm'
 
-      - name: Restore cached dependencies
-        uses: actions/cache@v4
-        with:
-          path: |
-            node_modules
-            .next/cache
-          key: ${{ runner.os }}-node-${{ hashFiles('**/pnpm-lock.yaml') }}
-          restore-keys: |
-            ${{ runner.os }}-node-
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
 
       - name: Run Code Quality Tests
         run: npx vitest run src/utils/__tests__/codeQualityMetrics.test.ts --no-watch --silent --run --sourcemap=false
+
+  test-root:
+    name: Test - Root (Main App)
+    needs: test-base
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    env:
+      NODE_OPTIONS: '--max-old-space-size=4096'
+    if: ${{ always() && (github.event_name != 'pull_request' || contains(github.event.pull_request.head.ref, 'src/') || contains(github.event.pull_request.head.ref, 'package')) }}
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v4
+        with:
+          version: 10
+
+      - name: Use Node.js 20.x
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20.x'
+          cache: 'pnpm'
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Build TypeScript types
+        run: |
+          mkdir -p dist/types
+          pnpm run build:types
+
+      - name: Run type checking
+        run: pnpm run typecheck
+
+  test-shared:
+    name: Test - Shared Workspace
+    needs: test-base
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    if: ${{ always() && github.event_name != 'pull_request' }}
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v4
+        with:
+          version: 10
+
+      - name: Use Node.js 20.x
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20.x'
+          cache: 'pnpm'
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Test shared workspace
+        run: pnpm --filter @hummbl/shared test
+
+  test-server:
+    name: Test - Server Workspace
+    needs: test-base
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    if: ${{ always() && github.event_name != 'pull_request' }}
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v4
+        with:
+          version: 10
+
+      - name: Use Node.js 20.x
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20.x'
+          cache: 'pnpm'
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Test server workspace
+        run: pnpm --filter hummbl-backend test
+
+  test-infrastructure:
+    name: Test - Infrastructure Workspace
+    needs: test-base
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    if: ${{ always() && github.event_name != 'pull_request' }}
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v4
+        with:
+          version: 10
+
+      - name: Use Node.js 20.x
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20.x'
+          cache: 'pnpm'
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Test infrastructure workspace
+        run: pnpm --filter hummbl-infrastructure test
+
+  test-mobile:
+    name: Test - Mobile Workspace
+    needs: test-base
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    if: ${{ always() && github.event_name != 'pull_request' }}
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v4
+        with:
+          version: 10
+
+      - name: Use Node.js 20.x
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20.x'
+          cache: 'pnpm'
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Test mobile workspace
+        run: pnpm --filter @hummbl/mobile test
 
   test-agent:
     name: Test - Agent
@@ -147,49 +285,40 @@ jobs:
 
     steps:
       - uses: actions/checkout@v4
-      - uses: pnpm/action-setup@v4
+
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v4
         with:
           version: 10
 
-      - uses: actions/setup-node@v4
+      - name: Use Node.js 20.x
+        uses: actions/setup-node@v4
         with:
           node-version: '20.x'
           cache: 'pnpm'
 
-      - name: Restore cached dependencies
-        uses: actions/cache@v4
-        with:
-          path: |
-            node_modules
-            .next/cache
-          key: ${{ runner.os }}-node-${{ hashFiles('**/pnpm-lock.yaml') }}
-          restore-keys: |
-            ${{ runner.os }}-node-
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
 
       - name: Run Agent Tests
         run: npx vitest run src/utils/__tests__/agentEffectiveness.test.ts --no-watch --silent --run --sourcemap=false
 
-      - name: Install dependencies
-        run: |
-          pnpm install --frozen-lockfile
-          pnpm list --depth=0
-
-      - name: Check Node.js version
-        run: node --version
-
-      - name: Build TypeScript types
-        run: |
-          mkdir -p dist/types
-          pnpm run build:types
-
-      - name: Run type checking
-        run: pnpm run typecheck
+      - name: Cache test results
+        uses: actions/cache@v4
+        id: cache-tests
+        with:
+          path: |
+            .vitest-cache
+            coverage/
+          key: test-cache-${{ hashFiles('src/**', 'package.json', 'pnpm-lock.yaml') }}-${{ github.sha }}
+          restore-keys: |
+            test-cache-${{ hashFiles('src/**', 'package.json', 'pnpm-lock.yaml') }}-
 
       - name: Run tests with detailed output
         id: tests
         continue-on-error: false
         timeout-minutes: 10
-      run: |
+        run: |
           echo "=== Environment Information ==="
           node --version
           npm --version
@@ -216,7 +345,7 @@ jobs:
       - name: Check for compliance report
         id: check_compliance
         continue-on-error: true
-      run: |
+        run: |
           if [ -f "compliance-report.json" ]; then
             echo "compliance_report_exists=true" >> $GITHUB_OUTPUT
           else
@@ -225,7 +354,7 @@ jobs:
           fi
 
       - name: Run verification
-      run: |
+        run: |
           npm run build
 
           # Ensure compliance-report.json exists
@@ -287,6 +416,11 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v4
+        with:
+          version: 10
+
       - name: Use Node.js
         uses: actions/setup-node@v4
         with:
@@ -344,7 +478,7 @@ jobs:
     name: Lighthouse Performance Audit
     needs: build
     runs-on: ubuntu-latest
-    if: github.event_name == 'pull_request'
+    if: ${{ github.event_name == 'pull_request' }}
 
     steps:
       - uses: actions/checkout@v4
@@ -362,10 +496,15 @@ jobs:
     name: Accessibility Tests
     needs: build
     runs-on: ubuntu-latest
-    if: github.event_name == 'pull_request'
+    if: ${{ github.event_name == 'pull_request' }}
 
     steps:
       - uses: actions/checkout@v4
+
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v4
+        with:
+          version: 10
 
       - name: Use Node.js
         uses: actions/setup-node@v4
@@ -384,7 +523,7 @@ jobs:
 
       - name: Run accessibility audit
         continue-on-error: true
-      run: |
+        run: |
           echo "Running accessibility checks..."
           npx serve -s dist -p 3000 &
           sleep 5
@@ -446,6 +585,6 @@ jobs:
 
       - name: Notify deployment success
         if: success()
-      run: |
+        run: |
           echo "✅ Production deployment successful!"
           echo "URL: https://hummbl.io"
