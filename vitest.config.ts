@@ -21,6 +21,14 @@ export default defineConfig({
     mockReset: true, // Reset mocks between tests
     restoreMocks: true, // Restore original implementations between tests
 
+    // Enable caching for faster CI runs
+    cache: {
+      dir: '.vitest-cache',
+    },
+
+    // Enable changed file detection
+    changed: process.env.CI === 'true' ? false : undefined, // Disable in CI to run all tests
+
     // Optimized pool configuration for better memory management
     poolOptions: {
       threads: {
