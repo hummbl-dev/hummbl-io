@@ -13,10 +13,14 @@ export default defineConfig({
     globals: true,
     environment: 'happy-dom',
     setupFiles: ['./vitest.setup.ts', './src/__mocks__/compliance-report.json'],
+    css: true, // Enable CSS imports in tests
     testTimeout: 30000,
     hookTimeout: 30000,
     maxConcurrency: 1, // Reduced from 2 to 1 to limit parallel test execution
     logHeapUsage: true,
+    typecheck: {
+      tsconfig: './tsconfig.test.json',
+    },
     clearMocks: true, // Clear mocks between tests to free memory
     mockReset: true, // Reset mocks between tests
     restoreMocks: true, // Restore original implementations between tests
