@@ -83,24 +83,17 @@ jobs:
 
     steps:
       - uses: actions/checkout@v4
-      - uses: pnpm/action-setup@v4
+
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v4
         with:
           version: 10
 
-      - uses: actions/setup-node@v4
+      - name: Use Node.js 20.x
+        uses: actions/setup-node@v4
         with:
           node-version: '20.x'
           cache: 'pnpm'
-
-      - name: Restore cached dependencies
-        uses: actions/cache@v4
-        with:
-          path: |
-            node_modules
-            .next/cache
-          key: ${{ runner.os }}-node-${{ hashFiles('**/pnpm-lock.yaml') }}
-          restore-keys: |
-            ${{ runner.os }}-node-
 
       - name: Run Analytics Tests
         run: npx vitest run src/utils/__tests__/analytics*.test.ts --no-watch --silent --run --sourcemap=false
@@ -115,24 +108,20 @@ jobs:
 
     steps:
       - uses: actions/checkout@v4
-      - uses: pnpm/action-setup@v4
+
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v4
         with:
           version: 10
 
-      - uses: actions/setup-node@v4
+      - name: Use Node.js 20.x
+        uses: actions/setup-node@v4
         with:
           node-version: '20.x'
           cache: 'pnpm'
 
-      - name: Restore cached dependencies
-        uses: actions/cache@v4
-        with:
-          path: |
-            node_modules
-            .next/cache
-          key: ${{ runner.os }}-node-${{ hashFiles('**/pnpm-lock.yaml') }}
-          restore-keys: |
-            ${{ runner.os }}-node-
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
 
       - name: Run Code Quality Tests
         run: npx vitest run src/utils/__tests__/codeQualityMetrics.test.ts --no-watch --silent --run --sourcemap=false
@@ -147,32 +136,23 @@ jobs:
 
     steps:
       - uses: actions/checkout@v4
-      - uses: pnpm/action-setup@v4
+
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v4
         with:
           version: 10
 
-      - uses: actions/setup-node@v4
+      - name: Use Node.js 20.x
+        uses: actions/setup-node@v4
         with:
           node-version: '20.x'
           cache: 'pnpm'
 
-      - name: Restore cached dependencies
-        uses: actions/cache@v4
-        with:
-          path: |
-            node_modules
-            .next/cache
-          key: ${{ runner.os }}-node-${{ hashFiles('**/pnpm-lock.yaml') }}
-          restore-keys: |
-            ${{ runner.os }}-node-
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
 
       - name: Run Agent Tests
         run: npx vitest run src/utils/__tests__/agentEffectiveness.test.ts --no-watch --silent --run --sourcemap=false
-
-      - name: Install dependencies
-        run: |
-          pnpm install --frozen-lockfile
-          pnpm list --depth=0
 
       - name: Check Node.js version
         run: node --version
@@ -293,6 +273,11 @@ jobs:
           node-version: '20.x'
           cache: 'pnpm'
 
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v4
+        with:
+          version: 10
+
       - name: Install dependencies
         run: pnpm install --frozen-lockfile
 
@@ -366,6 +351,11 @@ jobs:
 
     steps:
       - uses: actions/checkout@v4
+
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v4
+        with:
+          version: 10
 
       - name: Use Node.js
         uses: actions/setup-node@v4
