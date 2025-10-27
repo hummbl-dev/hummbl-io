@@ -101,11 +101,12 @@ export const NPSWidget: React.FC = () => {
 
   if (!isVisible) return null;
 
-  const getScoreLabel = (s: number): string => {
-    if (s <= 6) return 'Not likely';
-    if (s <= 8) return 'Neutral';
-    return 'Very likely';
-  };
+  // Unused helper function - may be needed in future UI enhancements
+  // const getScoreLabel = (s: number): string => {
+  //   if (s <= 6) return 'Not likely';
+  //   if (s <= 8) return 'Neutral';
+  //   return 'Very likely';
+  // };
 
   const getFollowUpPrompt = (): string => {
     if (score === null) return '';

@@ -2,12 +2,12 @@
   "extends": "../../tsconfig.json",
   "compilerOptions": {
     "composite": true,
-    "outDir": "../../dist/types",
+    "outDir": ".",
     "rootDir": ".",
     "emitDeclarationOnly": true,
     "declaration": true,
     "declarationMap": true,
-    "noEmitOnError": true
+    "noEmit": false
   },
   "include": ["./*.ts"],
   "exclude": ["node_modules", "**/*.test.ts"]

@@ -59,9 +59,9 @@ export const ProtectedRoute: React.FC<ProtectedRouteProps> = ({
 
         {showLogin && (
           <LoginModal
+            isOpen={showLogin}
+            onClose={handleLoginCancel}
             onSuccess={handleLoginSuccess}
-            onCancel={handleLoginCancel}
-            requiredRole={requiredRole}
           />
         )}
       </>

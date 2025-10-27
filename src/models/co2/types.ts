@@ -85,7 +85,7 @@ export interface Conflict {
   
   /** Resolution details */
   resolution?: {
-    method: 'merge' | 'prefer' | 'new' | 'custom';
+    method: 'auto' | 'merge' | 'prefer' | 'new' | 'custom';
     description: string;
     resolvedBy: string;
     resolvedAt: Date;
@@ -300,7 +300,7 @@ export interface ConceptualFusionModel {
   removeRule(id: string): boolean;
   
   // Utility methods
-  calculateSimilarity(concept1: Concept, concept2: Concept): number;
+  calculateSimilarity(concept1: Concept, concept2: Concept, fields?: ('name' | 'description' | 'properties' | 'relationships')[]): { score: number; breakdown: Array<{ field: string; score: number; weight: number }> };
   validateConcept(concept: Concept): ValidationResult;
   
   // Lifecycle hooks

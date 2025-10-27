@@ -76,13 +76,13 @@ const ModelDetailModal = ({ model, onClose }: ModelDetailModalProps) => {
               <h3 className="modal-section-title">Tags & Categories</h3>
               <div className="modal-tags">
                 {model.transformations &&
-                  model.transformations.map((t, i) => (
+                  model.transformations.map((t: string, i: number) => (
                     <span key={`t-${i}`} className="modal-transformation">
                       {t}
                     </span>
                   ))}
                 {model.tags &&
-                  model.tags.map((tag, i) => (
+                  model.tags.map((tag: string, i: number) => (
                     <span key={`tag-${i}`} className="modal-tag">
                       {tag}
                     </span>
@@ -96,7 +96,7 @@ const ModelDetailModal = ({ model, onClose }: ModelDetailModalProps) => {
             <section className="modal-section">
               <h3 className="modal-section-title">Sources & References</h3>
               <ul className="modal-sources">
-                {model.sources.map((source, i) => (
+                {model.sources.map((source: { name: string; reference?: string }, i: number) => (
                   <li key={i} className="modal-source">
                     <strong>{source.name}</strong>
                     {source.reference && (
