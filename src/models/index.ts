@@ -1,9 +1,9 @@
 /**
  * HUMMBL Base120 Models
- * 
+ *
  * This file serves as the central export point for all 120 mental models in the HUMMBL framework.
  * Models are organized by their categories and can be imported from here for use throughout the application.
- * 
+ *
  * Categories:
  * - P: Perspective Models (P1-P20)
  * - IN: Inversion Models (IN1-IN20)
@@ -77,8 +77,8 @@ export { createP20Model } from './p20';
 
 // ====== Inversion Models (IN1-IN20) ======
 
-// INDEX.TS - Inversion Model
-export { createIndex.tsModel } from './index.ts';
+// INDEX.TS - Inversion Model (already exported above as main index)
+// Note: This was a duplicate export with invalid name
 
 // IN1 - Inversion Model
 export { createIn1Model } from './in1';
@@ -381,4 +381,3 @@ export { createSy19Model } from './sy19';
 
 // SY20 - Synthesis Model
 export { createSy20Model } from './sy20';
-

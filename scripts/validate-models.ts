@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import fs from 'fs';
 import path from 'path';
 import { fileURLToPath } from 'url';
@@ -38,48 +39,48 @@ function analyzeImplementation(content: string) {
   const isPlaceholder = /TODO|placeholder|implement/i.test(content);
   const hasErrorHandling = /(try\s*\{|catch\s*\(|throw\s+new\s+Error)/.test(content);
   const hasInputValidation = /(if\s*\(!?\s*\w+\s*\||\|\|\s*!?\w+\.\w+)/.test(content);
-  
+
   return {
     hasAnalyzeMethod,
     isPlaceholder,
     hasErrorHandling,
-    hasInputValidation
+    hasInputValidation,
   };
 }
 
 function analyzeTests(content: string) {
   const testCount = (content.match(/it\(/g) || []).length;
   const hasEdgeCases = /(edge case|boundary|error|invalid)/i.test(content);
-  
+
   return {
     testCount,
-    hasEdgeCases
+    hasEdgeCases,
   };
 }
 
 function analyzeDocumentation(content: string) {
   const hasExamples = /##?\s*Examples?|```(typescript|javascript)/i.test(content);
   const hasUsage = /##?\s*Usage|how to use/i.test(content);
-  
+
   return {
     hasExamples,
-    hasUsage
+    hasUsage,
   };
 }
 
 function analyzeTypes(content: string) {
   const hasInputType = /(interface|type)\s+\w+Input\s*\{|type\s+\w+Input\s*=/i.test(content);
   const hasOutputType = /(interface|type)\s+\w+Output\s*\{|type\s+\w+Output\s*=/i.test(content);
-  
+
   return {
     hasInputType,
-    hasOutputType
+    hasOutputType,
   };
 }
 
 function validateModel(modelId: string): ModelValidation {
   const modelPath = path.join(ROOT_DIR, 'src', 'models', modelId.toLowerCase());
-  
+
   // Check if model directory exists
   if (!fs.existsSync(modelPath)) {
     return {
@@ -89,12 +90,12 @@ function validateModel(modelId: string): ModelValidation {
         hasAnalyzeMethod: false,
         isPlaceholder: true,
         hasErrorHandling: false,
-        hasInputValidation: false
+        hasInputValidation: false,
       },
       tests: { exists: false, testCount: 0, hasEdgeCases: false },
       documentation: { exists: false, hasExamples: false, hasUsage: false },
       types: { exists: false, hasInputType: false, hasOutputType: false },
-      overallStatus: 'scaffold'
+      overallStatus: 'scaffold',
     };
   }
 
@@ -104,9 +105,9 @@ function validateModel(modelId: string): ModelValidation {
     hasAnalyzeMethod: false,
     isPlaceholder: true,
     hasErrorHandling: false,
-    hasInputValidation: false
+    hasInputValidation: false,
   };
-  
+
   if (fs.existsSync(indexPath)) {
     const content = fs.readFileSync(indexPath, 'utf-8');
     implementationDetails = analyzeImplementation(content);
@@ -115,71 +116,71 @@ function validateModel(modelId: string): ModelValidation {
   // Check tests
   const testPath = path.join(modelPath, '__tests__', `${modelId.toLowerCase()}.test.ts`);
   let testAnalysis = { exists: false, testCount: 0, hasEdgeCases: false };
-  
+
   if (fs.existsSync(testPath)) {
     const testContent = fs.readFileSync(testPath, 'utf-8');
     const testStats = analyzeTests(testContent);
     testAnalysis = {
       exists: true,
       testCount: testStats.testCount,
-      hasEdgeCases: testStats.hasEdgeCases
+      hasEdgeCases: testStats.hasEdgeCases,
     };
   }
 
   // Check documentation
   const docPath = path.join(modelPath, 'README.md');
   let docAnalysis = { exists: false, hasExamples: false, hasUsage: false };
-  
+
   if (fs.existsSync(docPath)) {
     const docContent = fs.readFileSync(docPath, 'utf-8');
     docAnalysis = {
       exists: true,
-      ...analyzeDocumentation(docContent)
+      ...analyzeDocumentation(docContent),
     };
   }
 
   // Check types
   const typesPath = path.join(modelPath, 'types.ts');
   let typesAnalysis = { exists: false, hasInputType: false, hasOutputType: false };
-  
+
   if (fs.existsSync(typesPath)) {
     const typesContent = fs.readFileSync(typesPath, 'utf-8');
     typesAnalysis = {
       exists: true,
-      ...analyzeTypes(typesContent)
+      ...analyzeTypes(typesContent),
     };
   }
 
   // Determine overall status
-  const isComplete = implementationDetails.hasAnalyzeMethod && 
-                    !implementationDetails.isPlaceholder && 
-                    testAnalysis.testCount >= 5 && 
-                    docAnalysis.exists && 
-                    typesAnalysis.exists;
-  
-  const isPartial = implementationDetails.hasAnalyzeMethod || 
-                   testAnalysis.exists || 
-                   docAnalysis.exists || 
-                   typesAnalysis.exists;
+  const isComplete =
+    implementationDetails.hasAnalyzeMethod &&
+    !implementationDetails.isPlaceholder &&
+    testAnalysis.testCount >= 5 &&
+    docAnalysis.exists &&
+    typesAnalysis.exists;
 
-  const overallStatus = isComplete ? 'complete' : (isPartial ? 'partial' : 'scaffold');
+  const isPartial =
+    implementationDetails.hasAnalyzeMethod ||
+    testAnalysis.exists ||
+    docAnalysis.exists ||
+    typesAnalysis.exists;
+
+  const overallStatus = isComplete ? 'complete' : isPartial ? 'partial' : 'scaffold';
 
   return {
     id: modelId,
-    hasImplementation: implementationDetails.hasAnalyzeMethod && !implementationDetails.isPlaceholder,
+    hasImplementation:
+      implementationDetails.hasAnalyzeMethod && !implementationDetails.isPlaceholder,
     implementationDetails,
     tests: testAnalysis,
     documentation: docAnalysis,
     types: typesAnalysis,
-    overallStatus
+    overallStatus,
   };
 }
 
 // Models to validate
-const modelsToValidate = [
-  'p1', 'p5', 'p10', 'p15', 'p20',
-  'in1', 'in5', 'in10', 'in15', 'in20'
-];
+const modelsToValidate = ['p1', 'p5', 'p10', 'p15', 'p20', 'in1', 'in5', 'in10', 'in15', 'in20'];
 
 console.log('🔍 Validating models...\n');
 
@@ -190,14 +191,18 @@ const results = modelsToValidate.map(validateModel);
 console.log('MODEL | IMPL  | TESTS | DOCS  | TYPES | STATUS   ');
 console.log('------|-------|-------|-------|-------|-----------');
 
-results.forEach(model => {
+results.forEach((model) => {
+  const testIndicator = model.tests.exists
+    ? `${model.tests.testCount}${model.tests.hasEdgeCases ? '⚠️' : ' '}`.padEnd(6)
+    : '❌     ';
+
   console.log(
     `${model.id.padEnd(5)}| ` +
-    `${model.hasImplementation ? '✅' : '❌'}     | ` +
-    `${model.tests.exists ? `${model.tests.testCount}${model.tests.hasEdgeCases ? '⚠️' : ' '}`.padEnd(6)}| ` +
-    `${model.documentation.exists ? '✅' : '❌'}     | ` +
-    `${model.types.exists ? '✅' : '❌'}     | ` +
-    `${model.overallStatus.padEnd(9)}`
+      `${model.hasImplementation ? '✅' : '❌'}     | ` +
+      `${testIndicator}| ` +
+      `${model.documentation.exists ? '✅' : '❌'}     | ` +
+      `${model.types.exists ? '✅' : '❌'}     | ` +
+      `${model.overallStatus.padEnd(9)}`
   );
 });
 
@@ -206,12 +211,12 @@ const summary = {
   timestamp: new Date().toISOString(),
   stats: {
     totalModels: results.length,
-    complete: results.filter(m => m.overallStatus === 'complete').length,
-    partial: results.filter(m => m.overallStatus === 'partial').length,
-    scaffold: results.filter(m => m.overallStatus === 'scaffold').length,
-    withTests: results.filter(m => m.tests.exists).length,
-    withDocs: results.filter(m => m.documentation.exists).length,
-    withTypes: results.filter(m => m.types.exists).length
+    complete: results.filter((m) => m.overallStatus === 'complete').length,
+    partial: results.filter((m) => m.overallStatus === 'partial').length,
+    scaffold: results.filter((m) => m.overallStatus === 'scaffold').length,
+    withTests: results.filter((m) => m.tests.exists).length,
+    withDocs: results.filter((m) => m.documentation.exists).length,
+    withTypes: results.filter((m) => m.types.exists).length,
   },
   models: results.reduce<Record<string, any>>((acc, model) => {
     acc[model.id] = {
@@ -219,10 +224,10 @@ const summary = {
       implementation: model.hasImplementation,
       tests: model.tests.testCount,
       documentation: model.documentation.exists,
-      types: model.types.exists
+      types: model.types.exists,
     };
     return acc;
-  }, {})
+  }, {}),
 };
 
 // Save detailed report
