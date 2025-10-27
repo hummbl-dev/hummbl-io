@@ -79,8 +79,9 @@ export class OpenAIService {
 
     if (mentalModels && mentalModels.length > 0) {
       context += `Available Mental Models (${mentalModels.length}):\n`;
-      mentalModels.slice(0, 10).forEach((model) => {
-        context += `- ${model.name}: ${model.description?.substring(0, 100)}...\n`;
+      // Show up to 20 models for better coverage
+      mentalModels.slice(0, 20).forEach((model) => {
+        context += `- ${model.name} (${model.code || 'N/A'}): ${(model.definition || model.description || '').substring(0, 150)}...\n`;
       });
       context += '\n';
     }
@@ -88,12 +89,13 @@ export class OpenAIService {
     if (narratives && narratives.length > 0) {
       context += `Available Narratives (${narratives.length}):\n`;
       narratives.slice(0, 10).forEach((narrative) => {
-        context += `- ${narrative.title}: ${narrative.summary?.substring(0, 100)}...\n`;
+        context += `- ${narrative.title}: ${(narrative.summary || '').substring(0, 100)}...\n`;
       });
       context += '\n';
     }
 
-    context += 'Help users explore these concepts, answer questions, and provide insights.';
+    context +=
+      'Help users explore these concepts, answer questions, and provide insights. Reference specific models by name when relevant.';
 
     return context;
   }
