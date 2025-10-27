@@ -1,6 +1,6 @@
 // Protected route wrapper with RBAC
 
-import { useState, useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
 import { hasRole } from '../../utils/auth';
 import { LoginModal } from './LoginModal';
 import type { Role } from '../../utils/auth';
