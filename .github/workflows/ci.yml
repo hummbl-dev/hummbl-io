@@ -331,10 +331,10 @@ jobs:
           npm run test:memory-optimized -- --reporter=junit --reporter-options="outputFile=test-results/junit.xml" --verbose || {
             echo "Tests failed with exit code $?"
             # Don't fail here, we'll handle it after collecting artifacts
-            echo "::set-output name=status::failure"
+            echo "test_status=failure" >> $GITHUB_OUTPUT
             exit 0
           }
-          echo "::set-output name=status::success"
+          echo "test_status=success" >> $GITHUB_OUTPUT
         env:
           NODE_ENV: test
           CI: true
@@ -395,7 +395,7 @@ jobs:
           if-no-files-found: warn
 
       - name: Upload coverage to Codecov
-        if: steps.tests.outputs.status == 'success'
+        if: steps.tests.outputs.test_status == 'success'
         uses: codecov/codecov-action@v4
         with:
           token: ${{ secrets.CODECOV_TOKEN || 'none' }}
@@ -406,7 +406,7 @@ jobs:
           name: ${{ github.workflow }}-${{ github.ref_name }}
 
       - name: Set test status
-        if: steps.tests.outputs.status == 'failure'
+        if: steps.tests.outputs.test_status == 'failure'
         run: exit 1
 
   build:
@@ -457,8 +457,9 @@ jobs:
       - name: Check bundle size
         run: |
           echo "Checking bundle sizes..."
-          MAIN_JS_SIZE=$(stat -f%z dist/assets/*.js 2>/dev/null || stat -c%s dist/assets/*.js)
-          MAIN_CSS_SIZE=$(stat -f%z dist/assets/*.css 2>/dev/null || stat -c%s dist/assets/*.css)
+          # Portable size calculation using find and wc
+          MAIN_JS_SIZE=$(find dist/assets -name "*.js" -exec cat {} \; | wc -c)
+          MAIN_CSS_SIZE=$(find dist/assets -name "*.css" -exec cat {} \; | wc -c)
           TOTAL_SIZE=$((MAIN_JS_SIZE + MAIN_CSS_SIZE))
           MAX_SIZE=$((500 * 1024))
 
