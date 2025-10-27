@@ -1,6 +1,6 @@
 // Floating chat widget component
 
-import { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { ChatWindow } from './ChatWindow';
 import { ConversationHistory } from './ConversationHistory';
 import { ChatSettings } from './ChatSettings';
@@ -158,7 +158,7 @@ export function ChatWidget({ mentalModels, narratives, apiKey, context }: ChatWi
       const systemContext = openAI.buildSystemContext(mentalModels, narratives, contextDescription);
 
       // Prepare messages for API
-      const apiMessages = updatedConv.messages.map((msg) => ({
+      const apiMessages = updatedConv.messages.map((msg: { role: string; content: string }) => ({
         role: msg.role,
         content: msg.content,
       }));
