@@ -278,15 +278,15 @@ describe('${modelId}: Model', () => {
 
 ## Installation
 
-```bash
+\`\`\`bash
 npm install @hummbl/models
-```
+\`\`\`
 
 ## Usage
 
 ### Basic Usage
 
-```typescript
+\`\`\`typescript
 import { create${modelId}Model } from '@hummbl/models/${modelId.toLowerCase()}';
 
 const model = create${modelId}Model();
@@ -297,16 +297,16 @@ const result = await model.analyze({
     // Additional context
   },
 });
-```
+\`\`\`
 
 ### Configuration
 
-```typescript
+\`\`\`typescript
 const model = create${modelId}Model({
   telemetryEnabled: true,
   // Other configuration options
 });
-```
+\`\`\`
 
 ## API Reference
 
@@ -330,23 +330,23 @@ const model = create${modelId}Model({
 
 ### Example 1: [Use Case]
 
-```typescript
+\`\`\`typescript
 // Example code here
-```
+\`\`\`
 
 ## Development
 
 ### Running Tests
 
-```bash
+\`\`\`bash
 npm test ${modelId.toLowerCase()}
-```
+\`\`\`
 
 ### Building
 
-```bash
+\`\`\`bash
 npm run build
-```
+\`\`\`
 
 ## License
 
@@ -357,37 +357,37 @@ npm run build
 // Generate all model names
 const generateModelNames = () => {
   const models: string[] = [];
-  
+
   // P3-P20 (18 models)
   for (let i = 3; i <= 20; i++) {
     models.push(`P${i}`);
   }
-  
+
   // IN3-IN20 (18 models)
   for (let i = 3; i <= 20; i++) {
     models.push(`IN${i}`);
   }
-  
+
   // CO3-CO20 (18 models)
   for (let i = 3; i <= 20; i++) {
     models.push(`CO${i}`);
   }
-  
+
   // DE3-DE20 (18 models)
   for (let i = 3; i <= 20; i++) {
     models.push(`DE${i}`);
   }
-  
+
   // RE3-RE20 (18 models)
   for (let i = 3; i <= 20; i++) {
     models.push(`RE${i}`);
   }
-  
+
   // SY3-SY20 (18 models)
   for (let i = 3; i <= 20; i++) {
     models.push(`SY${i}`);
   }
-  
+
   return models;
 };
 
@@ -404,26 +404,32 @@ const ensureDir = async (dir: string) => {
 const generateModel = async (modelId: string) => {
   const modelDir = path.join(ROOT_DIR, modelId.toLowerCase());
   const testDir = path.join(modelDir, '__tests__');
-  
+
   try {
     // Create model directory
     await ensureDir(modelDir);
     await ensureDir(testDir);
-    
+
     // Generate files
     const files = [
       { path: path.join(modelDir, 'index.ts'), content: MODEL_TEMPLATES['index.ts'](modelId) },
       { path: path.join(modelDir, 'types.ts'), content: MODEL_TEMPLATES['types.ts'](modelId) },
-      { path: path.join(modelDir, 'constants.ts'), content: MODEL_TEMPLATES['constants.ts'](modelId) },
-      { path: path.join(testDir, `${modelId.toLowerCase()}.test.ts`), content: MODEL_TEMPLATES['test.ts'](modelId) },
+      {
+        path: path.join(modelDir, 'constants.ts'),
+        content: MODEL_TEMPLATES['constants.ts'](modelId),
+      },
+      {
+        path: path.join(testDir, `${modelId.toLowerCase()}.test.ts`),
+        content: MODEL_TEMPLATES['test.ts'](modelId),
+      },
       { path: path.join(modelDir, 'README.md'), content: MODEL_TEMPLATES['README.md'](modelId) },
     ];
-    
+
     // Write files
     for (const file of files) {
       await fs.writeFile(file.path, file.content, 'utf8');
     }
-    
+
     console.log(`✅ Generated ${modelId} model`);
     return true;
   } catch (error) {
@@ -435,19 +441,19 @@ const generateModel = async (modelId: string) => {
 // Main function
 const main = async () => {
   console.log('🚀 Starting model generation...');
-  
+
   const modelNames = generateModelNames();
   console.log(`📋 Generating ${modelNames.length} models`);
-  
+
   let successCount = 0;
   const failed: string[] = [];
-  
+
   // Process models in batches to avoid memory issues
   const BATCH_SIZE = 5;
   for (let i = 0; i < modelNames.length; i += BATCH_SIZE) {
     const batch = modelNames.slice(i, i + BATCH_SIZE);
-    const results = await Promise.all(batch.map(model => generateModel(model)));
-    
+    const results = await Promise.all(batch.map((model) => generateModel(model)));
+
     // Track results
     results.forEach((success, idx) => {
       if (success) {
@@ -456,10 +462,12 @@ const main = async () => {
         failed.push(batch[idx]);
       }
     });
-    
-    console.log(`🔄 Processed batch ${i / BATCH_SIZE + 1}/${Math.ceil(modelNames.length / BATCH_SIZE)}`);
+
+    console.log(
+      `🔄 Processed batch ${i / BATCH_SIZE + 1}/${Math.ceil(modelNames.length / BATCH_SIZE)}`
+    );
   }
-  
+
   // Print summary
   console.log('\n🎉 Generation complete!');
   console.log(`✅ Success: ${successCount}`);
