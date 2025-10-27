@@ -4,11 +4,16 @@ import { useState, useEffect, useRef } from 'react';
 import { ChatWindow } from './ChatWindow';
 import { ConversationHistory } from './ConversationHistory';
 import { ChatSettings } from './ChatSettings';
+import { ModelSuggestions } from './ModelSuggestions';
+import { ChatError } from './ChatError';
 import { getOpenAIService } from '../../services/openaiService';
 import { getStreamingService } from '../../services/openaiStreamingService';
+import { getContextualBuilder } from '../../services/contextualPromptBuilder';
 import { chatStorage } from '../../services/chatStorageService';
 import type { ChatConversation } from '../../../cascade/types/chat';
 import type { ChatContext } from '../../../cascade/types/chatContext';
+import type { MentalModel } from '../../../cascade/types/mental-model';
+import type { ConversationAnalysis } from '../../services/contextualPromptBuilder';
 import { buildContextDescription } from '../../../cascade/types/chatContext';
 import './ChatWidget.css';
 interface ChatWidgetProps {
@@ -29,6 +34,8 @@ export function ChatWidget({ mentalModels, narratives, apiKey, context }: ChatWi
   const [showSettings, setShowSettings] = useState(false);
   const [streamingResponse, setStreamingResponse] = useState<string>('');
   const streamingRef = useRef<boolean>(false);
+  const [conversationAnalysis, setConversationAnalysis] = useState<ConversationAnalysis | null>(null);
+  const [isAnalyzing, setIsAnalyzing] = useState(false);
 
   // Initialize conversations on mount
   useEffect(() => {
@@ -41,6 +48,7 @@ export function ChatWidget({ mentalModels, narratives, apiKey, context }: ChatWi
       const existing = loadedConversations.find((c) => c.id === currentId);
       if (existing) {
         setConversation(existing);
+        analyzeConversationAsync(existing);
         return;
       }
     }
@@ -51,7 +59,23 @@ export function ChatWidget({ mentalModels, narratives, apiKey, context }: ChatWi
     setConversations([newConv]);
     chatStorage.saveCurrentConversationId(newConv.id);
     chatStorage.saveConversations([newConv]);
-  }, []);
+  }, [mentalModels]);
+
+  // Analyze conversation for model suggestions
+  const analyzeConversationAsync = async (conv: ChatConversation) => {
+    if (!mentalModels || mentalModels.length === 0) return;
+    
+    setIsAnalyzing(true);
+    try {
+      const contextualBuilder = getContextualBuilder(mentalModels as MentalModel[]);
+      const analysis = contextualBuilder.analyzeConversation(conv);
+      setConversationAnalysis(analysis);
+    } catch (error) {
+      console.error('Failed to analyze conversation:', error);
+    } finally {
+      setIsAnalyzing(false);
+    }
+  };
 
   // Check for API key
   useEffect(() => {
@@ -165,6 +189,9 @@ export function ChatWidget({ mentalModels, narratives, apiKey, context }: ChatWi
           // Clear streaming state
           setStreamingResponse('');
           setIsLoading(false);
+          
+          // Re-analyze conversation with new message
+          analyzeConversationAsync(finalConv);
         },
         onError: (err: Error) => {
           streamingRef.current = false;
@@ -184,6 +211,11 @@ export function ChatWidget({ mentalModels, narratives, apiKey, context }: ChatWi
       setIsLoading(false);
       setStreamingResponse('');
     }
+  };
+
+  // Handler for selecting a model from suggestions
+  const handleModelSelect = (model: MentalModel) => {
+    handleSendMessage(`Tell me about ${model.name} and how it applies to my situation`);
   };
 
   if (!hasApiKey) {
@@ -219,7 +251,30 @@ export function ChatWidget({ mentalModels, narratives, apiKey, context }: ChatWi
         onOpenSettings={() => setShowSettings(true)}
         onOpenHistory={() => setShowHistory(true)}
         streamingResponse={streamingResponse}
-      />
+      >
+        {/* Model Suggestions */}
+        {conversationAnalysis && conversationAnalysis.suggestedModels.length > 0 && (
+          <ModelSuggestions
+            suggestions={conversationAnalysis.suggestedModels}
+            onSelectModel={handleModelSelect}
+            isLoading={isAnalyzing}
+          />
+        )}
+
+        {/* Error Display */}
+        {error && (
+          <ChatError
+            error={error}
+            onDismiss={() => setError(null)}
+            onRetry={() => {
+              const lastMessage = conversation?.messages[conversation.messages.length - 1];
+              if (lastMessage && lastMessage.role === 'user') {
+                handleSendMessage(lastMessage.content);
+              }
+            }}
+          />
+        )}
+      </ChatWindow>
 
       {/* Conversation History */}
       {showHistory && (
