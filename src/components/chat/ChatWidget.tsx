@@ -300,6 +300,7 @@ export function ChatWidget({ mentalModels, narratives, apiKey, context }: ChatWi
           }}
           messageCount={getTotalMessageCount()}
           conversationCount={conversations.length}
+          currentConversation={conversation}
         />
       )}
     </>

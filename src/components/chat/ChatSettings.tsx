@@ -1,5 +1,8 @@
 // Chat settings menu component
 
+import { useState } from 'react';
+import { conversationExport } from '../../services/conversationExport';
+import type { ChatConversation } from '../../../cascade/types/chat';
 import './ChatSettings.css';
 
 interface ChatSettingsProps {
@@ -9,6 +12,7 @@ interface ChatSettingsProps {
   onViewHistory: () => void;
   messageCount: number;
   conversationCount: number;
+  currentConversation: ChatConversation | null;
 }
 
 export function ChatSettings({
@@ -18,7 +22,10 @@ export function ChatSettings({
   onViewHistory,
   messageCount,
   conversationCount,
+  currentConversation,
 }: ChatSettingsProps) {
+  const [exporting, setExporting] = useState(false);
+
   if (!isOpen) return null;
 
   const handleClearAll = () => {
@@ -29,6 +36,42 @@ export function ChatSettings({
     ) {
       onClearAll();
       onClose();
+    }
+  };
+
+  const handleExportConversation = async (format: 'markdown' | 'text' | 'json') => {
+    if (!currentConversation) {
+      alert('No conversation to export');
+      return;
+    }
+
+    setExporting(true);
+    try {
+      await conversationExport.downloadConversation(currentConversation, {
+        format,
+        includeTimestamp: true,
+        includeMetadata: true,
+      });
+    } catch (error) {
+      console.error('Export failed:', error);
+      alert('Failed to export conversation');
+    } finally {
+      setExporting(false);
+    }
+  };
+
+  const handleCopyToClipboard = async (format: 'markdown' | 'text' | 'json') => {
+    if (!currentConversation) return;
+
+    setExporting(true);
+    try {
+      await conversationExport.copyToClipboard(currentConversation, format);
+      alert('Copied to clipboard!');
+    } catch (error) {
+      console.error('Copy failed:', error);
+      alert('Failed to copy to clipboard');
+    } finally {
+      setExporting(false);
     }
   };
 
@@ -64,6 +107,59 @@ export function ChatSettings({
               <span className="action-description">Browse past conversations</span>
             </div>
           </button>
+
+          {/* Export Section */}
+          {currentConversation && currentConversation.messages.length > 0 && (
+            <>
+              <div className="settings-section-header">
+                <span>Export Current Conversation</span>
+              </div>
+              
+              <div className="export-buttons">
+                <button
+                  className="export-button"
+                  onClick={() => handleExportConversation('markdown')}
+                  disabled={exporting}
+                  title="Download as Markdown"
+                >
+                  <span className="export-icon">📄</span> Markdown
+                </button>
+                <button
+                  className="export-button"
+                  onClick={() => handleExportConversation('text')}
+                  disabled={exporting}
+                  title="Download as Text"
+                >
+                  <span className="export-icon">📝</span> Text
+                </button>
+                <button
+                  className="export-button"
+                  onClick={() => handleExportConversation('json')}
+                  disabled={exporting}
+                  title="Download as JSON"
+                >
+                  <span className="export-icon">🔧</span> JSON
+                </button>
+              </div>
+
+              <div className="copy-buttons">
+                <button
+                  className="copy-button"
+                  onClick={() => handleCopyToClipboard('markdown')}
+                  disabled={exporting}
+                >
+                  📋 Copy Markdown
+                </button>
+                <button
+                  className="copy-button"
+                  onClick={() => handleCopyToClipboard('text')}
+                  disabled={exporting}
+                >
+                  📋 Copy Text
+                </button>
+              </div>
+            </>
+          )}
 
           <button
             className="settings-action-button danger"
