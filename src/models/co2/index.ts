@@ -983,7 +983,7 @@ export const createConceptualFusionModel = (config: Partial<ConceptualFusionMode
     description: string,
     severity: 'low' | 'medium' | 'high' | 'critical',
     sources: string[],
-    elements: Array<{ type: string; id: string; value?: any }>
+    elements: Array<{ type: 'concept' | 'property' | 'relationship'; id: string; value?: any }>
   ): Conflict => {
     return {
       id: `conflict_${uuidv4()}`,

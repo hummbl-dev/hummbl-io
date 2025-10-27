@@ -104,7 +104,7 @@ export function createCognitiveTracingModel(config: Partial<CognitiveTracingMode
             trace.relationships.push({
               sourceId: currentStep.id,
               targetId: nextStep.id,
-              type: 'leads-to',
+              type: 'leads-to' as const,
               strength: nextStep.confidence
             });
             

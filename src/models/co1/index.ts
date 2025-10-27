@@ -45,11 +45,14 @@ export const createSyntacticBindingModel = (): SyntacticBindingModel => {
     const binding: ModelBinding = {
       id: `bind-${uuidv4()}`,
       type: params.type,
-      components: params.components.map(comp => ({
-        ...comp,
-        constraints: comp.constraints || [],
-        meta: {},
-      })),
+      components: params.components.map(comp => {
+        const { constraints, meta, ...rest } = comp;
+        return {
+          ...rest,
+          constraints: constraints || [],
+          meta: meta || {},
+        } as ComponentReference;
+      }),
       constraints: params.constraints || [],
       direction: params.direction || BindingDirection.UNIDIRECTIONAL,
       priority: params.priority ?? config.defaultPriority,

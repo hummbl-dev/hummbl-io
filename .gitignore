@@ -112,6 +112,23 @@ lambda/package/
 lambda/venv/
 *.zip
 
+# Compiled TypeScript output (generated files)
+*.js
+*.js.map
+!public/**/*.js
+!dist/**/*.js
+!server/**/*.js
+!scripts/*.sh
+!node_modules/**/*.js
+
+# TypeScript declarations (generated)
+*.d.ts
+*.d.ts.map
+!node_modules/**/*.d.ts
+
+# TypeScript build info
+*.tsbuildinfo
+
 # Misc
 *.bak
 *.swp

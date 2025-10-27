@@ -122,10 +122,10 @@ export async function recursiveDecompose<T, R>(
     decomposition = {
       ...decomposition,
       status: 'failed',
-      error: {
-        message: error.message,
-        stack: error.stack,
-      },
+        error: {
+          message: (error as Error).message,
+          stack: (error as Error).stack,
+        },
       stats: {
         ...decomposition.stats,
         endTime: new Date(),
@@ -136,14 +136,14 @@ export async function recursiveDecompose<T, R>(
     // Emit failed event
     emitEvent({
       type: 'failed',
-      error,
+      error: error as Error,
       decomposition: { ...decomposition },
     });
     
     return {
       decomposition,
       success: false,
-      error,
+      error: error as Error,
     };
   }
 }
@@ -213,7 +213,7 @@ async function decomposeAndSolve<T, R>(
       decomposition = updateSubproblem(decomposition, subproblem.id, {
         status: 'failed',
         error: {
-          message: error.message,
+          message: (error as Error).message,
           stack: error.stack,
         },
         meta: {
@@ -250,7 +250,7 @@ async function decomposeAndSolve<T, R>(
       decomposition = updateSubproblem(decomposition, subproblem.id, {
         status: 'failed',
         error: {
-          message: `Failed to decompose: ${error.message}`,
+          message: `Failed to decompose: ${(error as Error).message}`,
           stack: error.stack,
         },
         meta: {
@@ -362,7 +362,7 @@ async function decomposeAndSolve<T, R>(
       decomposition = updateSubproblem(decomposition, subproblem.id, {
         status: 'failed',
         error: {
-          message: `Failed to combine solutions: ${error.message}`,
+          message: `Failed to combine solutions: ${(error as Error).message}`,
           stack: error.stack,
         },
         meta: {
