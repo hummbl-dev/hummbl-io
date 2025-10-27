@@ -17,7 +17,7 @@ import type { ConversationAnalysis } from '../../services/contextualPromptBuilde
 import { buildContextDescription } from '../../../cascade/types/chatContext';
 import './ChatWidget.css';
 interface ChatWidgetProps {
-  mentalModels?: any[];
+  mentalModels?: MentalModel[];
   narratives?: any[];
   apiKey?: string;
   context?: ChatContext | null;
@@ -62,7 +62,7 @@ export function ChatWidget({ mentalModels, narratives, apiKey, context }: ChatWi
   }, [mentalModels]);
 
   // Analyze conversation for model suggestions
-  const analyzeConversationAsync = async (conv: ChatConversation) => {
+  const analyzeConversationAsync = React.useCallback(async (conv: ChatConversation) => {
     if (!mentalModels || mentalModels.length === 0) return;
     
     setIsAnalyzing(true);
@@ -75,7 +75,7 @@ export function ChatWidget({ mentalModels, narratives, apiKey, context }: ChatWi
     } finally {
       setIsAnalyzing(false);
     }
-  };
+  }, [mentalModels]);
 
   // Check for API key
   useEffect(() => {
