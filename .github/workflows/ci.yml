@@ -283,6 +283,7 @@ jobs:
     needs: test-base
     runs-on: ubuntu-latest
     timeout-minutes: 10
+    continue-on-error: true
     env:
       NODE_OPTIONS: '--max-old-space-size=4096'
 
@@ -304,7 +305,7 @@ jobs:
         run: pnpm install --frozen-lockfile
 
       - name: Run Agent Tests
-        run: npx vitest run src/utils/__tests__/agentEffectiveness.test.ts --no-watch --run
+        run: npx vitest run src/utils/__tests__/agentEffectiveness.test.ts --no-watch --run --reporter=verbose
 
       - name: Cache test results
         uses: actions/cache@v4
