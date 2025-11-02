@@ -38,10 +38,10 @@ jobs:
         with:
           version: 10
 
-      - name: Use Node.js 20.x
+      - name: Use Node.js 18.x
         uses: actions/setup-node@v4
         with:
-          node-version: '20.x'
+          node-version: '18.x'
           cache: 'pnpm'
 
       - name: Cache dependencies (optimized for workspaces)
@@ -96,10 +96,10 @@ jobs:
         with:
           version: 10
 
-      - name: Use Node.js 20.x
+      - name: Use Node.js 18.x
         uses: actions/setup-node@v4
         with:
-          node-version: '20.x'
+          node-version: '18.x'
           cache: 'pnpm'
 
       - name: Run Analytics Tests
@@ -121,10 +121,10 @@ jobs:
         with:
           version: 10
 
-      - name: Use Node.js 20.x
+      - name: Use Node.js 18.x
         uses: actions/setup-node@v4
         with:
-          node-version: '20.x'
+          node-version: '18.x'
           cache: 'pnpm'
 
       - name: Install dependencies
@@ -150,10 +150,10 @@ jobs:
         with:
           version: 10
 
-      - name: Use Node.js 20.x
+      - name: Use Node.js 18.x
         uses: actions/setup-node@v4
         with:
-          node-version: '20.x'
+          node-version: '18.x'
           cache: 'pnpm'
 
       - name: Install dependencies
@@ -182,10 +182,10 @@ jobs:
         with:
           version: 10
 
-      - name: Use Node.js 20.x
+      - name: Use Node.js 18.x
         uses: actions/setup-node@v4
         with:
-          node-version: '20.x'
+          node-version: '18.x'
           cache: 'pnpm'
 
       - name: Install dependencies
@@ -209,10 +209,10 @@ jobs:
         with:
           version: 10
 
-      - name: Use Node.js 20.x
+      - name: Use Node.js 18.x
         uses: actions/setup-node@v4
         with:
-          node-version: '20.x'
+          node-version: '18.x'
           cache: 'pnpm'
 
       - name: Install dependencies
@@ -236,10 +236,10 @@ jobs:
         with:
           version: 10
 
-      - name: Use Node.js 20.x
+      - name: Use Node.js 18.x
         uses: actions/setup-node@v4
         with:
-          node-version: '20.x'
+          node-version: '18.x'
           cache: 'pnpm'
 
       - name: Install dependencies
@@ -263,10 +263,10 @@ jobs:
         with:
           version: 10
 
-      - name: Use Node.js 20.x
+      - name: Use Node.js 18.x
         uses: actions/setup-node@v4
         with:
-          node-version: '20.x'
+          node-version: '18.x'
           cache: 'pnpm'
 
       - name: Install dependencies
@@ -291,10 +291,10 @@ jobs:
         with:
           version: 10
 
-      - name: Use Node.js 20.x
+      - name: Use Node.js 18.x
         uses: actions/setup-node@v4
         with:
-          node-version: '20.x'
+          node-version: '18.x'
           cache: 'pnpm'
 
       - name: Install dependencies
@@ -421,10 +421,10 @@ jobs:
         with:
           version: 10
 
-      - name: Use Node.js
+      - name: Use Node.js 18.x
         uses: actions/setup-node@v4
         with:
-          node-version: '20.x'
+          node-version: '18.x'
           cache: 'pnpm'
 
       - name: Install dependencies
@@ -506,10 +506,10 @@ jobs:
         with:
           version: 10
 
-      - name: Use Node.js
+      - name: Use Node.js 18.x
         uses: actions/setup-node@v4
         with:
-          node-version: '20.x'
+          node-version: '18.x'
           cache: 'pnpm'
 
       - name: Install dependencies
