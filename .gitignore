@@ -121,6 +121,7 @@ lambda/venv/
 !dist/**/*.js
 !server/**/*.js
 !scripts/*.sh
+!infrastructure/scripts/*.js
 !node_modules/**/*.js
 
 # TypeScript declarations (generated)
