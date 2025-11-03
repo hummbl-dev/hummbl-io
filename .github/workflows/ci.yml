@@ -83,11 +83,19 @@ jobs:
 
       - name: Build infrastructure package
         run: |
-          echo "=== Diagnostic: Package information ==="
+          echo "=== Pre-build diagnostics ==="
+          echo "Current directory: $(pwd)"
           echo "Package name from package.json:"
           cat infrastructure/package.json | grep '"name"' || echo "package.json not found"
           echo ""
-          echo "Building infrastructure package..."
+          echo "Checking TypeScript installation:"
+          cd infrastructure && pnpm exec tsc --version 2>&1 || echo "TypeScript not available"
+          cd ..
+          echo ""
+          echo "Checking source files exist:"
+          ls -la infrastructure/bin/infrastructure.ts infrastructure/lib/hummbl-infrastructure-stack.ts 2>&1 || echo "Source files missing"
+          echo ""
+          echo "=== Building infrastructure package ==="
           pnpm --filter ./infrastructure build || {
             echo "Build failed with exit code $?"
             echo "=== Diagnostic: Infrastructure directory ==="
@@ -240,11 +248,19 @@ jobs:
 
       - name: Build infrastructure package
         run: |
-          echo "=== Diagnostic: Package information ==="
+          echo "=== Pre-build diagnostics ==="
+          echo "Current directory: $(pwd)"
           echo "Package name from package.json:"
           cat infrastructure/package.json | grep '"name"' || echo "package.json not found"
           echo ""
-          echo "Building infrastructure package..."
+          echo "Checking TypeScript installation:"
+          cd infrastructure && pnpm exec tsc --version 2>&1 || echo "TypeScript not available"
+          cd ..
+          echo ""
+          echo "Checking source files exist:"
+          ls -la infrastructure/bin/infrastructure.ts infrastructure/lib/hummbl-infrastructure-stack.ts 2>&1 || echo "Source files missing"
+          echo ""
+          echo "=== Building infrastructure package ==="
           pnpm --filter ./infrastructure build || {
             echo "Build failed with exit code $?"
             echo "=== Diagnostic: Infrastructure directory ==="
@@ -431,11 +447,19 @@ jobs:
 
       - name: Build infrastructure package
         run: |
-          echo "=== Diagnostic: Package information ==="
+          echo "=== Pre-build diagnostics ==="
+          echo "Current directory: $(pwd)"
           echo "Package name from package.json:"
           cat infrastructure/package.json | grep '"name"' || echo "package.json not found"
           echo ""
-          echo "Building infrastructure package..."
+          echo "Checking TypeScript installation:"
+          cd infrastructure && pnpm exec tsc --version 2>&1 || echo "TypeScript not available"
+          cd ..
+          echo ""
+          echo "Checking source files exist:"
+          ls -la infrastructure/bin/infrastructure.ts infrastructure/lib/hummbl-infrastructure-stack.ts 2>&1 || echo "Source files missing"
+          echo ""
+          echo "=== Building infrastructure package ==="
           pnpm --filter ./infrastructure build || {
             echo "Build failed with exit code $?"
             echo "=== Diagnostic: Infrastructure directory ==="
