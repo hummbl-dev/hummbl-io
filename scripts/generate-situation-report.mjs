@@ -20,11 +20,37 @@ const PRIORITY_LEVELS = {
   LOW: { weight: 1, label: '🟢 LOW', description: 'Nice to have' }
 };
 
+// Constants for file analysis
+const CODE_FILE_EXTENSIONS = ['.ts', '.tsx', '.js', '.jsx'];
+const EXCLUDED_DIRECTORIES = ['node_modules', 'dist', 'build', '__tests__'];
+const LARGE_FILE_THRESHOLD = 500; // lines
+
 class SituationReportGenerator {
   constructor() {
     this.issues = [];
     this.timestamp = new Date().toISOString();
     this.rootDir = process.cwd();
+  }
+
+  /**
+   * Helper method to check if a file is a code file
+   */
+  isCodeFile(filename) {
+    return CODE_FILE_EXTENSIONS.some(ext => filename.endsWith(ext));
+  }
+
+  /**
+   * Helper method to check if a directory should be excluded
+   */
+  isExcludedDirectory(dirname) {
+    return dirname.startsWith('.') || EXCLUDED_DIRECTORIES.includes(dirname);
+  }
+
+  /**
+   * Helper method to format timestamps consistently
+   */
+  formatTimestamp(date = new Date()) {
+    return date.toISOString().replace(/[:.]/g, '-');
   }
 
   /**
@@ -221,8 +247,15 @@ class SituationReportGenerator {
   analyzeSecurityRisks() {
     // Check for .env files in version control
     try {
-      const gitFiles = execSync('git ls-files', { encoding: 'utf8' });
-      if (gitFiles.includes('.env\n')) {
+      const gitFiles = execSync('git ls-files', { 
+        encoding: 'utf8',
+        cwd: this.rootDir,
+        timeout: 5000,
+        maxBuffer: 10 * 1024 * 1024 // 10MB max
+      });
+      const files = gitFiles.split('\n').map(f => f.trim()).filter(Boolean);
+      
+      if (files.includes('.env')) {
         this.addIssue({
           category: 'Security',
           title: '.env file in version control',
@@ -281,29 +314,35 @@ class SituationReportGenerator {
    */
   scanDirectoryForSecurityKeywords(dir, keywords) {
     const files = fs.readdirSync(dir);
+    const filesWithIssues = new Set();
     
     files.forEach(file => {
       const filePath = path.join(dir, file);
       const stat = fs.statSync(filePath);
       
-      if (stat.isDirectory() && !file.startsWith('.') && !['node_modules', 'dist', 'build'].includes(file)) {
+      if (stat.isDirectory() && !this.isExcludedDirectory(file)) {
         this.scanDirectoryForSecurityKeywords(filePath, keywords);
-      } else if (stat.isFile() && (file.endsWith('.ts') || file.endsWith('.tsx') || file.endsWith('.js') || file.endsWith('.jsx'))) {
+      } else if (stat.isFile() && this.isCodeFile(file)) {
         const content = fs.readFileSync(filePath, 'utf8');
         const lowerContent = content.toLowerCase();
         
-        keywords.forEach(keyword => {
-          if (lowerContent.includes(keyword) && (lowerContent.includes('todo') || lowerContent.includes('fixme'))) {
+        // Check if file has security-related TODOs/FIXMEs
+        const hasSecurityTodo = (lowerContent.includes('todo') || lowerContent.includes('fixme'));
+        if (hasSecurityTodo) {
+          const foundKeywords = keywords.filter(keyword => lowerContent.includes(keyword));
+          
+          if (foundKeywords.length > 0 && !filesWithIssues.has(filePath)) {
+            filesWithIssues.add(filePath);
             this.addIssue({
               category: 'Security',
               title: `Security-related TODO/FIXME found`,
               priority: 'HIGH',
-              description: `File ${filePath.replace(this.rootDir, '.')} contains security-related comments`,
+              description: `File ${filePath.replace(this.rootDir, '.')} contains security-related comments (${foundKeywords.join(', ')})`,
               impact: 'Potential security issue not yet addressed',
               recommendation: 'Review and address security-related TODOs immediately'
             });
           }
-        });
+        }
       }
     });
   }
@@ -315,14 +354,14 @@ class SituationReportGenerator {
     // Check for large files
     const srcDir = path.join(this.rootDir, 'src');
     if (fs.existsSync(srcDir)) {
-      const largeFiles = this.findLargeFiles(srcDir, 500); // Lines
+      const largeFiles = this.findLargeFiles(srcDir, LARGE_FILE_THRESHOLD);
       
       if (largeFiles.length > 0) {
         this.addIssue({
           category: 'Code Quality',
           title: `${largeFiles.length} files exceed recommended size`,
           priority: 'LOW',
-          description: `Files with >500 lines should be refactored for maintainability`,
+          description: `Files with >${LARGE_FILE_THRESHOLD} lines should be refactored for maintainability`,
           impact: 'Reduced code maintainability and readability',
           recommendation: 'Consider breaking down large files into smaller modules',
           details: {
@@ -368,9 +407,9 @@ class SituationReportGenerator {
         const filePath = path.join(directory, file);
         const stat = fs.statSync(filePath);
         
-        if (stat.isDirectory() && !file.startsWith('.') && !['node_modules', 'dist', 'build', '__tests__'].includes(file)) {
+        if (stat.isDirectory() && !this.isExcludedDirectory(file)) {
           scan(filePath);
-        } else if (stat.isFile() && (file.endsWith('.ts') || file.endsWith('.tsx') || file.endsWith('.js') || file.endsWith('.jsx'))) {
+        } else if (stat.isFile() && this.isCodeFile(file)) {
           const content = fs.readFileSync(filePath, 'utf8');
           const lines = content.split('\n').length;
           
@@ -529,7 +568,7 @@ class SituationReportGenerator {
       fs.mkdirSync(reportsDir, { recursive: true });
     }
 
-    const timestamp = new Date().toISOString().replace(/[:.]/g, '-');
+    const timestamp = this.formatTimestamp();
     
     if (format === 'json') {
       const jsonPath = path.join(reportsDir, `situation-report-${timestamp}.json`);
