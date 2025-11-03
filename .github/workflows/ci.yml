@@ -72,7 +72,20 @@ jobs:
         run: pnpm install --frozen-lockfile
 
       - name: Build infrastructure package
-        run: pnpm --filter hummbl-infrastructure build
+        run: |
+          echo "Building infrastructure package..."
+          cd infrastructure
+          pnpm build || {
+            echo "Build failed with exit code $?"
+            echo "Checking TypeScript configuration..."
+            cat tsconfig.json || echo "tsconfig.json not found"
+            echo "Checking if source files exist..."
+            ls -la bin/ lib/ || echo "bin/ or lib/ directories not found"
+            exit 1
+          }
+          echo "Build completed. Verifying output..."
+          ls -la bin/infrastructure.js || echo "bin/infrastructure.js not found after build"
+        working-directory: .
 
       - name: Verify infrastructure build output
         run: |
@@ -183,7 +196,20 @@ jobs:
         run: pnpm install --frozen-lockfile
 
       - name: Build infrastructure package
-        run: pnpm --filter hummbl-infrastructure build
+        run: |
+          echo "Building infrastructure package..."
+          cd infrastructure
+          pnpm build || {
+            echo "Build failed with exit code $?"
+            echo "Checking TypeScript configuration..."
+            cat tsconfig.json || echo "tsconfig.json not found"
+            echo "Checking if source files exist..."
+            ls -la bin/ lib/ || echo "bin/ or lib/ directories not found"
+            exit 1
+          }
+          echo "Build completed. Verifying output..."
+          ls -la bin/infrastructure.js || echo "bin/infrastructure.js not found after build"
+        working-directory: .
 
       - name: Build TypeScript types
         run: |
@@ -328,7 +354,20 @@ jobs:
         run: pnpm install --frozen-lockfile
 
       - name: Build infrastructure package
-        run: pnpm --filter hummbl-infrastructure build
+        run: |
+          echo "Building infrastructure package..."
+          cd infrastructure
+          pnpm build || {
+            echo "Build failed with exit code $?"
+            echo "Checking TypeScript configuration..."
+            cat tsconfig.json || echo "tsconfig.json not found"
+            echo "Checking if source files exist..."
+            ls -la bin/ lib/ || echo "bin/ or lib/ directories not found"
+            exit 1
+          }
+          echo "Build completed. Verifying output..."
+          ls -la bin/infrastructure.js || echo "bin/infrastructure.js not found after build"
+        working-directory: .
 
       - name: Verify infrastructure binary exists and list files
         run: |
