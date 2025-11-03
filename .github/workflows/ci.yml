@@ -321,6 +321,16 @@ jobs:
       - name: Build infrastructure package
         run: pnpm --filter hummbl-infrastructure build
 
+      - name: Verify infrastructure binary exists
+        run: |
+          if [ ! -f "infrastructure/bin/infrastructure.js" ]; then
+            echo "Error: infrastructure/bin/infrastructure.js not found after build"
+            exit 1
+          fi
+          if [ ! -f "node_modules/.bin/hummbl-infra" ]; then
+            echo "Warning: node_modules/.bin/hummbl-infra not found, but this may be OK if package is not linked"
+          fi
+
       - name: Run Agent Tests
         id: tests
         timeout-minutes: 10
