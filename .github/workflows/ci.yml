@@ -73,15 +73,30 @@ jobs:
 
       - name: Build infrastructure package
         run: |
+          echo "=== Diagnostic: Package information ==="
+          echo "Package name from package.json:"
+          cat infrastructure/package.json | grep '"name"' || echo "package.json not found"
+          echo ""
           echo "Building infrastructure package..."
-          pnpm --filter hummbl-infrastructure build || {
+          pnpm --filter ./infrastructure build || {
             echo "Build failed with exit code $?"
-            echo "Checking infrastructure directory..."
+            echo "=== Diagnostic: Infrastructure directory ==="
             ls -la infrastructure/ || echo "infrastructure/ not found"
-            echo "Checking TypeScript configuration..."
+            echo ""
+            echo "=== Diagnostic: TypeScript configuration ==="
             cat infrastructure/tsconfig.json || echo "tsconfig.json not found"
-            echo "Checking if source files exist..."
-            ls -la infrastructure/bin/ infrastructure/lib/ || echo "bin/ or lib/ directories not found"
+            echo ""
+            echo "=== Diagnostic: Source files ==="
+            find infrastructure -name "*.ts" -type f | head -10 || echo "No .ts files found"
+            echo ""
+            echo "=== Diagnostic: Compiled files ==="
+            find infrastructure -name "*.js" -type f | head -10 || echo "No .js files found"
+            echo ""
+            echo "=== Diagnostic: bin directory ==="
+            ls -la infrastructure/bin/ || echo "infrastructure/bin/ does not exist"
+            echo ""
+            echo "=== Diagnostic: lib directory ==="
+            ls -la infrastructure/lib/ || echo "infrastructure/lib/ does not exist"
             exit 1
           }
           echo "Build completed. Verifying output..."
@@ -205,15 +220,30 @@ jobs:
 
       - name: Build infrastructure package
         run: |
+          echo "=== Diagnostic: Package information ==="
+          echo "Package name from package.json:"
+          cat infrastructure/package.json | grep '"name"' || echo "package.json not found"
+          echo ""
           echo "Building infrastructure package..."
-          pnpm --filter hummbl-infrastructure build || {
+          pnpm --filter ./infrastructure build || {
             echo "Build failed with exit code $?"
-            echo "Checking infrastructure directory..."
+            echo "=== Diagnostic: Infrastructure directory ==="
             ls -la infrastructure/ || echo "infrastructure/ not found"
-            echo "Checking TypeScript configuration..."
+            echo ""
+            echo "=== Diagnostic: TypeScript configuration ==="
             cat infrastructure/tsconfig.json || echo "tsconfig.json not found"
-            echo "Checking if source files exist..."
-            ls -la infrastructure/bin/ infrastructure/lib/ || echo "bin/ or lib/ directories not found"
+            echo ""
+            echo "=== Diagnostic: Source files ==="
+            find infrastructure -name "*.ts" -type f | head -10 || echo "No .ts files found"
+            echo ""
+            echo "=== Diagnostic: Compiled files ==="
+            find infrastructure -name "*.js" -type f | head -10 || echo "No .js files found"
+            echo ""
+            echo "=== Diagnostic: bin directory ==="
+            ls -la infrastructure/bin/ || echo "infrastructure/bin/ does not exist"
+            echo ""
+            echo "=== Diagnostic: lib directory ==="
+            ls -la infrastructure/lib/ || echo "infrastructure/lib/ does not exist"
             exit 1
           }
           echo "Build completed. Verifying output..."
@@ -371,15 +401,30 @@ jobs:
 
       - name: Build infrastructure package
         run: |
+          echo "=== Diagnostic: Package information ==="
+          echo "Package name from package.json:"
+          cat infrastructure/package.json | grep '"name"' || echo "package.json not found"
+          echo ""
           echo "Building infrastructure package..."
-          pnpm --filter hummbl-infrastructure build || {
+          pnpm --filter ./infrastructure build || {
             echo "Build failed with exit code $?"
-            echo "Checking infrastructure directory..."
+            echo "=== Diagnostic: Infrastructure directory ==="
             ls -la infrastructure/ || echo "infrastructure/ not found"
-            echo "Checking TypeScript configuration..."
+            echo ""
+            echo "=== Diagnostic: TypeScript configuration ==="
             cat infrastructure/tsconfig.json || echo "tsconfig.json not found"
-            echo "Checking if source files exist..."
-            ls -la infrastructure/bin/ infrastructure/lib/ || echo "bin/ or lib/ directories not found"
+            echo ""
+            echo "=== Diagnostic: Source files ==="
+            find infrastructure -name "*.ts" -type f | head -10 || echo "No .ts files found"
+            echo ""
+            echo "=== Diagnostic: Compiled files ==="
+            find infrastructure -name "*.js" -type f | head -10 || echo "No .js files found"
+            echo ""
+            echo "=== Diagnostic: bin directory ==="
+            ls -la infrastructure/bin/ || echo "infrastructure/bin/ does not exist"
+            echo ""
+            echo "=== Diagnostic: lib directory ==="
+            ls -la infrastructure/lib/ || echo "infrastructure/lib/ does not exist"
             exit 1
           }
           echo "Build completed. Verifying output..."
