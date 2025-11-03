@@ -32,7 +32,7 @@ const issues = [];
 function addIssue(issue) {
   // Guard against unknown priorities with fallback to LOW
   const level = PRIORITY_LEVELS[issue.priority] ?? PRIORITY_LEVELS.LOW;
-  if (!issue.priority || !PRIORITY_LEVELS[issue.priority]) {
+  if (issue.priority && !PRIORITY_LEVELS[issue.priority]) {
     console.warn(`Unknown priority "${issue.priority}" provided, defaulting to LOW`);
   }
   const priorityWeight = level.weight;
