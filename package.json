@@ -26,7 +26,7 @@
     "test:analyze-memory": "node --expose-gc scripts/analyzeTestMemory.js",
     "test:optimize": "node scripts/optimizeTestMemory.js",
     "test:analytics": "NODE_OPTIONS='--max-old-space-size=2048 --expose-gc' vitest run src/utils/__tests__/analytics.test.ts --no-watch --silent --run",
-    "test:agent": "NODE_OPTIONS='--max-old-space-size=2048 --expose-gc' vitest run src/utils/__tests__/agentEffectiveness.test.ts --no-watch --run --reporter=verbose --reporter=junit --reporter-options=outputFile=test-results/junit.xml",
+    "test:agent": "NODE_OPTIONS='--max-old-space-size=2048 --expose-gc' vitest run src/utils/__tests__/agentEffectiveness.test.ts --no-watch --run --reporter=verbose",
     "test:analytics:edge-cases": "NODE_OPTIONS='--max-old-space-size=2048 --expose-gc' vitest run src/utils/__tests__/analytics.edge-cases.test.ts --no-watch --silent --run",
     "test:dev": "NODE_OPTIONS='--max-old-space-size=4096 --expose-gc' vitest",
     "test:ui": "NODE_OPTIONS='--max-old-space-size=4096 --expose-gc' vitest --ui",

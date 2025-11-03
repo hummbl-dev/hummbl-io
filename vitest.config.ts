@@ -15,6 +15,9 @@ export default defineConfig({
     setupFiles: ['./vitest.setup.ts', './src/__mocks__/compliance-report.json'],
     // ESM support for Node 20
     pool: 'forks',
+    reporters: process.env.CI
+      ? [['junit', { outputFile: './test-results/junit.xml' }], 'verbose']
+      : ['verbose'],
     poolOptions: {
       forks: {
         singleFork: true,
@@ -40,26 +43,8 @@ export default defineConfig({
     // Enable changed file detection
     changed: process.env.CI === 'true' ? false : undefined, // Disable in CI to run all tests
 
-    // Optimized pool configuration for better memory management
-    poolOptions: {
-      threads: {
-        minThreads: 1,
-        maxThreads: 1, // Reduced to 1 thread to minimize memory usage
-        useAtomics: false, // Can cause memory leaks in some cases
-        isolate: true,
-        singleThread: true, // Run tests in a single thread
-        execArgv: [
-          '--max-old-space-size=4096', // Reduced memory per worker
-          '--gc-interval=100', // More frequent garbage collection
-          '--expose-gc', // Enable manual garbage collection
-        ],
-      },
-      forks: {
-        // Fork mode can be more memory efficient for some test suites
-        singleFork: true,
-        isolate: true,
-      },
-    },
+    // Optimized pool configuration for better memory management (forks mode is set above)
+    // Note: poolOptions is only needed once when pool is set
 
     // Optimize coverage settings
     coverage: {
