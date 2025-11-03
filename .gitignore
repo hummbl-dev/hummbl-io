@@ -53,6 +53,10 @@ yarn-debug.log*
 yarn-error.log*
 lerna-debug.log*
 
+# Reports
+reports/
+!reports/.gitkeep
+
 # Environment
 .env
 .env.*

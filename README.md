@@ -133,6 +133,24 @@ pnpm prepare
 
 This will set up pre-commit hooks that run linting and formatting automatically.
 
+### Situation Report
+
+Generate a comprehensive analysis of risks, critical errors, and gaps:
+
+```bash
+# Generate situation report
+pnpm sitrep
+```
+
+This tool analyzes the codebase and generates a prioritized report of issues, including:
+
+- 🔴 **Critical Issues**: TypeScript errors, test failures, missing implementations
+- 🟠 **High Priority**: Incomplete features, missing tests
+- 🟡 **Medium Priority**: Technical debt, documentation gaps
+- 🟢 **Low Priority**: Code quality improvements
+
+See the [Situation Report Documentation](./docs/SITUATION_REPORT.md) for detailed usage.
+
 ## 📊 Analytics
 
 The application includes a robust analytics system that tracks user interactions while respecting privacy. The system supports multiple analytics providers and is designed to be performant and reliable.
