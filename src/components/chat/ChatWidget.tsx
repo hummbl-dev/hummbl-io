@@ -87,30 +87,6 @@ export function ChatWidget({ mentalModels, narratives, apiKey, context }: ChatWi
     }
   }, [mentalModels]);
 
-  // Initialize conversations on mount
-  useEffect(() => {
-    const loadedConversations = chatStorage.loadConversations();
-    setConversations(loadedConversations);
-
-    const currentId = chatStorage.loadCurrentConversationId();
-
-    if (currentId) {
-      const existing = loadedConversations.find((c) => c.id === currentId);
-      if (existing) {
-        setConversation(existing);
-        analyzeConversationAsync(existing);
-        return;
-      }
-    }
-
-    // Create new conversation
-    const newConv = chatStorage.createConversation();
-    setConversation(newConv);
-    setConversations([newConv]);
-    chatStorage.saveCurrentConversationId(newConv.id);
-    chatStorage.saveConversations([newConv]);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [mentalModels]);
 
   // Check for API key
   useEffect(() => {
