@@ -74,6 +74,15 @@ jobs:
       - name: Build infrastructure package
         run: pnpm --filter hummbl-infrastructure build
 
+      - name: Verify infrastructure build output
+        run: |
+          if [ ! -f "infrastructure/bin/infrastructure.js" ]; then
+            echo "Error: infrastructure/bin/infrastructure.js not found after build"
+            echo "Build may have failed. Checking infrastructure directory:"
+            ls -la infrastructure/bin/ || echo "infrastructure/bin/ does not exist"
+            exit 1
+          fi
+
       - name: Ensure test directories exist
         run: |
           mkdir -p src/__mocks__
@@ -321,14 +330,32 @@ jobs:
       - name: Build infrastructure package
         run: pnpm --filter hummbl-infrastructure build
 
-      - name: Verify infrastructure binary exists
+      - name: Verify infrastructure binary exists and list files
         run: |
+          echo "=== Infrastructure package structure ==="
+          ls -la infrastructure/ || echo "infrastructure/ directory not found"
+          ls -la infrastructure/bin/ || echo "infrastructure/bin/ directory not found"
+          find infrastructure -name "*.js" -type f 2>/dev/null | head -10 || echo "No .js files found"
+          echo "========================================"
+
           if [ ! -f "infrastructure/bin/infrastructure.js" ]; then
             echo "Error: infrastructure/bin/infrastructure.js not found after build"
+            echo "Checking if build actually ran..."
+            if [ ! -d "infrastructure/node_modules" ]; then
+              echo "Error: infrastructure/node_modules not found - dependencies may not be installed"
+            fi
+            echo "Build output files in infrastructure/bin/:"
+            ls -la infrastructure/bin/ || echo "infrastructure/bin/ does not exist"
             exit 1
           fi
-          if [ ! -f "node_modules/.bin/hummbl-infra" ]; then
-            echo "Warning: node_modules/.bin/hummbl-infra not found, but this may be OK if package is not linked"
+
+          echo "✓ infrastructure/bin/infrastructure.js found"
+
+          # Check if symlink exists (optional - may not be created in all cases)
+          if [ -f "node_modules/.bin/hummbl-infra" ]; then
+            echo "✓ node_modules/.bin/hummbl-infra symlink exists"
+          else
+            echo "⚠ node_modules/.bin/hummbl-infra not found (may need to re-run pnpm install after build)"
           fi
 
       - name: Run Agent Tests
