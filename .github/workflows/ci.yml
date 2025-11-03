@@ -537,7 +537,7 @@ jobs:
   deploy-staging:
     name: Deploy to Staging
     needs: [build, bundle-size]
-    if: github.ref == 'refs/heads/staging' && secrets.VERCEL != '' && secrets.VERCEL_ORG_ID != '' && secrets.VERCEL_PROJECT_ID != ''
+    if: github.ref == 'refs/heads/staging'
     runs-on: ubuntu-latest
 
     steps:
@@ -567,7 +567,7 @@ jobs:
   deploy-production:
     name: Deploy to Production
     needs: [build, bundle-size]
-    if: github.ref == 'refs/heads/main' && secrets.VERCEL != '' && secrets.VERCEL_ORG_ID != '' && secrets.VERCEL_PROJECT_ID != ''
+    if: github.ref == 'refs/heads/main'
     runs-on: ubuntu-latest
     environment:
       name: production
