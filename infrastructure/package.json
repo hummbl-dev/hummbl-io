@@ -6,7 +6,7 @@
     "hummbl-infra": "bin/infrastructure.js"
   },
   "scripts": {
-    "build": "tsc",
+    "build": "tsc && node scripts/verify-build.js",
     "prepare": "node scripts/check-prepare.js",
     "watch": "tsc -w",
     "test": "jest",

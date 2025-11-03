@@ -71,6 +71,16 @@ jobs:
       - name: Install dependencies (including infrastructure)
         run: pnpm install --frozen-lockfile
 
+      - name: Ensure infrastructure dependencies are installed
+        run: |
+          echo "Checking infrastructure package dependencies..."
+          if [ ! -d "infrastructure/node_modules" ]; then
+            echo "Installing infrastructure package dependencies..."
+            pnpm --filter ./infrastructure install
+          else
+            echo "infrastructure/node_modules already exists"
+          fi
+
       - name: Build infrastructure package
         run: |
           echo "=== Diagnostic: Package information ==="
@@ -217,6 +227,16 @@ jobs:
 
       - name: Install dependencies (including infrastructure)
         run: pnpm install --frozen-lockfile
+
+      - name: Ensure infrastructure dependencies are installed
+        run: |
+          echo "Checking infrastructure package dependencies..."
+          if [ ! -d "infrastructure/node_modules" ]; then
+            echo "Installing infrastructure package dependencies..."
+            pnpm --filter ./infrastructure install
+          else
+            echo "infrastructure/node_modules already exists"
+          fi
 
       - name: Build infrastructure package
         run: |
@@ -398,6 +418,16 @@ jobs:
 
       - name: Install dependencies (including infrastructure)
         run: pnpm install --frozen-lockfile
+
+      - name: Ensure infrastructure dependencies are installed
+        run: |
+          echo "Checking infrastructure package dependencies..."
+          if [ ! -d "infrastructure/node_modules" ]; then
+            echo "Installing infrastructure package dependencies..."
+            pnpm --filter ./infrastructure install
+          else
+            echo "infrastructure/node_modules already exists"
+          fi
 
       - name: Build infrastructure package
         run: |

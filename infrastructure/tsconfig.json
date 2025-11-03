@@ -20,7 +20,9 @@
     "strictPropertyInitialization": false,
     "skipLibCheck": true,
     "types": ["node", "jest"],
-    "typeRoots": ["./node_modules/@types"]
+    "typeRoots": ["./node_modules/@types"],
+    "outDir": "./",
+    "rootDir": "./"
   },
   "include": ["bin/**/*.ts", "lib/**/*.ts", "test/**/*.ts"],
   "exclude": ["node_modules", "cdk.out"]
