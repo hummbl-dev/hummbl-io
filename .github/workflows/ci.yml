@@ -517,7 +517,7 @@ jobs:
         with:
           urls: |
             https://hummbl.io
-          uploadArtifacts: true
+          uploadArtifacts: false
           temporaryPublicStorage: true
 
   accessibility:
