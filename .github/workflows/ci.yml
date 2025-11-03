@@ -68,17 +68,11 @@ jobs:
           restore-keys: |
             ${{ runner.os }}-pnpm-
 
+      - name: Build infrastructure package before install
+        run: pnpm --filter hummbl-infrastructure build
+
       - name: Install dependencies
         run: pnpm install --frozen-lockfile
-
-      - name: Build infrastructure package (if needed)
-        continue-on-error: true
-        run: |
-          if [ -d "infrastructure/lib" ] || [ -f "infrastructure/lib/hummbl-infrastructure-stack.ts" ]; then
-            pnpm --filter hummbl-infrastructure build
-          else
-            echo "Infrastructure lib directory not found, skipping build"
-          fi
 
       - name: Ensure test directories exist
         run: |
