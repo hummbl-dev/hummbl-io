@@ -68,11 +68,11 @@ jobs:
           restore-keys: |
             ${{ runner.os }}-pnpm-
 
-      - name: Build infrastructure package before install
-        run: pnpm --filter hummbl-infrastructure build
-
-      - name: Install dependencies
+      - name: Install dependencies (including infrastructure)
         run: pnpm install --frozen-lockfile
+
+      - name: Build infrastructure package
+        run: pnpm --filter hummbl-infrastructure build
 
       - name: Ensure test directories exist
         run: |
@@ -170,11 +170,11 @@ jobs:
           node-version: '20.x'
           cache: 'pnpm'
 
-      - name: Build infrastructure package before install
-        run: pnpm --filter hummbl-infrastructure build
-
-      - name: Install dependencies
+      - name: Install dependencies (including infrastructure)
         run: pnpm install --frozen-lockfile
+
+      - name: Build infrastructure package
+        run: pnpm --filter hummbl-infrastructure build
 
       - name: Build TypeScript types
         run: |
@@ -315,11 +315,11 @@ jobs:
           node-version: '20.x'
           cache: 'pnpm'
 
-      - name: Build infrastructure package before install
-        run: pnpm --filter hummbl-infrastructure build
-
-      - name: Install dependencies
+      - name: Install dependencies (including infrastructure)
         run: pnpm install --frozen-lockfile
+
+      - name: Build infrastructure package
+        run: pnpm --filter hummbl-infrastructure build
 
       - name: Run Agent Tests
         id: tests
