@@ -1,5 +1,6 @@
 import { readdir, readFile, stat } from 'fs/promises';
 import { join, extname } from 'path';
+import { pathToFileURL } from 'url';
 
 // Priority levels for issues
 const PRIORITY_LEVELS = {
@@ -29,7 +30,12 @@ const issues = [];
  * @param {Object} issue - The issue to add
  */
 function addIssue(issue) {
-  const priorityWeight = PRIORITY_LEVELS[issue.priority].weight;
+  // Guard against unknown priorities with fallback to LOW
+  const level = PRIORITY_LEVELS[issue.priority] ?? PRIORITY_LEVELS.LOW;
+  if (!issue.priority || !PRIORITY_LEVELS[issue.priority]) {
+    console.warn(`Unknown priority "${issue.priority}" provided, defaulting to LOW`);
+  }
+  const priorityWeight = level.weight;
   issues.push({
     ...issue,
     priorityWeight,
@@ -45,6 +51,8 @@ function addIssue(issue) {
  */
 async function scanDirectoryForSecurityKeywords(dir, keywords = SECURITY_KEYWORDS) {
   const foundIssues = [];
+  // Normalize keywords to lowercase for case-insensitive matching
+  const lowerKeywords = keywords.map(k => k.toLowerCase());
 
   async function traverse(currentDir) {
     try {
@@ -67,8 +75,8 @@ async function scanDirectoryForSecurityKeywords(dir, keywords = SECURITY_KEYWORD
               const content = await readFile(fullPath, 'utf8');
               const lowerContent = content.toLowerCase();
 
-              const foundKeywords = keywords.filter(keyword =>
-                lowerContent.includes(keyword)
+              const foundKeywords = lowerKeywords.filter(k =>
+                lowerContent.includes(k)
               );
 
               if (foundKeywords.length > 0) {
@@ -133,7 +141,7 @@ async function generateSituationReport(directory = process.cwd()) {
 }
 
 // Run if called directly
-if (import.meta.url === `file://${process.argv[1]}`) {
+if (process.argv[1] && import.meta.url === pathToFileURL(process.argv[1]).href) {
   const targetDir = process.argv[2] || process.cwd();
   generateSituationReport(targetDir)
     .then(report => {
