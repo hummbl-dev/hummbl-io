@@ -1,0 +1,9 @@
+{
+  "version": "3.2.4",
+  "results": [
+    [
+      ":scripts/__tests__/generate-situation-report.test.mjs",
+      { "duration": 429.79752599999995, "failed": false }
+    ]
+  ]
+}
