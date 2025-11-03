@@ -206,18 +206,26 @@ jobs:
       - name: Build infrastructure package
         run: |
           echo "Building infrastructure package..."
-          cd infrastructure
-          pnpm build || {
+          pnpm --filter hummbl-infrastructure build || {
             echo "Build failed with exit code $?"
+            echo "Checking infrastructure directory..."
+            ls -la infrastructure/ || echo "infrastructure/ not found"
             echo "Checking TypeScript configuration..."
-            cat tsconfig.json || echo "tsconfig.json not found"
+            cat infrastructure/tsconfig.json || echo "tsconfig.json not found"
             echo "Checking if source files exist..."
-            ls -la bin/ lib/ || echo "bin/ or lib/ directories not found"
+            ls -la infrastructure/bin/ infrastructure/lib/ || echo "bin/ or lib/ directories not found"
             exit 1
           }
           echo "Build completed. Verifying output..."
-          ls -la bin/infrastructure.js || echo "bin/infrastructure.js not found after build"
-        working-directory: .
+          if [ -f "infrastructure/bin/infrastructure.js" ]; then
+            echo "✓ infrastructure/bin/infrastructure.js exists"
+            ls -lh infrastructure/bin/infrastructure.js
+          else
+            echo "✗ infrastructure/bin/infrastructure.js NOT found after build"
+            echo "Listing infrastructure/bin/ contents:"
+            ls -la infrastructure/bin/ || echo "infrastructure/bin/ does not exist"
+            exit 1
+          fi
 
       - name: Build TypeScript types
         run: |
@@ -364,18 +372,26 @@ jobs:
       - name: Build infrastructure package
         run: |
           echo "Building infrastructure package..."
-          cd infrastructure
-          pnpm build || {
+          pnpm --filter hummbl-infrastructure build || {
             echo "Build failed with exit code $?"
+            echo "Checking infrastructure directory..."
+            ls -la infrastructure/ || echo "infrastructure/ not found"
             echo "Checking TypeScript configuration..."
-            cat tsconfig.json || echo "tsconfig.json not found"
+            cat infrastructure/tsconfig.json || echo "tsconfig.json not found"
             echo "Checking if source files exist..."
-            ls -la bin/ lib/ || echo "bin/ or lib/ directories not found"
+            ls -la infrastructure/bin/ infrastructure/lib/ || echo "bin/ or lib/ directories not found"
             exit 1
           }
           echo "Build completed. Verifying output..."
-          ls -la bin/infrastructure.js || echo "bin/infrastructure.js not found after build"
-        working-directory: .
+          if [ -f "infrastructure/bin/infrastructure.js" ]; then
+            echo "✓ infrastructure/bin/infrastructure.js exists"
+            ls -lh infrastructure/bin/infrastructure.js
+          else
+            echo "✗ infrastructure/bin/infrastructure.js NOT found after build"
+            echo "Listing infrastructure/bin/ contents:"
+            ls -la infrastructure/bin/ || echo "infrastructure/bin/ does not exist"
+            exit 1
+          fi
 
       - name: Verify infrastructure binary exists and list files
         run: |
