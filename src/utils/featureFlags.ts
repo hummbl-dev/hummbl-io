@@ -3,6 +3,8 @@
  * Addresses Strategy #6 gap for gradual feature deployment
  */
 
+import { logger } from './logger';
+
 export interface FeatureFlag {
   enabled: boolean;
   rolloutPercentage: number;
@@ -45,7 +47,10 @@ export function isFeatureEnabled(
   const feature = FEATURES[featureName];
 
   if (!feature) {
-    console.warn(`Unknown feature flag: ${featureName}`);
+    logger.warn(`Unknown feature flag: ${featureName}`, {
+      featureName,
+      availableFeatures: Object.keys(FEATURES),
+    });
     return false;
   }
 

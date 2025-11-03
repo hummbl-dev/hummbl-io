@@ -13,8 +13,10 @@ import {
   BindingType,
   ConstraintType,
   ConstraintSeverity,
+  BindingDirection,
 } from './types';
 import { CO1_CONSTANTS } from './constants';
+import { logger } from '../../utils/logger';
 
 /**
  * Creates a new Syntactic Binding model instance
@@ -215,14 +217,21 @@ export const createSyntacticBindingModel = (): SyntacticBindingModel => {
     // Validate the binding first
     const validation = validateBinding({ binding });
     if (!validation.isValid) {
-      console.warn('Cannot apply invalid binding:', validation.errors);
+      logger.warn('Cannot apply invalid binding', {
+        bindingId: binding.id,
+        errors: validation.errors,
+      });
       return false;
     }
 
     // Check for conflicts with existing bindings
     const conflicts = findConflictingBindings(binding);
     if (conflicts.length > 0) {
-      console.warn('Binding conflicts with existing bindings:', conflicts);
+      logger.warn('Binding conflicts with existing bindings', {
+        bindingId: binding.id,
+        conflictCount: conflicts.length,
+        conflicts,
+      });
       return false;
     }
 

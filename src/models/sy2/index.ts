@@ -123,18 +123,22 @@ export function createSchemaMapper(config: Partial<SchemaMapper> = {}): SchemaMa
       return mapping;
     },
     
-    transformValue(value: any, transformFn: string | ((value: any) => any)): any {
+    transformValue<T = unknown, R = T>(
+      value: T,
+      transformFn: string | ((value: T) => R)
+    ): R {
       try {
         if (typeof transformFn === 'string') {
           const fn = SY2_CONSTANTS.TRANSFORMATIONS[transformFn as keyof typeof SY2_CONSTANTS.TRANSFORMATIONS];
           if (typeof fn === 'function') {
-            return fn(value);
+            return fn(value) as R;
           }
           throw new Error(`Unknown transformation function: ${transformFn}`);
         }
         return transformFn(value);
       } catch (error) {
-        throw new Error(`Transformation failed: ${error.message}`);
+        const errorMessage = error instanceof Error ? error.message : String(error);
+        throw new Error(`Transformation failed: ${errorMessage}`);
       }
     },
     

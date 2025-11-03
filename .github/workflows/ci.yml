@@ -8,6 +8,10 @@ on:
       - '**/*.mdx'
       - '**/docs/**'
       - '**/.github/**'
+      - 'AUDIT*.md'
+      - 'MODEL*.md'
+      - '*.example'
+      - '.env.example'
   pull_request:
     branches: [main, staging]
     paths-ignore:
@@ -15,6 +19,10 @@ on:
       - '**/*.mdx'
       - '**/docs/**'
       - '**/.github/**'
+      - 'AUDIT*.md'
+      - 'MODEL*.md'
+      - '*.example'
+      - '.env.example'
 
 # Prevent concurrent workflow runs for the same branch/PR
 concurrency:
@@ -460,8 +468,9 @@ jobs:
           echo "Checking bundle sizes..."
 
           # Find the main entry point files (typically the largest)
-          LARGEST_JS=$(find dist/assets -name "*.js" -type f -exec sh -c 'stat -f%z "$1" 2>/dev/null || stat -c%s "$1" 2>/dev/null' _ {} \; | sort -n | tail -1 || echo "0")
-          LARGEST_CSS=$(find dist/assets -name "*.css" -type f -exec sh -c 'stat -f%z "$1" 2>/dev/null || stat -c%s "$1" 2>/dev/null' _ {} \; | sort -n | tail -1 || echo "0")
+          # Use portable method that works on both Linux and macOS
+          LARGEST_JS=$(find dist/assets -name "*.js" -type f -exec wc -c {} + 2>/dev/null | awk '{print $1}' | sort -n | tail -1 || echo "0")
+          LARGEST_CSS=$(find dist/assets -name "*.css" -type f -exec wc -c {} + 2>/dev/null | awk '{print $1}' | sort -n | tail -1 || echo "0")
 
           MAIN_JS_SIZE=${LARGEST_JS:-0}
           MAIN_CSS_SIZE=${LARGEST_CSS:-0}

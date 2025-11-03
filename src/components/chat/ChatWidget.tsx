@@ -15,10 +15,18 @@ import type { ChatContext } from '../../../cascade/types/chatContext';
 import type { MentalModel } from '../../../cascade/types/mental-model';
 import type { ConversationAnalysis } from '../../services/contextualPromptBuilder';
 import { buildContextDescription } from '../../../cascade/types/chatContext';
+import { logger } from '../../utils/logger';
 import './ChatWidget.css';
+
+interface Narrative {
+  title: string;
+  summary?: string;
+  [key: string]: unknown;
+}
+
 interface ChatWidgetProps {
   mentalModels?: MentalModel[];
-  narratives?: any[];
+  narratives?: Narrative[];
   apiKey?: string;
   context?: ChatContext | null;
 }
@@ -71,10 +79,37 @@ export function ChatWidget({ mentalModels, narratives, apiKey, context }: ChatWi
       const analysis = contextualBuilder.analyzeConversation(conv);
       setConversationAnalysis(analysis);
     } catch (error) {
-      console.error('Failed to analyze conversation:', error);
+      logger.error('Failed to analyze conversation', error instanceof Error ? error : new Error(String(error)), {
+        conversationId: conv.id,
+      });
     } finally {
       setIsAnalyzing(false);
     }
+  }, [mentalModels]);
+
+  // Initialize conversations on mount
+  useEffect(() => {
+    const loadedConversations = chatStorage.loadConversations();
+    setConversations(loadedConversations);
+
+    const currentId = chatStorage.loadCurrentConversationId();
+
+    if (currentId) {
+      const existing = loadedConversations.find((c) => c.id === currentId);
+      if (existing) {
+        setConversation(existing);
+        analyzeConversationAsync(existing);
+        return;
+      }
+    }
+
+    // Create new conversation
+    const newConv = chatStorage.createConversation();
+    setConversation(newConv);
+    setConversations([newConv]);
+    chatStorage.saveCurrentConversationId(newConv.id);
+    chatStorage.saveConversations([newConv]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [mentalModels]);
 
   // Check for API key
@@ -195,7 +230,10 @@ export function ChatWidget({ mentalModels, narratives, apiKey, context }: ChatWi
         },
         onError: (err: Error) => {
           streamingRef.current = false;
-          console.error('Streaming error:', err);
+          logger.error('Streaming error', err, {
+            conversationId: conversation?.id,
+            hasApiKey: !!apiKey,
+          });
           setError(err.message);
           setTimeout(() => setError(null), 5000);
           setIsLoading(false);
@@ -204,7 +242,10 @@ export function ChatWidget({ mentalModels, narratives, apiKey, context }: ChatWi
       });
     } catch (err) {
       streamingRef.current = false;
-      console.error('Chat error:', err);
+      logger.error('Chat error', err instanceof Error ? err : new Error(String(err)), {
+        conversationId: conversation?.id,
+        hasApiKey: !!apiKey,
+      });
       const errorMessage = err instanceof Error ? err.message : 'Failed to send message';
       setError(errorMessage);
       setTimeout(() => setError(null), 5000);

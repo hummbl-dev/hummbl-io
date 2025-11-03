@@ -17,6 +17,7 @@ import {
   CO2_CONSTANTS, 
   EXAMPLE_CONCEPTS 
 } from './constants';
+import { logger } from '../../utils/logger';
 
 type EventHandler = (data: any) => void | Promise<void>;
 type EventType = 'beforeFusion' | 'afterFusion' | 'conflictDetected' | 'conceptAdded' | 'conceptUpdated' | 'conceptRemoved';
@@ -77,7 +78,10 @@ export const createConceptualFusionModel = (config: Partial<ConceptualFusionMode
       try {
         await Promise.resolve(handler(data));
       } catch (error) {
-        console.error(`Error in ${event} handler:`, error);
+        logger.error(`Error in ${event} handler`, error instanceof Error ? error : new Error(String(error)), {
+          event,
+          handlerCount: handlers.size,
+        });
       }
     }
   };
@@ -929,10 +933,13 @@ export const createConceptualFusionModel = (config: Partial<ConceptualFusionMode
         try {
           // In a real implementation, we would parse and execute the rule
           // This is a simplified version
-          console.log(`Applying custom rule: ${rule.name}`);
+          logger.debug(`Applying custom rule: ${rule.name}`, { ruleId, ruleName: rule.name });
           // result = applyRule(rule, result, sources, context);
         } catch (error) {
-          console.error(`Error applying rule ${ruleId}:`, error);
+          logger.error(`Error applying rule ${ruleId}`, error instanceof Error ? error : new Error(String(error)), {
+            ruleId,
+            ruleName: rule.name,
+          });
         }
       }
     }
@@ -968,7 +975,10 @@ export const createConceptualFusionModel = (config: Partial<ConceptualFusionMode
           return true; // Simplified for now
         }
       } catch (error) {
-        console.error(`Error evaluating rule ${rule.id}:`, error);
+        logger.error(`Error evaluating rule ${rule.id}`, error instanceof Error ? error : new Error(String(error)), {
+          ruleId: rule.id,
+          conflictType: conflict.type,
+        });
       }
     }
     

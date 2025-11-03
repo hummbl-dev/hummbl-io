@@ -1,6 +1,8 @@
 // OpenAI API integration service
 
 import type { OpenAIMessage, OpenAIRequest, OpenAIResponse } from '../types/chat';
+import type { MentalModel } from '../../cascade/types/mental-model';
+import { logger } from '../utils/logger';
 
 const OPENAI_API_URL = 'https://api.openai.com/v1/chat/completions';
 const MODEL = 'gpt-4o-mini'; // Fast and cost-effective
@@ -56,15 +58,18 @@ export class OpenAIService {
 
       return data.choices[0].message.content;
     } catch (error) {
-      console.error('OpenAI API error:', error);
+      logger.error('OpenAI API error', error instanceof Error ? error : new Error(String(error)), {
+        model: MODEL,
+        messageCount: messages.length,
+      });
       throw error;
     }
   }
 
   // Build system context from mental models, narratives, and current view context
   buildSystemContext(
-    mentalModels?: any[],
-    narratives?: any[],
+    mentalModels?: MentalModel[],
+    narratives?: Array<{ title: string; summary?: string }>,
     contextDescription?: string
   ): string {
     let context =

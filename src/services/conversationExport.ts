@@ -146,8 +146,8 @@ export class ConversationExportService {
   /**
    * Copy to clipboard
    */
-  async copyToClipboard(conversation: ChatConversation, format: string): Promise<void> {
-    const content = await this.exportConversation(conversation, { format: format as any });
+  async copyToClipboard(conversation: ChatConversation, format: ExportOptions['format']): Promise<void> {
+    const content = await this.exportConversation(conversation, { format });
     await navigator.clipboard.writeText(content);
   }
 }

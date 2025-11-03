@@ -3,6 +3,7 @@
 import { useState } from 'react';
 import { conversationExport } from '../../services/conversationExport';
 import type { ChatConversation } from '../../../cascade/types/chat';
+import { logger } from '../../utils/logger';
 import './ChatSettings.css';
 
 interface ChatSettingsProps {
@@ -53,7 +54,10 @@ export function ChatSettings({
         includeMetadata: true,
       });
     } catch (error) {
-      console.error('Export failed:', error);
+      logger.error('Export failed', error instanceof Error ? error : new Error(String(error)), {
+        format,
+        conversationId: currentConversation?.id,
+      });
       alert('Failed to export conversation');
     } finally {
       setExporting(false);
@@ -68,7 +72,10 @@ export function ChatSettings({
       await conversationExport.copyToClipboard(currentConversation, format);
       alert('Copied to clipboard!');
     } catch (error) {
-      console.error('Copy failed:', error);
+      logger.error('Copy failed', error instanceof Error ? error : new Error(String(error)), {
+        format,
+        conversationId: currentConversation?.id,
+      });
       alert('Failed to copy to clipboard');
     } finally {
       setExporting(false);
@@ -76,11 +83,23 @@ export function ChatSettings({
   };
 
   return (
-    <div className="chat-settings-overlay" onClick={onClose}>
-      <div className="chat-settings" onClick={(e) => e.stopPropagation()}>
+    <div 
+      className="chat-settings-overlay" 
+      onClick={onClose}
+      onKeyDown={(e) => e.key === 'Escape' && onClose()}
+      role="button"
+      tabIndex={0}
+      aria-label="Close settings overlay"
+    >
+      <div 
+        className="chat-settings" 
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby="settings-header"
+      >
         {/* Header */}
         <div className="settings-header">
-          <h3>Chat Settings</h3>
+          <h3 id="settings-header">Chat Settings</h3>
           <button className="settings-close-button" onClick={onClose} aria-label="Close settings">
             ✕
           </button>
