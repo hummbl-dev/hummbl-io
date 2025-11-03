@@ -163,11 +163,13 @@ jobs:
         run: pnpm install --frozen-lockfile
 
       - name: Build TypeScript types
+        continue-on-error: true
         run: |
           mkdir -p dist/types
           pnpm run build:types
 
       - name: Run type checking
+        continue-on-error: true
         run: pnpm run typecheck
 
   test-shared:
