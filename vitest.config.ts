@@ -13,6 +13,13 @@ export default defineConfig({
     globals: true,
     environment: 'happy-dom',
     setupFiles: ['./vitest.setup.ts', './src/__mocks__/compliance-report.json'],
+    // ESM support for Node 20
+    pool: 'forks',
+    poolOptions: {
+      forks: {
+        singleFork: true,
+      },
+    },
     css: true, // Enable CSS imports in tests
     testTimeout: 30000,
     hookTimeout: 30000,

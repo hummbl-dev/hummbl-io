@@ -334,7 +334,8 @@ jobs:
           mkdir -p test-results
 
           # Run only agent tests with memory optimization
-          NODE_OPTIONS='--max-old-space-size=2048 --expose-gc' npx vitest run src/utils/__tests__/agentEffectiveness.test.ts --no-watch --run --reporter=verbose --reporter=junit --reporter-options="outputFile=test-results/junit.xml" || {
+          # Use npm script to ensure consistent environment
+          pnpm run test:agent || {
             echo "Agent tests failed with exit code $?"
             echo "test_status=failure" >> $GITHUB_OUTPUT
             exit 1
