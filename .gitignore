@@ -10,6 +10,7 @@ dist/
 build/
 coverage/
 .cache/
+.vitest-cache/
 .next/
 out/
 .serverless/
