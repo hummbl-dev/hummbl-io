@@ -102,6 +102,9 @@ jobs:
           node-version: '18.x'
           cache: 'pnpm'
 
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
       - name: Run Analytics Tests
         run: npx vitest run src/utils/__tests__/analytics*.test.ts --no-watch --silent --run --sourcemap=false
 
