@@ -14,17 +14,17 @@ import { version } from './constants';
  * This model implements the Composition mental model by combining elements
  * to create new wholes with emergent properties.
  */
-export const createco04Model = (config: Partial<CompositionConfig> = {}) => {
+export const createCO04Model = (config: Partial<CompositionConfig> = {}) => {
   // Merge default config with user config
   const {
-    name = 'co04',
+    name = 'CO04',
     version: modelVersion = version,
-    name = '$(basename $(dirname $file))',
-    version: modelVersion = version,
-    // @ts-expect-error - logger kept for potential future use
+    eventEmitter = new EventEmitter(),
     telemetryEnabled = false,
     // @ts-expect-error - logger kept for potential future use
     logger = console,
+  } = { ...DEFAULT_COMPOSITION_CONFIG, ...config };
+
   /**
    * Analyze input using the Composition model
    */
@@ -111,4 +111,4 @@ export const createco04Model = (config: Partial<CompositionConfig> = {}) => {
   };
 };
 
-export default createco04Model;
+export default createCO04Model;
