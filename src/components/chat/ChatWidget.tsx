@@ -42,7 +42,9 @@ export function ChatWidget({ mentalModels, narratives, apiKey, context }: ChatWi
   const [showSettings, setShowSettings] = useState(false);
   const [streamingResponse, setStreamingResponse] = useState<string>('');
   const streamingRef = useRef<boolean>(false);
-  const [conversationAnalysis, setConversationAnalysis] = useState<ConversationAnalysis | null>(null);
+  const [conversationAnalysis, setConversationAnalysis] = useState<ConversationAnalysis | null>(
+    null
+  );
   const [isAnalyzing, setIsAnalyzing] = useState(false);
 
   // Initialize conversations on mount
@@ -70,23 +72,29 @@ export function ChatWidget({ mentalModels, narratives, apiKey, context }: ChatWi
   }, [mentalModels]);
 
   // Analyze conversation for model suggestions
-  const analyzeConversationAsync = React.useCallback(async (conv: ChatConversation) => {
-    if (!mentalModels || mentalModels.length === 0) return;
-    
-    setIsAnalyzing(true);
-    try {
-      const contextualBuilder = getContextualBuilder(mentalModels as MentalModel[]);
-      const analysis = contextualBuilder.analyzeConversation(conv);
-      setConversationAnalysis(analysis);
-    } catch (error) {
-      logger.error('Failed to analyze conversation', error instanceof Error ? error : new Error(String(error)), {
-        conversationId: conv.id,
-      });
-    } finally {
-      setIsAnalyzing(false);
-    }
-  }, [mentalModels]);
+  const analyzeConversationAsync = React.useCallback(
+    async (conv: ChatConversation) => {
+      if (!mentalModels || mentalModels.length === 0) return;
 
+      setIsAnalyzing(true);
+      try {
+        const contextualBuilder = getContextualBuilder(mentalModels as MentalModel[]);
+        const analysis = contextualBuilder.analyzeConversation(conv);
+        setConversationAnalysis(analysis);
+      } catch (error) {
+        logger.error(
+          'Failed to analyze conversation',
+          error instanceof Error ? error : new Error(String(error)),
+          {
+            conversationId: conv.id,
+          }
+        );
+      } finally {
+        setIsAnalyzing(false);
+      }
+    },
+    [mentalModels]
+  );
 
   // Check for API key
   useEffect(() => {
@@ -146,7 +154,7 @@ export function ChatWidget({ mentalModels, narratives, apiKey, context }: ChatWi
     return conversations.reduce((sum, conv) => sum + conv.messages.length, 0);
   };
 
-  const handleSendMessage = async (message: string) => {
+  const handleSendMessage = async (message: string, isRetry: boolean = false) => {
     if (!conversation || !hasApiKey) {
       setError('OpenAI API key not configured');
       setTimeout(() => setError(null), 5000);
@@ -159,9 +167,12 @@ export function ChatWidget({ mentalModels, narratives, apiKey, context }: ChatWi
     streamingRef.current = true;
 
     try {
-      // Add user message
-      const updatedConv = chatStorage.addMessage(conversation, 'user', message);
-      setConversation(updatedConv);
+      // Add user message only if not retrying (retry means message already exists)
+      let updatedConv = conversation;
+      if (!isRetry) {
+        updatedConv = chatStorage.addMessage(conversation, 'user', message);
+        setConversation(updatedConv);
+      }
 
       // Build system context with current view context
       const openAI = getOpenAIService();
@@ -200,7 +211,7 @@ export function ChatWidget({ mentalModels, narratives, apiKey, context }: ChatWi
           // Clear streaming state
           setStreamingResponse('');
           setIsLoading(false);
-          
+
           // Re-analyze conversation with new message
           analyzeConversationAsync(finalConv);
         },
@@ -286,7 +297,8 @@ export function ChatWidget({ mentalModels, narratives, apiKey, context }: ChatWi
             onRetry={() => {
               const lastMessage = conversation?.messages[conversation.messages.length - 1];
               if (lastMessage && lastMessage.role === 'user') {
-                handleSendMessage(lastMessage.content);
+                // Pass isRetry=true to prevent adding duplicate user message
+                handleSendMessage(lastMessage.content, true);
               }
             }}
           />
