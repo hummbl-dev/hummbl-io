@@ -396,7 +396,9 @@ const ensureDir = async (dir: string) => {
   try {
     await fs.mkdir(dir, { recursive: true });
   } catch (error) {
-    if (error.code !== 'EEXIST') throw error;
+    if (error && typeof error === 'object' && 'code' in error && error.code !== 'EEXIST') {
+      throw error;
+    }
   }
 };
 
@@ -433,7 +435,8 @@ const generateModel = async (modelId: string) => {
     console.log(`✅ Generated ${modelId} model`);
     return true;
   } catch (error) {
-    console.error(`❌ Failed to generate ${modelId}:`, error.message);
+    const message = error instanceof Error ? error.message : String(error);
+    console.error(`❌ Failed to generate ${modelId}:`, message);
     return false;
   }
 };

@@ -3,9 +3,8 @@ import { fileURLToPath } from 'url';
 import { dirname, join } from 'path';
 
 // __dirname is available but not currently used in this script
-// Using dirname for potential future use
 const __filename = fileURLToPath(import.meta.url);
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
+// @ts-expect-error - unused variable kept for future use
 const _unusedDirname = dirname(__filename);
 
 const MODEL_DEFINITION = {

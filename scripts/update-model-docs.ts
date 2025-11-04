@@ -1,7 +1,7 @@
-import { writeFileSync, readFileSync, existsSync, mkdirSync } from 'fs';
+import { writeFileSync, existsSync, mkdirSync } from 'fs';
 import { join } from 'path';
 import { fileURLToPath } from 'url';
-import { allModels, ModelMetadata, getModelById } from './model-metadata.js';
+import { allModels, ModelMetadata } from './model-metadata.js';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = join(__filename, '..');

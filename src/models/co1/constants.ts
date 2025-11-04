@@ -1,7 +1,6 @@
 import { 
   BindingPattern, 
   ModelBinding, 
-  ComponentReference, 
   Constraint, 
   ConstraintType, 
   ConstraintSeverity,
@@ -193,7 +192,7 @@ export const CO1_CONSTANTS = {
       },
     },
     // More patterns can be added here
-  ] as BindingPattern[],
+  ] as unknown as BindingPattern[],
   
   // Example bindings for testing and documentation
   EXAMPLE_BINDINGS: [
@@ -239,7 +238,7 @@ export const CO1_CONSTANTS = {
         lastUpdatedBy: 'system',
       },
     },
-  ] as ModelBinding[],
+  ] as unknown as ModelBinding[],
   
   // Example scenario for documentation
   EXAMPLE_SCENARIO: {

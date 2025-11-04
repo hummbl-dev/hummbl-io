@@ -21,6 +21,7 @@ export const createCO03Model = (config: Partial<CompositionConfig> = {}) => {
     version: modelVersion = version,
     eventEmitter = new EventEmitter(),
     telemetryEnabled = false,
+    // @ts-expect-error - logger kept for potential future use
     logger = console,
   } = { ...DEFAULT_COMPOSITION_CONFIG, ...config };
 
@@ -45,7 +46,7 @@ export const createCO03Model = (config: Partial<CompositionConfig> = {}) => {
       const composition = {
         elements: input.elements,
         relationships: input.relationships || [],
-        emergentProperties: []
+        emergentProperties: [] as string[], as string[],
       };
 
       // Add some basic emergent properties based on the input

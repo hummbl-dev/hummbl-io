@@ -9,7 +9,7 @@ import { stringify } from 'csv-stringify/sync';
 
 // Get the directory name in ES module context
 const __filename = fileURLToPath(import.meta.url);
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
+// @ts-expect-error - unused variable kept for future use
 const _unusedDirname = path.dirname(__filename);
 
 // Default configuration

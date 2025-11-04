@@ -9,21 +9,22 @@ import {
 import { version } from './constants';
 
 /**
- * CO04: Composition Model
+ * co04: Composition Model
  * 
  * This model implements the Composition mental model by combining elements
  * to create new wholes with emergent properties.
  */
-export const createCO04Model = (config: Partial<CompositionConfig> = {}) => {
+export const createco04Model = (config: Partial<CompositionConfig> = {}) => {
   // Merge default config with user config
   const {
-    name = 'CO04',
+    name = 'co04',
     version: modelVersion = version,
-    eventEmitter = new EventEmitter(),
+    name = '$(basename $(dirname $file))',
+    version: modelVersion = version,
+    // @ts-expect-error - logger kept for potential future use
     telemetryEnabled = false,
+    // @ts-expect-error - logger kept for potential future use
     logger = console,
-  } = { ...DEFAULT_COMPOSITION_CONFIG, ...config };
-
   /**
    * Analyze input using the Composition model
    */
@@ -45,7 +46,7 @@ export const createCO04Model = (config: Partial<CompositionConfig> = {}) => {
       const composition = {
         elements: input.elements,
         relationships: input.relationships || [],
-        emergentProperties: []
+        emergentProperties: [] as string[], as string[],
       };
 
       // Add some basic emergent properties based on the input
@@ -103,11 +104,11 @@ export const createCO04Model = (config: Partial<CompositionConfig> = {}) => {
   };
 
   return {
-    id: 'CO04',
+    id: 'co04',
     name,
     version: modelVersion,
     analyze
   };
 };
 
-export default createCO04Model;
+export default createco04Model;

@@ -9,7 +9,7 @@ import {
 import { version } from './constants';
 
 /**
- * CO08: Composition Model
+ * co08: Composition Model
  * 
  * This model implements the Composition mental model by combining elements
  * to create new wholes with emergent properties.
@@ -21,6 +21,7 @@ export const createCO08Model = (config: Partial<CompositionConfig> = {}) => {
     version: modelVersion = version,
     eventEmitter = new EventEmitter(),
     telemetryEnabled = false,
+    // @ts-expect-error - logger kept for potential future use
     logger = console,
   } = { ...DEFAULT_COMPOSITION_CONFIG, ...config };
 
@@ -45,7 +46,7 @@ export const createCO08Model = (config: Partial<CompositionConfig> = {}) => {
       const composition = {
         elements: input.elements,
         relationships: input.relationships || [],
-        emergentProperties: []
+        emergentProperties: [] as string[], as string[],
       };
 
       // Add some basic emergent properties based on the input
@@ -103,7 +104,7 @@ export const createCO08Model = (config: Partial<CompositionConfig> = {}) => {
   };
 
   return {
-    id: 'CO08',
+    id: 'co08',
     name,
     version: modelVersion,
     analyze
