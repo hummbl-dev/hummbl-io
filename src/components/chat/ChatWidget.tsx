@@ -154,6 +154,12 @@ export function ChatWidget({ mentalModels, narratives, apiKey, context }: ChatWi
     return conversations.reduce((sum, conv) => sum + conv.messages.length, 0);
   };
 
+  /**
+   * Send a message to the chat API and handle the response.
+   * @param message - The message content to send
+   * @param isRetry - If true, prevents adding duplicate user messages when retrying a failed request.
+   *                  The message should already exist in the conversation history when retrying.
+   */
   const handleSendMessage = async (message: string, isRetry: boolean = false) => {
     if (!conversation || !hasApiKey) {
       setError('OpenAI API key not configured');

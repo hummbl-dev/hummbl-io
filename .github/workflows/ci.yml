@@ -559,10 +559,9 @@ jobs:
           fi
 
       - name: Run verification
-        continue-on-error: true
         run: |
           # Build the project
-          npm run build || echo "Build failed, continuing..."
+          npm run build
 
           # Ensure compliance-report.json exists (simplified version)
           if [ ! -f "compliance-report.json" ]; then
@@ -660,19 +659,18 @@ jobs:
         run: |
           echo "Checking bundle sizes..."
 
-          # Find the main entry point files (typically the largest)
-          # Use portable method that works on both Linux and macOS
-          LARGEST_JS=$(find dist/assets -name "*.js" -type f -exec wc -c {} + 2>/dev/null | awk '{print $1}' | sort -n | tail -1 || echo "0")
-          LARGEST_CSS=$(find dist/assets -name "*.css" -type f -exec wc -c {} + 2>/dev/null | awk '{print $1}' | sort -n | tail -1 || echo "0")
+          # Calculate total bundle size (all JS and CSS files)
+          TOTAL_JS_SIZE=$(find dist/assets -name "*.js" -type f -exec wc -c {} + 2>/dev/null | awk 'END{print $1}' || echo "0")
+          TOTAL_CSS_SIZE=$(find dist/assets -name "*.css" -type f -exec wc -c {} + 2>/dev/null | awk 'END{print $1}' || echo "0")
 
-          MAIN_JS_SIZE=${LARGEST_JS:-0}
-          MAIN_CSS_SIZE=${LARGEST_CSS:-0}
+          MAIN_JS_SIZE=${TOTAL_JS_SIZE:-0}
+          MAIN_CSS_SIZE=${TOTAL_CSS_SIZE:-0}
 
           TOTAL_SIZE=$((MAIN_JS_SIZE + MAIN_CSS_SIZE))
           MAX_SIZE=$((1000 * 1024))  # 1 MB limit
 
-          echo "Largest JS file: $((MAIN_JS_SIZE / 1024)) KB"
-          echo "Largest CSS file: $((MAIN_CSS_SIZE / 1024)) KB"
+          echo "Total JS bundle: $((MAIN_JS_SIZE / 1024)) KB"
+          echo "Total CSS bundle: $((MAIN_CSS_SIZE / 1024)) KB"
           echo "Total (largest files): $((TOTAL_SIZE / 1024)) KB"
           echo "Max allowed: $((MAX_SIZE / 1024)) KB (1 MB)"
 

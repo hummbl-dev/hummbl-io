@@ -4,6 +4,9 @@
 import type { ChatConversation, ChatMessage } from '../../cascade/types/chat';
 import type { MentalModel } from '../../cascade/types/mental-model';
 
+// Minimum word length for topic extraction
+const MIN_TOPIC_WORD_LENGTH = 4;
+
 export interface ModelSuggestion {
   model: MentalModel;
   relevanceScore: number;
@@ -32,7 +35,6 @@ export class ContextualPromptBuilder {
    */
   analyzeConversation(conversation: ChatConversation): ConversationAnalysis {
     const allMessages = conversation.messages.map((m) => m.content.toLowerCase()).join(' ');
-    const words = allMessages.split(/\s+/);
 
     // Extract key topics
     const topics = this.extractTopics(allMessages);
@@ -75,7 +77,7 @@ export class ContextualPromptBuilder {
       'on',
       'at',
     ]);
-    const words = text.split(/\s+/).filter((w) => w.length > 4 && !commonWords.has(w));
+    const words = text.split(/\s+/).filter((w) => w.length > MIN_TOPIC_WORD_LENGTH && !commonWords.has(w));
     const uniqueWords = Array.from(new Set(words));
     return uniqueWords.slice(0, 5);
   }
