@@ -562,7 +562,7 @@ jobs:
         continue-on-error: true
         run: |
           # Build the project
-          npm run build || echo "Build failed, continuing..."
+          npm run build
 
           # Ensure compliance-report.json exists (simplified version)
           if [ ! -f "compliance-report.json" ]; then
