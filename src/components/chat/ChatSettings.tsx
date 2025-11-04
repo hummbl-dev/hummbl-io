@@ -87,9 +87,6 @@ export function ChatSettings({
       className="chat-settings-overlay" 
       onClick={onClose}
       onKeyDown={(e) => e.key === 'Escape' && onClose()}
-      role="button"
-      tabIndex={0}
-      aria-label="Close settings overlay"
     >
       <div 
         className="chat-settings" 
