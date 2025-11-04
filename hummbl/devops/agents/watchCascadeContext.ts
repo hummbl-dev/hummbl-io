@@ -43,7 +43,9 @@ export class ContextWatcher extends EventEmitter {
     this.watcher
       .on('add', () => this.scheduleValidation())
       .on('change', () => this.scheduleValidation())
-      .on('error', (error: Error) => this.emit('error', error));
+      .on('error', (error: unknown) => {
+        this.emit('error', error instanceof Error ? error : new Error(String(error)));
+      });
   }
 
   async stop(): Promise<void> {
@@ -96,7 +98,10 @@ export class ContextWatcher extends EventEmitter {
         filePath: this.contextPath,
         valid,
         errors,
-        context: valid ? context : undefined,
+        context:
+          valid && typeof context === 'object' && context !== null
+            ? (context as CascadeAgentContext)
+            : undefined,
       };
 
       // Emit validation event
