@@ -42,5 +42,10 @@ if (!fs.existsSync(binPath)) {
 
 const stats = fs.statSync(binPath);
 console.log(`✅ infrastructure bin exists: ${binPath} (${Math.round(stats.size / 1024)}KB)`);
-console.log('File permissions:', fs.statSync(binPath).mode.toString(8));
+console.log('File permissions:', stats.mode.toString(8));
 
+// Check if the binary is executable
+if ((stats.mode & 0o111) === 0) {
+  console.warn(`⚠️  Warning: ${binPath} is not marked as executable. CLI tools should have the execute bit set.`);
+  console.warn('You may need to run: chmod +x ' + binPath);
+}
