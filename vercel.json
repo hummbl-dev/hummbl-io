@@ -1,6 +1,6 @@
 {
   "buildCommand": "pnpm run build",
-  "installCommand": "pnpm install --frozen-lockfile",
+  "installCommand": "pnpm install --frozen-lockfile && (pnpm --filter hummbl-infrastructure run build || true)",
   "framework": null,
   "outputDirectory": "dist",
   "headers": [
