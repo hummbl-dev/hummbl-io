@@ -1,10 +1,6 @@
-import { useState, useEffect, useMemo } from 'react';
-import { NarrativeList } from './components/narratives/NarrativeList';
-import { MentalModelsList } from './components/mental-models/MentalModelsList';
+import { useState, useEffect, useMemo, Suspense, lazy } from 'react';
 import { MentalModelsFilters } from './components/mental-models/MentalModelsFilters';
-import ModelDetailModal from './components/mental-models/ModelDetailModal';
 import { Hero } from './components/Hero/Hero';
-import { ChatWidget } from './components/chat/ChatWidget';
 import { AuthProvider } from './contexts/AuthContext';
 import type { ViewType } from '@cascade/types/view';
 import type { MentalModel } from '@cascade/types/mental-model';
@@ -12,6 +8,122 @@ import { fetchMentalModels, clearMentalModelsCache } from './services/mentalMode
 import { useMentalModelFilters } from './hooks/useMentalModelFilters';
 import type { ChatContext } from '@cascade/types/chatContext';
 import './App.css';
+
+// Lazy load route components
+const NarrativeList = lazy(() => import('./components/narratives/NarrativeList').then(module => ({ default: module.NarrativeList })));
+const MentalModelsList = lazy(() => import('./components/mental-models/MentalModelsList').then(module => ({ default: module.MentalModelsList })));
+const ModelDetailModal = lazy(() => import('./components/mental-models/ModelDetailModal'));
+const ChatWidget = lazy(() => import('./components/chat/ChatWidget').then(module => ({ default: module.ChatWidget })));
+
+// Skeleton loaders for lazy components
+const NarrativeListSkeleton = () => (
+  <div className="loading">
+    <div className="skeleton-header" />
+    <div className="skeleton-grid">
+      {Array.from({ length: 6 }).map((_, i) => (
+        <div key={i} className="skeleton-card" />
+      ))}
+    </div>
+  </div>
+);
+
+const MentalModelsListSkeleton = () => (
+  <div className="loading">Loading mental models...</div>
+);
+
+const ModalSkeleton = () => null; // Modal doesn't need skeleton until opened
+
+// Lazy ChatWidget component that loads after delay or on interaction
+function LazyChatWidget({
+  mentalModels,
+  selectedModel,
+  currentView,
+}: {
+  mentalModels: MentalModel[];
+  selectedModel: MentalModel | null;
+  currentView: ViewType;
+}) {
+  const [shouldLoad, setShouldLoad] = useState(false);
+
+  useEffect(() => {
+    // Load after 3 seconds delay
+    const delayTimer = setTimeout(() => {
+      setShouldLoad(true);
+    }, 3000);
+
+    // Or load on first user interaction
+    const handleInteraction = () => {
+      setShouldLoad(true);
+    };
+
+    // Listen for user interactions
+    document.addEventListener('click', handleInteraction, { once: true });
+    document.addEventListener('keydown', handleInteraction, { once: true });
+    document.addEventListener('touchstart', handleInteraction, { once: true });
+
+    return () => {
+      clearTimeout(delayTimer);
+      document.removeEventListener('click', handleInteraction);
+      document.removeEventListener('keydown', handleInteraction);
+      document.removeEventListener('touchstart', handleInteraction);
+    };
+  }, []);
+
+  // Calculate context before early return (hooks must be called unconditionally)
+  const chatContext = useMemo((): ChatContext | null => {
+          // If a model modal is open
+          if (selectedModel) {
+            return {
+              type: 'mental-model',
+              viewMode: 'modal-open',
+              currentItem: selectedModel,
+              metadata: {
+                totalModels: mentalModels.length,
+              },
+            };
+          }
+
+          // If browsing mental models
+          if (currentView === 'models') {
+            return {
+              type: 'mental-model',
+              viewMode: 'browsing',
+              metadata: {
+                totalModels: mentalModels.length,
+                activeFilters: [],
+              },
+            };
+          }
+
+          // If browsing narratives
+          if (currentView === 'narratives') {
+            return {
+              type: 'narrative',
+              viewMode: 'browsing',
+              metadata: {
+                totalNarratives: 0, // TODO: Add narratives count when available
+              },
+            };
+          }
+
+          return null;
+        }, [selectedModel, currentView, mentalModels.length]);
+
+  if (!shouldLoad) {
+    return null;
+  }
+
+  return (
+    <Suspense fallback={<ModalSkeleton />}>
+      <ChatWidget
+        mentalModels={mentalModels}
+        narratives={[]}
+        apiKey={import.meta.env.VITE_OPENAI_API_KEY}
+        context={chatContext}
+      />
+    </Suspense>
+  );
+}
 
 // Types for persisted state
 interface MentalModelsState {
@@ -121,7 +233,9 @@ function App() {
 
         <main className="main-content">
           {currentView === 'narratives' ? (
-            <NarrativeList />
+            <Suspense fallback={<NarrativeListSkeleton />}>
+              <NarrativeList />
+            </Suspense>
           ) : (
             <div className="mental-models-wrapper">
               <div
@@ -162,7 +276,7 @@ function App() {
               </div>
 
               {isLoading ? (
-                <div className="loading">Loading mental models...</div>
+                <MentalModelsListSkeleton />
               ) : error ? (
                 <div className="error">{error}</div>
               ) : (
@@ -175,24 +289,26 @@ function App() {
                     categories={categories}
                     transformations={transformations}
                   />
-                  <MentalModelsList
-                    models={filteredModels}
-                    onSelect={handleModelSelect}
-                    onRetry={async () => {
-                      clearMentalModelsCache();
-                      setIsLoading(true);
-                      try {
-                        const models = await fetchMentalModels();
-                        setMentalModels(models);
-                        setError(null);
-                      } catch (err) {
-                        console.error('Retry failed:', err);
-                        setError('Failed to load mental models. Please try again later.');
-                      } finally {
-                        setIsLoading(false);
-                      }
-                    }}
-                  />
+                  <Suspense fallback={<MentalModelsListSkeleton />}>
+                    <MentalModelsList
+                      models={filteredModels}
+                      onSelect={handleModelSelect}
+                      onRetry={async () => {
+                        clearMentalModelsCache();
+                        setIsLoading(true);
+                        try {
+                          const models = await fetchMentalModels();
+                          setMentalModels(models);
+                          setError(null);
+                        } catch (err) {
+                          console.error('Retry failed:', err);
+                          setError('Failed to load mental models. Please try again later.');
+                        } finally {
+                          setIsLoading(false);
+                        }
+                      }}
+                    />
+                  </Suspense>
                 </>
               )}
             </div>
@@ -207,52 +323,16 @@ function App() {
 
         {/* Model Detail Modal */}
         {selectedModel && (
-          <ModelDetailModal model={selectedModel} onClose={() => setSelectedModel(null)} />
+          <Suspense fallback={<ModalSkeleton />}>
+            <ModelDetailModal model={selectedModel} onClose={() => setSelectedModel(null)} />
+          </Suspense>
         )}
 
-        {/* Chat Widget */}
-        <ChatWidget
+        {/* Chat Widget - Load after delay or on interaction */}
+        <LazyChatWidget
           mentalModels={mentalModels}
-          narratives={[]}
-          apiKey={import.meta.env.VITE_OPENAI_API_KEY}
-          context={useMemo((): ChatContext | null => {
-            // If a model modal is open
-            if (selectedModel) {
-              return {
-                type: 'mental-model',
-                viewMode: 'modal-open',
-                currentItem: selectedModel,
-                metadata: {
-                  totalModels: mentalModels.length,
-                },
-              };
-            }
-
-            // If browsing mental models
-            if (currentView === 'models') {
-              return {
-                type: 'mental-model',
-                viewMode: 'browsing',
-                metadata: {
-                  totalModels: mentalModels.length,
-                  activeFilters: [],
-                },
-              };
-            }
-
-            // If browsing narratives
-            if (currentView === 'narratives') {
-              return {
-                type: 'narrative',
-                viewMode: 'browsing',
-                metadata: {
-                  totalNarratives: 0, // TODO: Add narratives count when available
-                },
-              };
-            }
-
-            return null;
-          }, [selectedModel, currentView, mentalModels.length])}
+          selectedModel={selectedModel}
+          currentView={currentView}
         />
       </div>
     </AuthProvider>

@@ -742,9 +742,36 @@ jobs:
     needs: [build, bundle-size]
     if: github.ref == 'refs/heads/staging'
     runs-on: ubuntu-latest
+    timeout-minutes: 15
+    concurrency:
+      group: deploy-staging
+      cancel-in-progress: false
 
     steps:
       - uses: actions/checkout@v4
+
+      - name: Verify build artifacts
+        run: |
+          if [ ! -d "dist" ] || [ ! -f "dist/index.html" ]; then
+            echo "❌ Build artifacts missing! Downloading from artifacts..."
+            # Artifacts should be available from build job
+          fi
+
+      - name: Download build artifacts
+        uses: actions/download-artifact@v4
+        with:
+          name: dist
+          path: dist/
+
+      - name: Verify build artifacts exist
+        run: |
+          if [ ! -d "dist" ] || [ ! -f "dist/index.html" ]; then
+            echo "❌ Build artifacts missing!"
+            exit 1
+          fi
+          echo "✅ Build artifacts verified"
+          echo "Build contents:"
+          ls -la dist/ | head -20
 
       - name: Install Vercel CLI
         run: npm install --global vercel@latest
@@ -758,20 +785,65 @@ jobs:
       - name: Build Project Artifacts
         run: vercel build --token=${{ secrets.VERCEL }}
 
-      - name: Deploy to Vercel (Staging)
-        run: vercel deploy --prebuilt --token=${{ secrets.VERCEL }}
+      - name: Deploy to Vercel (Staging/Preview)
+        run: vercel deploy --prebuilt --token=${{ secrets.VERCEL }} --alias=staging-hummbl.vercel.app
+        env:
+          VERCEL_ORG_ID: ${{ secrets.VERCEL_ORG_ID }}
+          VERCEL_PROJECT_ID: ${{ secrets.VERCEL_PROJECT_ID }}
+
+      - name: Notify deployment success
+        if: success()
+        run: |
+          echo "✅ Staging deployment successful!"
+          echo "URL: https://staging-hummbl.vercel.app"
+          echo "Commit: ${{ github.sha }}"
+          echo "Author: ${{ github.actor }}"
+
+      - name: Notify deployment failure
+        if: failure()
+        run: |
+          echo "❌ Staging deployment failed!"
+          echo "Commit: ${{ github.sha }}"
+          echo "Author: ${{ github.actor }}"
+          echo "View logs: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}"
 
   deploy-production:
     name: Deploy to Production
     needs: [build, bundle-size]
     if: github.ref == 'refs/heads/main'
     runs-on: ubuntu-latest
+    timeout-minutes: 20
     environment:
       name: production
       url: https://hummbl.io
+    concurrency:
+      group: deploy-production
+      cancel-in-progress: false
 
     steps:
       - uses: actions/checkout@v4
+
+      - name: Verify build artifacts
+        run: |
+          if [ ! -d "dist" ] || [ ! -f "dist/index.html" ]; then
+            echo "❌ Build artifacts missing! Downloading from artifacts..."
+          fi
+
+      - name: Download build artifacts
+        uses: actions/download-artifact@v4
+        with:
+          name: dist
+          path: dist/
+
+      - name: Verify build artifacts exist
+        run: |
+          if [ ! -d "dist" ] || [ ! -f "dist/index.html" ]; then
+            echo "❌ Build artifacts missing!"
+            exit 1
+          fi
+          echo "✅ Build artifacts verified"
+          echo "Build contents:"
+          ls -la dist/ | head -20
 
       - name: Install Vercel CLI
         run: npm install --global vercel@latest
@@ -796,3 +868,15 @@ jobs:
         run: |
           echo "✅ Production deployment successful!"
           echo "URL: https://hummbl.io"
+          echo "Commit: ${{ github.sha }}"
+          echo "Author: ${{ github.actor }}"
+          echo "Branch: ${{ github.ref_name }}"
+
+      - name: Notify deployment failure
+        if: failure()
+        run: |
+          echo "❌ Production deployment failed!"
+          echo "Commit: ${{ github.sha }}"
+          echo "Author: ${{ github.actor }}"
+          echo "Branch: ${{ github.ref_name }}"
+          echo "View logs: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}"

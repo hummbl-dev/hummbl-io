@@ -58,7 +58,6 @@ lerna-debug.log*
 .env
 .env.*
 !.env.example
-!.env.staging
 
 # Editor directories and files
 .DS_Store
