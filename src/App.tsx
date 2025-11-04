@@ -29,7 +29,7 @@ export const App: React.FC = () => {
   if (currentView === 'models') {
     return (
       <div className="min-h-screen bg-white">
-        <Header />
+        <Header onNavigate={handleNavigate} />
         <div className="pt-20">
           <ModelsPage />
         </div>
@@ -41,7 +41,7 @@ export const App: React.FC = () => {
   // Show Home page
   return (
     <div className="min-h-screen bg-white">
-      <Header />
+      <Header onNavigate={handleNavigate} />
       
       {/* Hero Section */}
       <section className="pt-32 pb-20 px-4">
@@ -123,6 +123,64 @@ export const App: React.FC = () => {
                 transformation={transformation}
               />
             ))}
+          </div>
+        </div>
+      </section>
+
+      {/* About Section */}
+      <section id="about" className="py-20 px-4 bg-gradient-to-b from-white to-gray-50">
+        <div className="container mx-auto max-w-4xl">
+          <div className="text-center mb-12">
+            <h2 className="text-4xl font-bold text-gray-900 mb-4">
+              About HUMMBL Base120
+            </h2>
+            <p className="text-xl text-gray-600">
+              A systematic approach to thinking and decision-making
+            </p>
+          </div>
+          
+          <div className="space-y-8 text-gray-700">
+            <div className="bg-white p-8 rounded-lg shadow-sm">
+              <h3 className="text-2xl font-bold text-gray-900 mb-4">Our Mission</h3>
+              <p className="leading-relaxed">
+                HUMMBL Systems provides frameworks and tools that enhance cognitive capability through 
+                systematic application of mental models. We believe better thinking leads to better decisions, 
+                better solutions, and better outcomes across all domains of human endeavor.
+              </p>
+            </div>
+            
+            <div className="bg-white p-8 rounded-lg shadow-sm">
+              <h3 className="text-2xl font-bold text-gray-900 mb-4">The Framework</h3>
+              <p className="leading-relaxed mb-4">
+                Base120 represents a carefully curated collection of 120 mental models organized across 
+                6 fundamental transformations. Each model has been validated through real-world application 
+                and refined through systematic usage analysis.
+              </p>
+              <p className="leading-relaxed">
+                The framework progresses from Base6 foundational models through Base42 critical mass 
+                collection to the complete Base120 taxonomy, enabling users to engage at the depth 
+                appropriate to their needs and expertise level.
+              </p>
+            </div>
+            
+            <div className="bg-white p-8 rounded-lg shadow-sm">
+              <h3 className="text-2xl font-bold text-gray-900 mb-4">Our Approach</h3>
+              <p className="leading-relaxed">
+                Unlike theoretical frameworks that collect mental models for comprehensiveness, HUMMBL 
+                Base120 prioritizes empirically validated utility. Each model in the Base42 critical mass 
+                collection demonstrates consistent application value across diverse problem-solving contexts.
+              </p>
+            </div>
+            
+            <div className="text-center pt-8">
+              <button
+                onClick={() => handleNavigate('models')}
+                className="px-8 py-4 bg-hummbl-primary text-white rounded-lg font-semibold hover:bg-hummbl-secondary transition-colors inline-flex items-center space-x-2"
+              >
+                <span>Explore the Framework</span>
+                <ArrowRight className="w-5 h-5" />
+              </button>
+            </div>
           </div>
         </div>
       </section>

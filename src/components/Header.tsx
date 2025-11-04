@@ -14,9 +14,10 @@ import { cn } from '../utils/cn';
 
 interface HeaderProps {
   className?: string;
+  onNavigate?: (view: 'home' | 'models') => void;
 }
 
-export const Header: React.FC<HeaderProps> = ({ className }) => {
+export const Header: React.FC<HeaderProps> = ({ className, onNavigate }) => {
   const [isMenuOpen, setIsMenuOpen] = React.useState(false);
 
   return (
@@ -39,9 +40,12 @@ export const Header: React.FC<HeaderProps> = ({ className }) => {
             <a href="#transformations" className="text-gray-600 hover:text-hummbl-primary transition-colors">
               Transformations
             </a>
-            <a href="#models" className="text-gray-600 hover:text-hummbl-primary transition-colors">
+            <button
+              onClick={() => onNavigate?.('models')}
+              className="text-gray-600 hover:text-hummbl-primary transition-colors"
+            >
               Models
-            </a>
+            </button>
             <a href="#about" className="text-gray-600 hover:text-hummbl-primary transition-colors">
               About
             </a>
@@ -49,7 +53,10 @@ export const Header: React.FC<HeaderProps> = ({ className }) => {
 
           {/* CTA Button */}
           <div className="hidden md:block">
-            <button className="px-6 py-2 bg-hummbl-primary text-white rounded-lg hover:bg-hummbl-secondary transition-colors">
+            <button
+              onClick={() => onNavigate?.('models')}
+              className="px-6 py-2 bg-hummbl-primary text-white rounded-lg hover:bg-hummbl-secondary transition-colors"
+            >
               Get Started
             </button>
           </div>
@@ -67,19 +74,43 @@ export const Header: React.FC<HeaderProps> = ({ className }) => {
         {/* Mobile Menu */}
         {isMenuOpen && (
           <nav className="md:hidden mt-4 pb-4 space-y-3">
-            <a href="#framework" className="block text-gray-600 hover:text-hummbl-primary transition-colors">
+            <a
+              href="#framework"
+              className="block text-gray-600 hover:text-hummbl-primary transition-colors"
+              onClick={() => setIsMenuOpen(false)}
+            >
               Framework
             </a>
-            <a href="#transformations" className="block text-gray-600 hover:text-hummbl-primary transition-colors">
+            <a
+              href="#transformations"
+              className="block text-gray-600 hover:text-hummbl-primary transition-colors"
+              onClick={() => setIsMenuOpen(false)}
+            >
               Transformations
             </a>
-            <a href="#models" className="block text-gray-600 hover:text-hummbl-primary transition-colors">
+            <button
+              onClick={() => {
+                onNavigate?.('models');
+                setIsMenuOpen(false);
+              }}
+              className="block w-full text-left text-gray-600 hover:text-hummbl-primary transition-colors"
+            >
               Models
-            </a>
-            <a href="#about" className="block text-gray-600 hover:text-hummbl-primary transition-colors">
+            </button>
+            <a
+              href="#about"
+              className="block text-gray-600 hover:text-hummbl-primary transition-colors"
+              onClick={() => setIsMenuOpen(false)}
+            >
               About
             </a>
-            <button className="w-full px-6 py-2 bg-hummbl-primary text-white rounded-lg hover:bg-hummbl-secondary transition-colors">
+            <button
+              onClick={() => {
+                onNavigate?.('models');
+                setIsMenuOpen(false);
+              }}
+              className="w-full px-6 py-2 bg-hummbl-primary text-white rounded-lg hover:bg-hummbl-secondary transition-colors"
+            >
               Get Started
             </button>
           </nav>
