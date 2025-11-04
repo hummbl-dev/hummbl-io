@@ -11,9 +11,12 @@
 import React from 'react';
 import type { TransformationType } from '../types/models';
 import { MENTAL_MODELS } from '../data/mentalModels';
+import { BetaBanner } from '../components/BetaBanner';
+import { SearchBar } from '../components/SearchBar';
 import { TransformationFilter } from '../components/TransformationFilter';
 import { ModelsGrid } from '../components/ModelsGrid';
 import { ModelDetail } from './ModelDetail';
+import { useSearch } from '../hooks/useSearch';
 
 interface ModelsPageProps {
   className?: string;
@@ -23,6 +26,9 @@ interface ModelsPageProps {
 export const ModelsPage: React.FC<ModelsPageProps> = ({ className }) => {
   const [selectedTransformation, setSelectedTransformation] = React.useState<TransformationType | 'ALL'>('ALL');
   const [selectedModel, setSelectedModel] = React.useState<string | null>(null);
+  
+  // Using P4 (Lens Shifting) for search-based filtering
+  const { query, setQuery, results, resultCount, hasQuery } = useSearch(MENTAL_MODELS);
 
   const handleModelClick = (code: string): void => {
     setSelectedModel(code);
@@ -63,6 +69,20 @@ export const ModelsPage: React.FC<ModelsPageProps> = ({ className }) => {
         </div>
       </section>
 
+      {/* Beta Banner */}
+      <section className="max-w-7xl mx-auto px-4 py-6">
+        <BetaBanner />
+      </section>
+
+      {/* Search Bar */}
+      <section className="max-w-7xl mx-auto px-4 py-6">
+        <SearchBar
+          value={query}
+          onChange={setQuery}
+          resultCount={hasQuery ? resultCount : undefined}
+        />
+      </section>
+
       {/* Filter Section */}
       <section className="max-w-7xl mx-auto px-4 py-8">
         <TransformationFilter
@@ -74,7 +94,7 @@ export const ModelsPage: React.FC<ModelsPageProps> = ({ className }) => {
       {/* Models Grid */}
       <section className="max-w-7xl mx-auto px-4 pb-16">
         <ModelsGrid
-          models={MENTAL_MODELS}
+          models={results.map(r => r.model)}
           selectedTransformation={selectedTransformation}
           onModelClick={handleModelClick}
         />
