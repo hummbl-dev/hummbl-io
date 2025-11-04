@@ -49,4 +49,3 @@ if ((stats.mode & 0o111) === 0) {
   console.warn(`⚠️  Warning: ${binPath} is not marked as executable. CLI tools should have the execute bit set.`);
   console.warn('You may need to run: chmod +x ' + binPath);
 }
-
