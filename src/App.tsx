@@ -1,262 +1,174 @@
-import { useState, useEffect, useMemo } from 'react';
-import { NarrativeList } from './components/narratives/NarrativeList';
-import { MentalModelsList } from './components/mental-models/MentalModelsList';
-import { MentalModelsFilters } from './components/mental-models/MentalModelsFilters';
-import ModelDetailModal from './components/mental-models/ModelDetailModal';
-import { Hero } from './components/Hero/Hero';
-import { ChatWidget } from './components/chat/ChatWidget';
-import { AuthProvider } from './contexts/AuthContext';
-import type { ViewType } from '@cascade/types/view';
-import type { MentalModel } from '@cascade/types/mental-model';
-import { fetchMentalModels, clearMentalModelsCache } from './services/mentalModelsService';
-import { useMentalModelFilters } from './hooks/useMentalModelFilters';
-import type { ChatContext } from '@cascade/types/chatContext';
-import './App.css';
+/**
+ * Main Application Component
+ * 
+ * HUMMBL landing page showcasing the Base120 framework.
+ * Features hero section, transformations grid, and framework overview.
+ * 
+ * @module App
+ * @version 1.0.0
+ */
 
-// Types for persisted state
-interface MentalModelsState {
-  searchTerm: string;
-  selectedTransformations: string[];
-  sortBy: string;
-  showExamples: boolean;
-}
+import React from 'react';
+import { ArrowRight, Brain, Zap } from 'lucide-react';
+import { Header } from './components/Header';
+import { Footer } from './components/Footer';
+import { TransformationCard } from './components/TransformationCard';
+import { ModelsPage } from './pages/Models';
+import { TRANSFORMATIONS, TOTAL_MODELS, FRAMEWORK_VERSION } from './constants/transformations';
 
-// Default state
-const DEFAULT_MENTAL_MODELS_STATE: MentalModelsState = {
-  searchTerm: '',
-  selectedTransformations: [],
-  sortBy: 'name-asc',
-  showExamples: true,
-};
+// Using SY19 (Meta-Model Selection) for view management
+export const App: React.FC = () => {
+  const [currentView, setCurrentView] = React.useState<'home' | 'models'>('home');
 
-// LocalStorage keys
-const LOCAL_STORAGE_KEYS = {
-  VIEW: 'hummbl:view',
-  MENTAL_MODELS_STATE: 'hummbl:mental-models-state',
-};
-
-function App() {
-  // State for the current view
-  const [currentView, setCurrentView] = useState<ViewType>(() => {
-    // Initialize from localStorage or default to 'narratives'
-    const savedView = localStorage.getItem(LOCAL_STORAGE_KEYS.VIEW) as ViewType;
-    return savedView || 'narratives';
-  });
-
-  // State for mental models data
-  const [mentalModels, setMentalModels] = useState<MentalModel[]>([]);
-  const [isLoading, setIsLoading] = useState<boolean>(true);
-  const [error, setError] = useState<string | null>(null);
-  const [selectedModel, setSelectedModel] = useState<MentalModel | null>(null);
-
-  // Mental models filtering
-  const {
-    filters,
-    setFilters,
-    filteredModels,
-    categories,
-    transformations,
-    resultCount,
-    totalCount,
-  } = useMentalModelFilters(mentalModels);
-
-  // State for mental models UI state
-  const [mentalModelsState] = useState<MentalModelsState>(() => {
-    // Initialize from localStorage or use defaults
-    const savedState = localStorage.getItem(LOCAL_STORAGE_KEYS.MENTAL_MODELS_STATE);
-    return savedState ? JSON.parse(savedState) : DEFAULT_MENTAL_MODELS_STATE;
-  });
-
-  // Load mental models data
-  useEffect(() => {
-    const loadMentalModels = async () => {
-      if (currentView !== 'models') return;
-
-      setIsLoading(true);
-      setError(null);
-
-      try {
-        const models = await fetchMentalModels();
-        setMentalModels(models);
-      } catch (err) {
-        console.error('Failed to load mental models:', err);
-        setError('Failed to load mental models. Please try again later.');
-      } finally {
-        setIsLoading(false);
-      }
-    };
-
-    loadMentalModels();
-  }, [currentView]);
-
-  // Save view to localStorage when it changes
-  useEffect(() => {
-    localStorage.setItem(LOCAL_STORAGE_KEYS.VIEW, currentView);
-  }, [currentView]);
-
-  // Save mental models state to localStorage when it changes
-  useEffect(() => {
-    localStorage.setItem(LOCAL_STORAGE_KEYS.MENTAL_MODELS_STATE, JSON.stringify(mentalModelsState));
-  }, [mentalModelsState]);
-
-  // Handle model selection
-  const handleModelSelect = (model: MentalModel) => {
-    setSelectedModel(model);
+  const handleNavigate = (view: 'home' | 'models'): void => {
+    setCurrentView(view);
+    window.scrollTo({ top: 0, behavior: 'smooth' });
   };
 
-  // Handle mental models state updates (inline where used)
-
-  return (
-    <AuthProvider>
-      <div className="app">
-        {/* Header */}
-        <header className="header">
-          <div className="header-content">
-            <h1 className="logo">HUMMBL</h1>
-          </div>
-        </header>
-
-        {/* Hero Section */}
-        <Hero onViewChange={setCurrentView} currentView={currentView} />
-
-        <main className="main-content">
-          {currentView === 'narratives' ? (
-            <NarrativeList />
-          ) : (
-            <div className="mental-models-wrapper">
-              <div
-                style={{ display: 'flex', justifyContent: 'flex-end', gap: 8, marginBottom: 12 }}
-              >
-                <button
-                  onClick={async () => {
-                    clearMentalModelsCache();
-                    setIsLoading(true);
-                    try {
-                      const models = await fetchMentalModels();
-                      setMentalModels(models);
-                      setError(null);
-                    } catch (err) {
-                      console.error('Failed to refresh mental models:', err);
-                      setError('Failed to load mental models. Please try again later.');
-                    } finally {
-                      setIsLoading(false);
-                    }
-                  }}
-                  className="button refresh-button"
-                  aria-label="Refresh data"
-                  title="Refresh data"
-                >
-                  <svg
-                    width="20"
-                    height="20"
-                    viewBox="0 0 24 24"
-                    fill="none"
-                    stroke="currentColor"
-                    strokeWidth="2"
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                  >
-                    <path d="M21.5 2v6h-6M2.5 22v-6h6M2 11.5a10 10 0 0 1 18.8-4.3M22 12.5a10 10 0 0 1-18.8 4.2" />
-                  </svg>
-                </button>
-              </div>
-
-              {isLoading ? (
-                <div className="loading">Loading mental models...</div>
-              ) : error ? (
-                <div className="error">{error}</div>
-              ) : (
-                <>
-                  <MentalModelsFilters
-                    filters={filters}
-                    onFiltersChange={setFilters}
-                    resultCount={resultCount}
-                    totalCount={totalCount}
-                    categories={categories}
-                    transformations={transformations}
-                  />
-                  <MentalModelsList
-                    models={filteredModels}
-                    onSelect={handleModelSelect}
-                    onRetry={async () => {
-                      clearMentalModelsCache();
-                      setIsLoading(true);
-                      try {
-                        const models = await fetchMentalModels();
-                        setMentalModels(models);
-                        setError(null);
-                      } catch (err) {
-                        console.error('Retry failed:', err);
-                        setError('Failed to load mental models. Please try again later.');
-                      } finally {
-                        setIsLoading(false);
-                      }
-                    }}
-                  />
-                </>
-              )}
-            </div>
-          )}
-        </main>
-
-        {/* Footer */}
-        <footer className="footer">
-          <p>HUMMBL Cognitive Framework v1.0</p>
-          <p>Production Certified - 2025-10-17</p>
-        </footer>
-
-        {/* Model Detail Modal */}
-        {selectedModel && (
-          <ModelDetailModal model={selectedModel} onClose={() => setSelectedModel(null)} />
-        )}
-
-        {/* Chat Widget */}
-        <ChatWidget
-          mentalModels={mentalModels}
-          narratives={[]}
-          apiKey={import.meta.env.VITE_OPENAI_API_KEY}
-          context={useMemo((): ChatContext | null => {
-            // If a model modal is open
-            if (selectedModel) {
-              return {
-                type: 'mental-model',
-                viewMode: 'modal-open',
-                currentItem: selectedModel,
-                metadata: {
-                  totalModels: mentalModels.length,
-                },
-              };
-            }
-
-            // If browsing mental models
-            if (currentView === 'models') {
-              return {
-                type: 'mental-model',
-                viewMode: 'browsing',
-                metadata: {
-                  totalModels: mentalModels.length,
-                  activeFilters: [],
-                },
-              };
-            }
-
-            // If browsing narratives
-            if (currentView === 'narratives') {
-              return {
-                type: 'narrative',
-                viewMode: 'browsing',
-                metadata: {
-                  totalNarratives: 0, // TODO: Add narratives count when available
-                },
-              };
-            }
-
-            return null;
-          }, [selectedModel, currentView, mentalModels.length])}
-        />
+  // Show Models page
+  if (currentView === 'models') {
+    return (
+      <div className="min-h-screen bg-white">
+        <Header />
+        <div className="pt-20">
+          <ModelsPage />
+        </div>
+        <Footer />
       </div>
-    </AuthProvider>
-  );
-}
+    );
+  }
 
-export default App;
+  // Show Home page
+  return (
+    <div className="min-h-screen bg-white">
+      <Header />
+      
+      {/* Hero Section */}
+      <section className="pt-32 pb-20 px-4">
+        <div className="container mx-auto max-w-6xl">
+          <div className="text-center space-y-6">
+            <div className="inline-flex items-center space-x-2 px-4 py-2 bg-hummbl-light rounded-full text-sm text-hummbl-primary font-medium">
+              <Zap className="w-4 h-4" />
+              <span>Framework Version {FRAMEWORK_VERSION}</span>
+            </div>
+            
+            <h1 className="text-5xl md:text-7xl font-bold text-gray-900 leading-tight">
+              Think Better with
+              <br />
+              <span className="text-hummbl-primary">HUMMBL Base120</span>
+            </h1>
+            
+            <p className="text-xl text-gray-600 max-w-3xl mx-auto">
+              A comprehensive framework of {TOTAL_MODELS} mental models organized across 6 fundamental transformations. 
+              Enhance decision-making, problem-solving, and strategic thinking.
+            </p>
+            
+            <div className="flex flex-col sm:flex-row items-center justify-center gap-4 pt-4">
+              <button 
+                onClick={() => handleNavigate('models')}
+                className="px-8 py-4 bg-hummbl-primary text-white rounded-lg font-semibold hover:bg-hummbl-secondary transition-colors flex items-center space-x-2"
+              >
+                <span>Explore Framework</span>
+                <ArrowRight className="w-5 h-5" />
+              </button>
+              <button 
+                onClick={() => handleNavigate('models')}
+                className="px-8 py-4 border-2 border-gray-300 text-gray-700 rounded-lg font-semibold hover:border-hummbl-primary hover:text-hummbl-primary transition-colors flex items-center space-x-2"
+              >
+                <Brain className="w-5 h-5" />
+                <span>Browse Models</span>
+              </button>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* Stats Section */}
+      <section className="py-16 bg-gray-50">
+        <div className="container mx-auto max-w-6xl px-4">
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-8 text-center">
+            <div>
+              <div className="text-4xl font-bold text-hummbl-primary mb-2">{TOTAL_MODELS}</div>
+              <div className="text-gray-600">Mental Models</div>
+            </div>
+            <div>
+              <div className="text-4xl font-bold text-hummbl-primary mb-2">{TRANSFORMATIONS.length}</div>
+              <div className="text-gray-600">Transformations</div>
+            </div>
+            <div>
+              <div className="text-4xl font-bold text-hummbl-primary mb-2">20</div>
+              <div className="text-gray-600">Models per Transformation</div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* Transformations Section */}
+      <section id="transformations" className="py-20 px-4">
+        <div className="container mx-auto max-w-6xl">
+          <div className="text-center mb-16">
+            <h2 className="text-4xl font-bold text-gray-900 mb-4">
+              The 6 Transformations
+            </h2>
+            <p className="text-xl text-gray-600 max-w-2xl mx-auto">
+              Each transformation represents a fundamental pattern of thinking, 
+              containing 20 carefully curated mental models.
+            </p>
+          </div>
+          
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            {TRANSFORMATIONS.map((transformation) => (
+              <TransformationCard
+                key={transformation.code}
+                transformation={transformation}
+              />
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* Framework Overview */}
+      <section id="framework" className="py-20 bg-gray-900 text-white px-4">
+        <div className="container mx-auto max-w-6xl">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-12 items-center">
+            <div>
+              <h2 className="text-4xl font-bold mb-6">
+                What is HUMMBL Base120?
+              </h2>
+              <div className="space-y-4 text-gray-300">
+                <p>
+                  HUMMBL Base120 is a systematic framework for understanding and applying mental models. 
+                  It organizes 120 proven thinking patterns into 6 fundamental transformations.
+                </p>
+                <p>
+                  Each mental model is a tool for better thinking—a lens through which to view problems, 
+                  make decisions, and understand complex systems.
+                </p>
+                <p>
+                  By mastering these models across all transformations, you develop a comprehensive 
+                  toolkit for tackling any challenge with clarity and confidence.
+                </p>
+              </div>
+            </div>
+            <div className="space-y-6">
+              <div className="bg-white/10 backdrop-blur-sm rounded-lg p-6">
+                <h3 className="text-xl font-bold mb-3">Perspective (P)</h3>
+                <p className="text-gray-300 text-sm">Frame problems from different viewpoints</p>
+              </div>
+              <div className="bg-white/10 backdrop-blur-sm rounded-lg p-6">
+                <h3 className="text-xl font-bold mb-3">Inversion (IN)</h3>
+                <p className="text-gray-300 text-sm">Work backward to find solutions</p>
+              </div>
+              <div className="bg-white/10 backdrop-blur-sm rounded-lg p-6">
+                <h3 className="text-xl font-bold mb-3">Systems (SY)</h3>
+                <p className="text-gray-300 text-sm">Understand patterns and emergence</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <Footer />
+    </div>
+  );
+};

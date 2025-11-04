@@ -1,516 +1,221 @@
-# HUMMBL
+# HUMMBL.io
 
-**120 Mental Models for Strategic Thinking**
+**Version 1.0.0** | **Framework Version 1.0-beta**
 
-A modern web application for exploring and searching the HUMMBL (Highly Useful Mental Model Base Language) framework - a comprehensive collection of mental models organized into six core transformations.
+Official website for HUMMBL Base120 - A comprehensive framework of 120 mental models organized across 6 fundamental transformations.
 
-🌐 **Live Site:** [hummbl.io](https://hummbl.io)
-
----
-
-## 📚 Documentation
-
-For detailed development setup and guidelines, see the [Development Guide](docs/DEVELOPMENT.md).
-
-## 🎯 Overview
-
-HUMMBL provides an interactive interface to browse, search, and learn about 120 mental models that enhance strategic thinking and decision-making. Each model includes:
-
-- **Code**: Unique identifier for quick reference (e.g., P1, IN5, CO12)
-- **Name**: The mental model's title
-- **Definition**: Clear explanation of the concept
-- **Example**: Practical application scenario
-- **Transformation**: Classification into one of six cognitive transformations
+[![Deploy with Vercel](https://vercel.com/button)](https://vercel.com/new/clone?repository-url=https://github.com/hummbl/hummbl-io)
 
 ---
 
-## 🧠 Six Transformations
-
-The mental models are organized into six fundamental transformations:
-
-| Code   | Transformation | Description                                |
-| ------ | -------------- | ------------------------------------------ |
-| **P**  | Perspective    | Viewing situations from different angles   |
-| **IN** | Inversion      | Thinking backwards or opposite             |
-| **CO** | Composition    | Combining elements together                |
-| **DE** | Decomposition  | Breaking down into parts                   |
-| **RE** | Recursion      | Self-referential patterns and iteration    |
-| **SY** | Meta-Systems   | Systems thinking and higher-order patterns |
-
-Each transformation contains 20 models (P1-P20, IN1-IN20, etc.)
-
----
-
-## ✨ Features
-
-- **🔍 Search**: Find models by name, code, or keywords in definitions
-- **🎯 Filter**: Browse by transformation type (P, IN, CO, DE, RE, SY)
-- **📱 Responsive**: Works seamlessly on desktop, tablet, and mobile
-- **⚡ Fast**: Built with Vite for instant loading and smooth interactions
-- **🎨 Clean UI**: Card-based grid with expandable detail views
-
----
-
-## 🚀 Getting Started
-
-### Prerequisites
-
-- Node.js 20.x or later
-- pnpm 8.x or later
-- Git
-
-### Installation
-
-1. Clone the repository:
-
-   ```bash
-   git clone https://github.com/your-username/hummbl-io.git
-   cd hummbl-io
-   ```
-
-2. Install dependencies:
-
-   ```bash
-   pnpm install
-   ```
-
-3. Set up environment variables:
-   ```bash
-   cp .env.example .env
-   # Edit .env with your configuration
-   ```
-
-### Development
-
-Start the development server:
+## Quick Start
 
 ```bash
-pnpm dev
-```
+# Install dependencies
+npm install
 
-### Building for Production
+# Start development server
+npm run dev
 
-```bash
-pnpm build
-pnpm preview
-```
-
-### Testing
-
-Run unit tests:
-
-```bash
-pnpm test
-```
-
-Run performance tests:
-
-```bash
-pnpm test:perf
-pnpm test:auth
-```
-
-### Linting and Formatting
-
-```bash
-# Lint code
-pnpm lint
-
-# Format code
-pnpm format
-
-# Check TypeScript types
-pnpm typecheck
-```
-
-### Git Hooks
-
-This project uses Husky for Git hooks. After cloning, run:
-
-```bash
-pnpm prepare
-```
-
-This will set up pre-commit hooks that run linting and formatting automatically.
-
-## 📊 Analytics
-
-The application includes a robust analytics system that tracks user interactions while respecting privacy. The system supports multiple analytics providers and is designed to be performant and reliable.
-
-### Key Features
-
-- **Multi-provider Support**: Tracks events in both Plausible and Google Analytics
-- **Type Safety**: Full TypeScript support with strict type checking
-- **Performance Optimized**: Lightweight and non-blocking
-- **Comprehensive Testing**: Extensive test coverage for all tracking functions
-- **Privacy-Focused**: No personally identifiable information (PII) is collected by default
-
-### Available Tracking Methods
-
-```typescript
-// Basic event tracking
-trackEvent({
-  event: 'button_click',
-  category: 'engagement',
-  label: 'Signup Button',
-  properties: {
-    button_position: 'hero',
-    button_color: 'blue',
-  },
-});
-
-// Page view tracking
-trackPageView('/dashboard', 'Dashboard Page');
-
-// Predefined events
-trackSearchPerformed('mental models', 15);
-trackMentalModelViewed('P1', 'First Principles');
-```
-
-### Configuration
-
-Initialize analytics in your main application file:
-
-```typescript
-import { initAnalytics } from './utils/analytics';
-
-initAnalytics({
-  debug: process.env.NODE_ENV === 'development',
-  trackPageViews: true,
-  trackErrors: true,
-  sampleRate: 1.0, // 100% of sessions
-});
-```
-
-### Testing
-
-Run the test suite:
-
-```bash
-# Run all analytics tests
-pnpm test:analytics
-
-# Run edge case tests
-pnpm test:analytics:edge-cases
-```
-
-For more details, see the [Analytics Documentation](./docs/ANALYTICS.md).
-
-## 🤝 Contributing
-
-1. Fork the repository
-2. Create a feature branch: `git checkout -b feature/amazing-feature`
-3. Commit your changes: `git commit -m 'Add some amazing feature'`
-4. Push to the branch: `git push origin feature/amazing-feature`
-5. Open a pull request
-
-## 📄 License
-
-This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
-
-### Prerequisites
-
-- **Node.js** (v16 or higher)
-- **npm** or **yarn**
-
-### Installation
-
-1. **Clone the repository:**
-
-   ```bash
-   git clone https://github.com/[YOUR-USERNAME]/hummbl-io.git
-   cd hummbl-io
-   ```
-
-2. **Install dependencies:**
-
-   ```bash
-   npm install
-   ```
-
-3. **Start the development server:**
-
-   ```bash
-   npm run dev
-   ```
-
-4. **Open your browser:**
-   ```
-   http://localhost:5173
-   ```
-
----
-
-## 📦 Build & Deployment
-
-### Local Production Build
-
-To create an optimized production build:
-
-```bash
+# Build for production
 npm run build
-```
 
-The build artifacts will be generated in the `dist/` directory.
-
-To preview the production build locally:
-
-```bash
+# Preview production build
 npm run preview
 ```
 
-### Deploy to Vercel
+Visit [http://localhost:5173](http://localhost:5173) to view the site.
 
-This project is configured for Vercel deployment:
+---
 
-1. **Connect to Vercel:**
-   - Push your repository to GitHub
-   - Import project in [Vercel Dashboard](https://vercel.com/new)
-   - Vercel auto-detects Vite configuration
+## Architecture
 
-2. **Configure Build Settings:**
-   - **Framework Preset:** Vite
-   - **Build Command:** `npm run build`
-   - **Output Directory:** `dist`
-   - **Install Command:** `npm install`
+### Tech Stack
 
-3. **Add Custom Domain** (optional):
-   - Go to Project Settings → Domains
-   - Add your domain (e.g., `hummbl.io`)
-   - Update DNS records as shown by Vercel
+- **Framework**: React 18 + Vite
+- **Language**: TypeScript (strict mode)
+- **Styling**: TailwindCSS 3
+- **Icons**: Lucide React
+- **Analytics**: Vercel Analytics
+- **Deployment**: Vercel
 
-### Deploy to Other Platforms
+### Project Structure
 
-**Cloudflare Pages:**
-
-```bash
-npm run build
-npx wrangler pages deploy dist --project-name=hummbl-io
 ```
-
-**Netlify:**
-
-```bash
-npm run build
-# Drag and drop dist/ folder to Netlify
+src/
+├── components/          # React components (named exports)
+│   ├── Header.tsx      # Main navigation
+│   ├── Footer.tsx      # Site footer
+│   └── TransformationCard.tsx  # Transformation showcase cards
+├── constants/          # Application constants
+│   └── transformations.ts      # 6 transformations data
+├── types/              # TypeScript type definitions
+│   └── models.ts       # Mental model types
+├── utils/              # Utility functions
+│   └── cn.ts           # ClassName merger
+├── App.tsx             # Main application component
+├── main.tsx            # Application entry point
+└── index.css           # Global styles + Tailwind
 ```
 
 ---
 
-## 🛠️ Tech Stack
+## HUMMBL Framework
 
-- **React 18** - UI library
-- **TypeScript** - Type safety and developer experience
-- **Vite** - Next-generation build tool with HMR
-- **CSS3** - Custom styling (no framework needed)
+### The 6 Transformations
 
-### Dependencies
+1. **P (Perspective)**: Frame, name, shift POV
+2. **IN (Inversion)**: Reverse assumptions, work backward
+3. **CO (Composition)**: Build up, combine, integrate parts
+4. **DE (Decomposition)**: Break down, modularize, separate
+5. **RE (Recursion)**: Self-reference, repetition, iteration
+6. **SY (Systems)**: Meta-systems, patterns, emergence
 
-```json
-{
-  "dependencies": {
-    "react": "^18.2.0",
-    "react-dom": "^18.2.0"
-  },
-  "devDependencies": {
-    "@types/react": "^18.2.43",
-    "@types/react-dom": "^18.2.17",
-    "@vitejs/plugin-react": "^4.2.1",
-    "typescript": "^5.2.2",
-    "vite": "^5.0.8"
-  }
+Each transformation contains exactly 20 mental models, totaling 120 models in the Base120 framework.
+
+---
+
+## Code Standards
+
+### TypeScript
+
+- **Strict Mode**: All code uses TypeScript strict mode
+- **No `any` Types**: Use `unknown` or proper types
+- **Interfaces**: For object shapes
+- **Named Exports**: No default exports
+
+### React
+
+- **Functional Components**: Only functional components with `React.FC`
+- **Typed Props**: All props have interfaces
+- **Named Exports**: `export const Component: React.FC<Props>`
+- **Hooks**: Proper typing with loading/error states
+
+### Example Component
+
+```typescript
+interface CardProps {
+  title: string;
+  onClick?: () => void;
 }
+
+export const Card: React.FC<CardProps> = ({ title, onClick }) => {
+  return <div onClick={onClick}>{title}</div>;
+};
 ```
 
 ---
 
-## 📁 Project Structure
+## Development
 
-```
-hummbl-io/
-├── public/
-│   └── models.json          # All 120 mental models (data source)
-├── src/
-│   ├── App.tsx              # Main application component
-│   ├── App.css              # Component styles
-│   ├── index.css            # Global styles
-│   └── main.tsx             # Application entry point
-├── index.html               # HTML template
-├── package.json             # Dependencies and scripts
-├── tsconfig.json            # TypeScript configuration
-├── vite.config.ts           # Vite configuration
-└── vercel.json              # Deployment configuration
-```
+### Available Scripts
+
+- `npm run dev` - Start development server
+- `npm run build` - Build for production
+- `npm run lint` - Run ESLint
+- `npm run preview` - Preview production build
+
+### Environment Variables
+
+No environment variables required for development. For production deployment, Vercel Analytics is automatically configured.
 
 ---
 
-## 🎨 Usage
+## Deployment
 
-### Searching Models
+### Vercel (Recommended)
 
-Use the search bar to find models by:
+1. Push code to GitHub
+2. Import project in Vercel dashboard
+3. Configure domain: `hummbl.io`
+4. Deploy automatically
 
-- **Model name** (e.g., "First Principles")
-- **Model code** (e.g., "P1")
-- **Keywords** in definitions (e.g., "feedback", "decomposition")
+### Build Settings
 
-The search is case-insensitive and searches across all model fields.
-
-### Filtering by Transformation
-
-Click transformation filter buttons to view models by type:
-
-- **All** - View all 120 models
-- **P - Perspective** - Models focused on viewpoint shifts
-- **IN - Inversion** - Models using reverse thinking
-- **CO - Composition** - Models about combining elements
-- **DE - Decomposition** - Models about breaking down complexity
-- **RE - Recursion** - Models with self-referential patterns
-- **SY - Meta-Systems** - Models for systems-level thinking
-
-### Viewing Model Details
-
-Click any model card to expand and view:
-
-- Complete definition
-- Practical example application
-- Transformation classification
-- Tier level (1-20)
-
-Click outside or on another card to close the detail view.
+- **Build Command**: `npm run build`
+- **Output Directory**: `dist`
+- **Install Command**: `npm install`
+- **Framework Preset**: Vite
 
 ---
 
-## 🔧 Customization
+## Features
 
-### Adding or Modifying Models
+### ✅ Implemented
 
-Models are stored in `public/models.json`. Each model follows this structure:
+- Hero section with framework overview
+- 6 transformations showcase grid
+- Responsive header with mobile menu
+- Footer with company info and links
+- Vercel Analytics integration
+- TypeScript strict mode
+- TailwindCSS styling
+- Named exports throughout
 
-```json
-{
-  "code": "P1",
-  "name": "First Principles Framing",
-  "transformation": "P",
-  "tier": 1,
-  "definition": "Reduce complex problems to foundational truths...",
-  "example": "When redesigning pricing strategy, start with unit costs..."
-}
-```
+### 🚧 Planned
 
-After modifying `models.json`, restart the development server.
-
-### Styling
-
-- **Global styles:** `src/index.css`
-- **Component styles:** `src/App.css`
-- **Colors, spacing, typography** can be customized in CSS files
+- Mental models explorer/grid
+- Individual transformation pages
+- Model detail pages
+- Search functionality
+- Interactive model relationships
+- Case studies section
 
 ---
 
-## 🐛 Troubleshooting
+## Company
+
+**HUMMBL Systems (HUMMBL, LLC)**
+
+- Website: [hummbl.io](https://hummbl.io)
+- Domain: hummbl.io
+- Phase: Phase 0 commercialization (Oct 2025)
+- Goal: 10 WAU + 3 case studies by 2025-11-25
+
+---
+
+## License
+
+© 2025 HUMMBL Systems (HUMMBL, LLC). All rights reserved.
+
+---
+
+## Troubleshooting
 
 ### Build Issues
 
-**Error: "Command 'vite build' exited with 127"**
+**TypeScript Errors**: Ensure all files use proper types, no `any`
+```bash
+npm run build
+```
 
-- **Solution:** Ensure build command in deployment platform is set to `npm run build`, not `vite build`
+**CSS Not Loading**: Verify Tailwind is configured
+```bash
+# Check tailwind.config.js exists
+# Check @tailwind directives in index.css
+```
 
-**Error: "Module not found"**
+### Development Issues
 
-- **Solution:** Delete `node_modules` and `package-lock.json`, then run `npm install`
-
-**TypeScript errors during build**
-
-- **Solution:** Run `npm run build` locally first to catch type errors
-- Check `tsconfig.json` configuration
-
-### Development Server Issues
-
-**Port 5173 already in use**
-
-- **Solution:** Kill the existing process or change port in `vite.config.ts`:
-  ```ts
-  export default defineConfig({
-    plugins: [react()],
-    server: { port: 3000 },
-  });
-  ```
-
-**Hot reload not working**
-
-- **Solution:** Check browser console for errors
-- Restart dev server with `npm run dev`
+**Port Already in Use**: Change port in `vite.config.ts`
+```typescript
+export default defineConfig({
+  server: { port: 3000 }
+})
+```
 
 ---
 
-## 📚 About HUMMBL Framework
+## Changelog
 
-The HUMMBL Mental Models Framework is a comprehensive collection of 120 cognitive tools for strategic thinking, organized into six transformations with 20 tiers each.
+### v1.0.0 (2025-11-04)
 
-**Framework Structure:**
-
-- **Base6**: 6 foundational models (one per transformation)
-- **Base42**: 42 core models (first 7 tiers)
-- **Base90**: 90 essential models (first 15 tiers)
-- **Base120**: Complete collection (all 20 tiers)
-
-For more information about the framework itself, visit the documentation (coming soon).
-
----
-
-## 🤝 Contributing
-
-Contributions are welcome! Areas for contribution:
-
-- **Bug reports** - Found an issue? Open a GitHub issue
-- **Feature requests** - Have an idea? Suggest it via issues
-- **Model improvements** - Suggest edits to definitions or examples
-- **UI/UX enhancements** - Improve the interface
-- **Documentation** - Help improve this README or add guides
-
-### Development Workflow
-
-1. Fork the repository
-2. Create a feature branch (`git checkout -b feature/amazing-feature`)
-3. Make your changes
-4. Test locally (`npm run dev` and `npm run build`)
-5. Commit your changes (`git commit -m 'Add amazing feature'`)
-6. Push to the branch (`git push origin feature/amazing-feature`)
-7. Open a Pull Request
-
----
-
-## 📄 License
-
-This project is licensed under the MIT License - see the LICENSE file for details.
-
----
-
-## 🌟 Acknowledgments
-
-- **HUMMBL Framework** - Original mental models framework
-- **React Team** - For the excellent UI library
-- **Vite Team** - For the blazing-fast build tool
-- **Vercel** - For seamless deployment platform
-
----
-
-## 📧 Contact
-
-**Website:** [hummbl.io](https://hummbl.io)
-
-For questions, feedback, or bug reports:
-
-- Open an issue on GitHub
-- Visit the live site for more information
-
----
-
-**HUMMBL Mental Models Framework v1.0** - Base120 Complete Collection
-
----
-
-🚀 **CI/CD Status:** Automated testing and deployment enabled via GitHub Actions
-
-<!-- Deployment test 2025-10-22 -->
+- Initial production release
+- React 18 + Vite setup
+- TypeScript strict mode
+- TailwindCSS integration
+- Header, Footer, TransformationCard components
+- Landing page with hero, stats, transformations showcase
+- Vercel Analytics integration
+- Comprehensive documentation
+- Ready for Vercel deployment

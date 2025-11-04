@@ -1,1 +1,0 @@
-# Testing updated husky hook
