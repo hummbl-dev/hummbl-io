@@ -1,8 +1,7 @@
 import { v4 as uuidv4 } from 'uuid';
-import { 
-  ModelBinding, 
-  ComponentReference, 
-  Constraint, 
+import {
+  ModelBinding,
+  ComponentReference,
   BindingPattern,
   ValidationResult,
   ValidationError,
@@ -11,8 +10,8 @@ import {
   ValidateBindingParams,
   SyntacticBindingModel,
   BindingType,
+  BindingDirection,
   ConstraintType,
-  ConstraintSeverity,
 } from './types';
 import { CO1_CONSTANTS } from './constants';
 
@@ -23,9 +22,9 @@ export const createSyntacticBindingModel = (): SyntacticBindingModel => {
   // Initialize storage for bindings and patterns
   const bindings = new Map<string, ModelBinding>();
   const patterns = new Map<string, BindingPattern>();
-  
+
   // Register built-in patterns
-  CO1_CONSTANTS.BUILTIN_PATTERNS.forEach(pattern => {
+  CO1_CONSTANTS.BUILTIN_PATTERNS.forEach((pattern) => {
     patterns.set(pattern.id, pattern);
   });
 
@@ -45,8 +44,10 @@ export const createSyntacticBindingModel = (): SyntacticBindingModel => {
     const binding: ModelBinding = {
       id: `bind-${uuidv4()}`,
       type: params.type,
-      components: params.components.map(comp => ({
-        ...comp,
+      components: params.components.map((comp) => ({
+        componentId: comp.componentId,
+        role: comp.role,
+        isRequired: comp.isRequired ?? false,
         constraints: comp.constraints || [],
         meta: {},
       })),
@@ -85,8 +86,6 @@ export const createSyntacticBindingModel = (): SyntacticBindingModel => {
   const validateBinding = ({
     binding,
     includeSuggestions = true,
-    includeWarnings = true,
-    context = {},
   }: ValidateBindingParams): ValidationResult => {
     const errors: ValidationError[] = [];
     const warnings: ValidationWarning[] = [];
@@ -103,33 +102,17 @@ export const createSyntacticBindingModel = (): SyntacticBindingModel => {
       });
     };
 
-    const addWarning = (code: string, message: string, path: string) => {
-      if (includeWarnings) {
-        warnings.push({
-          code,
-          message,
-          path,
-          severity: 'warning',
-        });
-      }
-    };
-
     // Validate binding type
     if (!Object.values(BindingType).includes(binding.type as BindingType)) {
-      addError(
-        'INVALID_BINDING_TYPE',
-        `Invalid binding type: ${binding.type}`,
-        'type',
-        {
-          description: `Use one of: ${Object.values(BindingType).join(', ')}`,
-          action: () => {
-            // Auto-fix by setting to default type
-            if ('type' in binding) {
-              binding.type = BindingType.SEQUENTIAL;
-            }
-          },
-        }
-      );
+      addError('INVALID_BINDING_TYPE', `Invalid binding type: ${binding.type}`, 'type', {
+        description: `Use one of: ${Object.values(BindingType).join(', ')}`,
+        action: () => {
+          // Auto-fix by setting to default type
+          if ('type' in binding) {
+            binding.type = BindingType.SEQUENTIAL;
+          }
+        },
+      });
     }
 
     // Validate components
@@ -141,7 +124,7 @@ export const createSyntacticBindingModel = (): SyntacticBindingModel => {
       binding.components.forEach((comp, index) => {
         const ref = `${comp.componentId}:${comp.role}`;
         componentRefs.set(ref, (componentRefs.get(ref) || 0) + 1);
-        
+
         if (componentRefs.get(ref)! > 1) {
           addError(
             'DUPLICATE_COMPONENT',
@@ -167,19 +150,14 @@ export const createSyntacticBindingModel = (): SyntacticBindingModel => {
 
     // Validate direction
     if (!Object.values(BindingDirection).includes(binding.direction as BindingDirection)) {
-      addError(
-        'INVALID_DIRECTION',
-        `Invalid direction: ${binding.direction}`,
-        'direction',
-        {
-          description: `Use one of: ${Object.values(BindingDirection).join(', ')}`,
-          action: () => {
-            if ('direction' in binding) {
-              binding.direction = BindingDirection.UNIDIRECTIONAL;
-            }
-          },
-        }
-      );
+      addError('INVALID_DIRECTION', `Invalid direction: ${binding.direction}`, 'direction', {
+        description: `Use one of: ${Object.values(BindingDirection).join(', ')}`,
+        action: () => {
+          if ('direction' in binding) {
+            binding.direction = BindingDirection.UNIDIRECTIONAL;
+          }
+        },
+      });
     }
 
     // Generate suggestions if requested
@@ -190,10 +168,8 @@ export const createSyntacticBindingModel = (): SyntacticBindingModel => {
         );
       }
 
-      if (binding.constraints.length === 0) {
-        suggestions.push(
-          'Add constraints to ensure the binding is used as intended.'
-        );
+      if (binding.constraints && binding.constraints.length === 0) {
+        suggestions.push('Add constraints to ensure the binding is used as intended.');
       }
     }
 
@@ -240,7 +216,7 @@ export const createSyntacticBindingModel = (): SyntacticBindingModel => {
    */
   const findConflictingBindings = (binding: ModelBinding): ModelBinding[] => {
     const conflicts: ModelBinding[] = [];
-    
+
     for (const existingBinding of bindings.values()) {
       // Skip self-comparison
       if ('id' in binding && existingBinding.id === binding.id) {
@@ -248,10 +224,10 @@ export const createSyntacticBindingModel = (): SyntacticBindingModel => {
       }
 
       // Check for overlapping components with conflicting constraints
-      const overlappingComponents = existingBinding.components.some(existingComp =>
-        binding.components.some(newComp => 
-          existingComp.componentId === newComp.componentId &&
-          existingComp.role === newComp.role
+      const overlappingComponents = existingBinding.components.some((existingComp) =>
+        binding.components.some(
+          (newComp) =>
+            existingComp.componentId === newComp.componentId && existingComp.role === newComp.role
         )
       );
 
@@ -296,13 +272,11 @@ export const createSyntacticBindingModel = (): SyntacticBindingModel => {
    */
   const listPatterns = ({ tags = [] } = {}): BindingPattern[] => {
     let result = Array.from(patterns.values());
-    
+
     if (tags.length > 0) {
-      result = result.filter(pattern => 
-        tags.some(tag => pattern.tags.includes(tag))
-      );
+      result = result.filter((pattern) => tags.some((tag) => pattern.tags.includes(tag)));
     }
-    
+
     return result;
   };
 
@@ -316,33 +290,31 @@ export const createSyntacticBindingModel = (): SyntacticBindingModel => {
   /**
    * Lists all bindings, optionally filtered
    */
-  const listBindings = ({ 
+  const listBindings = ({
     type,
     tags = [],
     componentId,
-  }: { 
-    type?: BindingType; 
-    tags?: string[]; 
+  }: {
+    type?: BindingType;
+    tags?: string[];
     componentId?: string;
   } = {}): ModelBinding[] => {
     let result = Array.from(bindings.values());
-    
+
     if (type) {
-      result = result.filter(binding => binding.type === type);
+      result = result.filter((binding) => binding.type === type);
     }
-    
+
     if (tags.length > 0) {
-      result = result.filter(binding => 
-        tags.some(tag => binding.tags.includes(tag))
-      );
+      result = result.filter((binding) => tags.some((tag) => binding.tags.includes(tag)));
     }
-    
+
     if (componentId) {
-      result = result.filter(binding =>
-        binding.components.some(comp => comp.componentId === componentId)
+      result = result.filter((binding) =>
+        binding.components.some((comp) => comp.componentId === componentId)
       );
     }
-    
+
     return result;
   };
 
@@ -351,32 +323,30 @@ export const createSyntacticBindingModel = (): SyntacticBindingModel => {
    */
   const suggestBindings = (components: ComponentReference[]): ModelBinding[] => {
     const suggestions: ModelBinding[] = [];
-    
+
     // Find matching patterns
     for (const pattern of patterns.values()) {
       // Simple matching based on component roles
       const requiredRoles = pattern.template.components
-        .filter(comp => comp.isRequired)
-        .map(comp => comp.role);
-      
-      const availableRoles = components.map(comp => comp.role);
-      const hasRequiredRoles = requiredRoles.every(role => 
-        availableRoles.includes(role)
-      );
-      
+        .filter((comp) => comp.isRequired)
+        .map((comp) => comp.role);
+
+      const availableRoles = components.map((comp) => comp.role);
+      const hasRequiredRoles = requiredRoles.every((role) => availableRoles.includes(role));
+
       if (hasRequiredRoles) {
         // Create a binding based on the pattern
         const binding = createBinding({
           ...pattern.template,
-          components: components.filter(comp => 
-            pattern.template.components.some(pComp => pComp.role === comp.role)
+          components: components.filter((comp) =>
+            pattern.template.components.some((pComp) => pComp.role === comp.role)
           ),
         });
-        
+
         suggestions.push(binding);
       }
     }
-    
+
     return suggestions;
   };
 
@@ -386,22 +356,22 @@ export const createSyntacticBindingModel = (): SyntacticBindingModel => {
   const optimizeBindings = (bindingsToOptimize: ModelBinding[]): ModelBinding[] => {
     // Simple optimization: remove duplicate bindings
     const uniqueBindings = new Map<string, ModelBinding>();
-    
+
     for (const binding of bindingsToOptimize) {
       const key = JSON.stringify({
         type: binding.type,
-        components: binding.components.map(c => ({
+        components: binding.components.map((c) => ({
           componentId: c.componentId,
           role: c.role,
         })),
         direction: binding.direction,
       });
-      
+
       if (!uniqueBindings.has(key)) {
         uniqueBindings.set(key, binding);
       }
     }
-    
+
     return Array.from(uniqueBindings.values());
   };
 
@@ -411,26 +381,26 @@ export const createSyntacticBindingModel = (): SyntacticBindingModel => {
     name: CO1_CONSTANTS.MODEL_NAME,
     description: 'Defines a compositional grammar for model interlinkage',
     version: CO1_CONSTANTS.VERSION,
-    
+
     // Core methods
     createBinding,
     validateBinding,
     applyBinding,
     removeBinding,
-    
+
     // Pattern management
     registerPattern,
     getPattern,
     listPatterns,
-    
+
     // Binding management
     getBinding,
     listBindings,
-    
+
     // Utility methods
     suggestBindings,
     optimizeBindings,
-    
+
     // Configuration
     config,
   };
