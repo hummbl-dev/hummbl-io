@@ -2,8 +2,9 @@ import { mkdir, writeFile } from 'fs/promises';
 import { fileURLToPath } from 'url';
 import { dirname, join } from 'path';
 
+// __dirname is available but not currently used in this script
 const __filename = fileURLToPath(import.meta.url);
-const __dirname = dirname(__filename);
+const _unusedDirname = dirname(__filename);
 
 const MODEL_DEFINITION = {
   id: 'IN1',

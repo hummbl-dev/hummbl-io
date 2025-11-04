@@ -29,7 +29,7 @@ export async function extractTemplate(sourcePath: string, outputPath: string, op
     );
 
     // Process the source file to create template
-    const template = transformToTemplate(sourceFile, options);
+    const template = transformToTemplate(sourceFile, options, sourcePath);
     
     // Ensure output directory exists
     const outputDir = path.dirname(outputPath);
@@ -47,8 +47,9 @@ export async function extractTemplate(sourcePath: string, outputPath: string, op
   }
 }
 
-function transformToTemplate(node: ts.Node, options: TemplateOptions): string {
-  const printer = ts.createPrinter({ newLine: ts.NewLineKind.LineFeed });
+function transformToTemplate(sourceFile: ts.SourceFile, options: TemplateOptions, sourcePath: string): string {
+  const printer = ts.createPrinter();
+  
   const transformer = <T extends ts.Node>(context: ts.TransformationContext) => 
     (rootNode: T) => {
       function visit(node: ts.Node): ts.Node {
@@ -86,7 +87,7 @@ function transformToTemplate(node: ts.Node, options: TemplateOptions): string {
       return ts.visitNode(rootNode, visit);
     };
   
-  const result = ts.transform(node, [transformer]);
+  const result = ts.transform(sourceFile, [transformer]);
   const transformedSourceFile = result.transformed[0] as ts.SourceFile;
   
   let output = printer.printFile(transformedSourceFile);
@@ -113,10 +114,14 @@ function processMethod(method: ts.MethodDeclaration): ts.MethodDeclaration {
     return method;
   }
   
+  // Check if return type is void
+  const isVoidReturn = method.type && 
+    (ts.isTypeNode(method.type) && method.type.kind === ts.SyntaxKind.VoidKeyword || 
+     (ts.isUnionTypeNode(method.type) && method.type.types.some(t => t.kind === ts.SyntaxKind.VoidKeyword)));
+  
   // Add implementation placeholder for other methods
   return ts.factory.updateMethodDeclaration(
     method,
-    method.decorators,
     method.modifiers,
     method.asteriskToken,
     method.name,
@@ -129,7 +134,7 @@ function processMethod(method: ts.MethodDeclaration): ts.MethodDeclaration {
         ts.factory.createStringLiteral('// TODO: Implement this method')
       ),
       ts.factory.createReturnStatement(
-        method.type && !ts.isVoidTypeNode(method.type) 
+        !isVoidReturn
           ? ts.factory.createIdentifier('undefined')
           : undefined
       )
@@ -142,7 +147,6 @@ function processProperty(property: ts.PropertyDeclaration): ts.PropertyDeclarati
   if (!property.initializer || !property.questionToken) {
     return ts.factory.updatePropertyDeclaration(
       property,
-      property.decorators,
       property.modifiers,
       property.name,
       property.questionToken,

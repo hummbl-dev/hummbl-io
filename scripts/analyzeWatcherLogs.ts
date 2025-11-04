@@ -9,7 +9,7 @@ import { stringify } from 'csv-stringify/sync';
 
 // Get the directory name in ES module context
 const __filename = fileURLToPath(import.meta.url);
-const __dirname = path.dirname(__filename);
+const _unusedDirname = path.dirname(__filename);
 
 // Default configuration
 const DEFAULT_CONFIG = {
@@ -52,7 +52,7 @@ type EventType = 'valid' | 'invalid' | 'error' | 'modification' | 'memory';
 interface MetricPoint {
   timestamp: string;
   type: EventType;
-  details: any;
+  details: Record<string, unknown>;
 }
 
 interface AggregatedMetrics {
