@@ -12,6 +12,7 @@ import React from 'react';
 import { ArrowRight, Brain, Zap } from 'lucide-react';
 import { Header } from './components/Header';
 import { Footer } from './components/Footer';
+import { ScrollToTop } from './components/ScrollToTop';
 import { TransformationCard } from './components/TransformationCard';
 import { ModelsPage } from './pages/Models';
 import { TRANSFORMATIONS, TOTAL_MODELS, FRAMEWORK_VERSION } from './constants/transformations';
@@ -29,11 +30,12 @@ export const App: React.FC = () => {
   if (currentView === 'models') {
     return (
       <div className="min-h-screen bg-white">
-        <Header onNavigate={handleNavigate} />
+        <Header onNavigate={handleNavigate} currentView="models" />
         <div className="pt-20">
-          <ModelsPage />
+          <ModelsPage onNavigateHome={() => handleNavigate('home')} />
         </div>
         <Footer />
+        <ScrollToTop />
       </div>
     );
   }
@@ -41,7 +43,7 @@ export const App: React.FC = () => {
   // Show Home page
   return (
     <div className="min-h-screen bg-white">
-      <Header onNavigate={handleNavigate} />
+      <Header onNavigate={handleNavigate} currentView="home" />
       
       {/* Hero Section */}
       <section className="pt-32 pb-20 px-4">
@@ -227,6 +229,7 @@ export const App: React.FC = () => {
       </section>
 
       <Footer />
+      <ScrollToTop />
     </div>
   );
 };

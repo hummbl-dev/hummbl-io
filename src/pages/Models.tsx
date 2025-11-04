@@ -9,6 +9,7 @@
  */
 
 import React from 'react';
+import { ArrowLeft } from 'lucide-react';
 import type { TransformationType } from '../types/models';
 import { MENTAL_MODELS } from '../data/mentalModels';
 import { BetaBanner } from '../components/BetaBanner';
@@ -20,10 +21,11 @@ import { useSearch } from '../hooks/useSearch';
 
 interface ModelsPageProps {
   className?: string;
+  onNavigateHome?: () => void;
 }
 
 // Using SY19 (Meta-Model Selection) to manage view state
-export const ModelsPage: React.FC<ModelsPageProps> = ({ className }) => {
+export const ModelsPage: React.FC<ModelsPageProps> = ({ className, onNavigateHome }) => {
   const [selectedTransformation, setSelectedTransformation] = React.useState<TransformationType | 'ALL'>('ALL');
   const [selectedModel, setSelectedModel] = React.useState<string | null>(null);
   
@@ -56,6 +58,19 @@ export const ModelsPage: React.FC<ModelsPageProps> = ({ className }) => {
   // Show grid view with filter
   return (
     <div className={className}>
+      {/* Back to Home Button */}
+      {onNavigateHome && (
+        <section className="max-w-7xl mx-auto px-4 pt-6">
+          <button
+            onClick={onNavigateHome}
+            className="inline-flex items-center space-x-2 text-gray-600 hover:text-hummbl-primary transition-colors group"
+          >
+            <ArrowLeft className="w-4 h-4 group-hover:-translate-x-1 transition-transform" />
+            <span className="font-medium">Back to Home</span>
+          </button>
+        </section>
+      )}
+
       {/* Page Header */}
       <section className="bg-gradient-to-b from-hummbl-light to-white py-16 px-4">
         <div className="max-w-6xl mx-auto text-center">

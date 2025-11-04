@@ -15,9 +15,10 @@ import { cn } from '../utils/cn';
 interface HeaderProps {
   className?: string;
   onNavigate?: (view: 'home' | 'models') => void;
+  currentView?: 'home' | 'models';
 }
 
-export const Header: React.FC<HeaderProps> = ({ className, onNavigate }) => {
+export const Header: React.FC<HeaderProps> = ({ className, onNavigate, currentView = 'home' }) => {
   const [isMenuOpen, setIsMenuOpen] = React.useState(false);
 
   return (
@@ -25,12 +26,16 @@ export const Header: React.FC<HeaderProps> = ({ className, onNavigate }) => {
       <div className="container mx-auto px-4 py-4">
         <div className="flex items-center justify-between">
           {/* Logo */}
-          <div className="flex items-center space-x-2">
+          <button
+            onClick={() => onNavigate?.('home')}
+            className="flex items-center space-x-2 hover:opacity-80 transition-opacity"
+            aria-label="Go to home"
+          >
             <div className="w-8 h-8 bg-hummbl-primary rounded-lg flex items-center justify-center">
               <span className="text-white font-bold text-sm">H</span>
             </div>
             <span className="text-xl font-bold text-gray-900">HUMMBL</span>
-          </div>
+          </button>
 
           {/* Desktop Navigation */}
           <nav className="hidden md:flex items-center space-x-8">
@@ -42,7 +47,10 @@ export const Header: React.FC<HeaderProps> = ({ className, onNavigate }) => {
             </a>
             <button
               onClick={() => onNavigate?.('models')}
-              className="text-gray-600 hover:text-hummbl-primary transition-colors"
+              className={cn(
+                "text-gray-600 hover:text-hummbl-primary transition-colors",
+                currentView === 'models' && "text-hummbl-primary font-semibold"
+              )}
             >
               Models
             </button>
