@@ -1,6 +1,8 @@
 // OpenAI API integration service
 
 import type { OpenAIMessage, OpenAIRequest, OpenAIResponse } from '../types/chat';
+import type { MentalModel } from '../../cascade/types/mental-model';
+import { logger } from '../utils/logger';
 
 const OPENAI_API_URL = 'https://api.openai.com/v1/chat/completions';
 const MODEL = 'gpt-4o-mini'; // Fast and cost-effective
@@ -56,15 +58,18 @@ export class OpenAIService {
 
       return data.choices[0].message.content;
     } catch (error) {
-      console.error('OpenAI API error:', error);
+      logger.error('OpenAI API error', error instanceof Error ? error : new Error(String(error)), {
+        model: MODEL,
+        messageCount: messages.length,
+      });
       throw error;
     }
   }
 
   // Build system context from mental models, narratives, and current view context
   buildSystemContext(
-    mentalModels?: any[],
-    narratives?: any[],
+    mentalModels?: MentalModel[],
+    narratives?: Array<{ title: string; summary?: string }>,
     contextDescription?: string
   ): string {
     let context =
@@ -79,8 +84,9 @@ export class OpenAIService {
 
     if (mentalModels && mentalModels.length > 0) {
       context += `Available Mental Models (${mentalModels.length}):\n`;
-      mentalModels.slice(0, 10).forEach((model) => {
-        context += `- ${model.name}: ${model.description?.substring(0, 100)}...\n`;
+      // Show up to 20 models for better coverage
+      mentalModels.slice(0, 20).forEach((model) => {
+        context += `- ${model.name} (${model.code || 'N/A'}): ${(model.definition || model.description || '').substring(0, 150)}...\n`;
       });
       context += '\n';
     }
@@ -88,12 +94,13 @@ export class OpenAIService {
     if (narratives && narratives.length > 0) {
       context += `Available Narratives (${narratives.length}):\n`;
       narratives.slice(0, 10).forEach((narrative) => {
-        context += `- ${narrative.title}: ${narrative.summary?.substring(0, 100)}...\n`;
+        context += `- ${narrative.title}: ${(narrative.summary || '').substring(0, 100)}...\n`;
       });
       context += '\n';
     }
 
-    context += 'Help users explore these concepts, answer questions, and provide insights.';
+    context +=
+      'Help users explore these concepts, answer questions, and provide insights. Reference specific models by name when relevant.';
 
     return context;
   }

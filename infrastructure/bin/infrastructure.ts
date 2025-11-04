@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 import 'source-map-support/register';
 import * as cdk from 'aws-cdk-lib';
-import { HummblInfrastructureStack } from '../lib/hummbl-infrastructure-stack';
+import { HummblInfrastructureStack } from '../lib/hummbl-infrastructure-stack.js';
 
 const app = new cdk.App();
 

@@ -46,7 +46,7 @@ async function main() {
         : `${COLORS.red}✗ INVALID${COLORS.reset}`;
       console.log(`[${formatTimestamp()}] ${status} Context validated`);
     })
-    .on('valid', (result) => {
+    .on('valid', () => {
       console.log(`${COLORS.green}${formatTimestamp()} [VALID] Context is valid${COLORS.reset}`);
       console.log(`${COLORS.cyan}Notifying reasoning agents...${COLORS.reset}\n`);
       // TODO: Add notification logic for reasoning agents
@@ -55,7 +55,7 @@ async function main() {
       console.error(
         `\n${COLORS.red}${formatTimestamp()} [ERROR] Context validation failed:${COLORS.reset}`
       );
-      result.errors.forEach((error, index) => {
+      result.errors.forEach((error: string, index: number) => {
         console.error(`${COLORS.red}  ${index + 1}. ${error}${COLORS.reset}`);
       });
       console.log(''); // Add empty line after errors

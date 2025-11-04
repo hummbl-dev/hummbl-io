@@ -40,3 +40,9 @@
 
 # Build output
 /dist-ssr/
+
+# Infrastructure scripts (use different ESLint config)
+infrastructure/
+
+# Service worker (plain JS, not in tsconfig)
+public/service-worker.js

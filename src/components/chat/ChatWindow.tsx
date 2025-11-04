@@ -1,6 +1,6 @@
 // Chat window modal component
 
-import { useRef, useEffect } from 'react';
+import React, { useRef, useEffect } from 'react';
 import { ChatMessage } from './ChatMessage';
 import { ChatInput } from './ChatInput';
 import type { ChatConversation } from '../../../cascade/types/chat';
@@ -16,6 +16,7 @@ interface ChatWindowProps {
   onOpenSettings: () => void;
   onOpenHistory: () => void;
   streamingResponse?: string;
+  children?: React.ReactNode;
 }
 
 export function ChatWindow({
@@ -28,6 +29,7 @@ export function ChatWindow({
   onOpenSettings,
   onOpenHistory,
   streamingResponse = '',
+  children,
 }: ChatWindowProps) {
   const messagesEndRef = useRef<HTMLDivElement>(null);
 
@@ -128,6 +130,10 @@ export function ChatWindow({
                 </div>
               )}
               {error && <div className="chat-error">⚠️ {error}</div>}
+              
+              {/* Render children (model suggestions, errors, etc.) */}
+              {children}
+              
               <div ref={messagesEndRef} />
             </>
           )}

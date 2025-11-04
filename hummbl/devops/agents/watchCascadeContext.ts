@@ -1,6 +1,6 @@
 // humbbl/devops/agents/watchCascadeContext.ts
 
-import chokidar from 'chokidar';
+import chokidar, { type FSWatcher } from 'chokidar';
 import { validateCascadeContext } from './validateCascadeContext.js';
 import type { CascadeAgentContext } from './cascadeAgentContext';
 import fs from 'fs/promises';
@@ -16,8 +16,8 @@ type ValidationResult = {
 };
 
 export class ContextWatcher extends EventEmitter {
-  private watcher: chokidar.FSWatcher | null = null;
-  private validationTimeout: NodeJS.Timeout | null = null;
+  private watcher: FSWatcher | null = null;
+  private validationTimeout: ReturnType<typeof setTimeout> | null = null;
   private readonly DEBOUNCE_MS = 500; // 500ms debounce time
 
   constructor(
@@ -43,7 +43,9 @@ export class ContextWatcher extends EventEmitter {
     this.watcher
       .on('add', () => this.scheduleValidation())
       .on('change', () => this.scheduleValidation())
-      .on('error', (error) => this.emit('error', error));
+      .on('error', (error: unknown) => {
+        this.emit('error', error instanceof Error ? error : new Error(String(error)));
+      });
   }
 
   async stop(): Promise<void> {
@@ -76,7 +78,7 @@ export class ContextWatcher extends EventEmitter {
     try {
       // Read and parse the context file
       const content = await fs.readFile(this.contextPath, 'utf-8');
-      let context: any;
+      let context: CascadeAgentContext | unknown;
 
       // Handle both JSON and TypeScript exports
       if (this.contextPath.endsWith('.ts')) {
@@ -96,7 +98,10 @@ export class ContextWatcher extends EventEmitter {
         filePath: this.contextPath,
         valid,
         errors,
-        context: valid ? context : undefined,
+        context:
+          valid && typeof context === 'object' && context !== null
+            ? (context as CascadeAgentContext)
+            : undefined,
       };
 
       // Emit validation event

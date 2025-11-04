@@ -1,5 +1,7 @@
 // Cascade Agent effectiveness evaluation
 
+import { logger } from './logger';
+
 export interface AgentTask {
   id: string;
   type: 'feature' | 'fix' | 'refactor' | 'test' | 'docs';
@@ -41,6 +43,9 @@ export interface AgentReport {
 const AGENT_TASKS_KEY = 'hummbl_agent_tasks';
 const MAX_TASKS = 50;
 
+// In-memory fallback for environments without localStorage (e.g., Node.js test environments)
+let inMemoryStorage: AgentTask[] = [];
+
 /**
  * Record an agent task
  */
@@ -61,12 +66,20 @@ export function recordTask(task: AgentTask): void {
  */
 function getTasks(): AgentTask[] {
   try {
+    if (typeof localStorage === 'undefined') {
+      // Use in-memory storage as fallback
+      return inMemoryStorage;
+    }
     const stored = localStorage.getItem(AGENT_TASKS_KEY);
     if (stored) {
       return JSON.parse(stored);
     }
   } catch (error) {
-    console.warn('Failed to load agent tasks:', error);
+    logger.warn('Failed to load agent tasks', {
+      error: error instanceof Error ? error.message : String(error),
+    });
+    // Fall back to in-memory storage on error
+    return inMemoryStorage;
   }
   return [];
 }
@@ -76,9 +89,18 @@ function getTasks(): AgentTask[] {
  */
 function saveTasks(tasks: AgentTask[]): void {
   try {
+    if (typeof localStorage === 'undefined') {
+      // In environments without localStorage (like Node.js), use in-memory storage
+      inMemoryStorage = tasks;
+      return;
+    }
     localStorage.setItem(AGENT_TASKS_KEY, JSON.stringify(tasks));
   } catch (error) {
-    console.warn('Failed to save agent tasks:', error);
+    logger.warn('Failed to save agent tasks', {
+      error: error instanceof Error ? error.message : String(error),
+    });
+    // Fall back to in-memory storage on error
+    inMemoryStorage = tasks;
   }
 }
 
@@ -336,5 +358,18 @@ export function exportAgentReport(): string {
  * Clear agent tasks
  */
 export function clearAgentTasks(): void {
-  localStorage.removeItem(AGENT_TASKS_KEY);
+  try {
+    // Clear in-memory storage
+    inMemoryStorage = [];
+
+    if (typeof localStorage !== 'undefined') {
+      localStorage.removeItem(AGENT_TASKS_KEY);
+    }
+  } catch (error) {
+    logger.warn('Failed to clear agent tasks', {
+      error: error instanceof Error ? error.message : String(error),
+    });
+    // Ensure in-memory storage is cleared even on error
+    inMemoryStorage = [];
+  }
 }

@@ -239,22 +239,32 @@ export function NarrativeDetailModal({ narrative, isOpen, onClose }: NarrativeDe
             <div id="examples-panel" role="tabpanel" className="tab-panel">
               {narrative.examples && narrative.examples.length > 0 ? (
                 <div className="examples-grid">
-                  {narrative.examples.map((example, idx) => (
-                    <div key={idx} className="example-card">
-                      <div className="example-section">
-                        <h4 className="example-label">🎯 Scenario</h4>
-                        <p className="example-text">{example.scenario}</p>
+                  {narrative.examples.map((example: any, idx: number) => {
+                    // Handle both string and object examples
+                    if (typeof example === 'string') {
+                      return (
+                        <div key={idx} className="example-card">
+                          <p className="example-text">{example}</p>
+                        </div>
+                      );
+                    }
+                    return (
+                      <div key={idx} className="example-card">
+                        <div className="example-section">
+                          <h4 className="example-label">🎯 Scenario</h4>
+                          <p className="example-text">{example.scenario}</p>
+                        </div>
+                        <div className="example-section">
+                          <h4 className="example-label">⚙️ Application</h4>
+                          <p className="example-text">{example.application}</p>
+                        </div>
+                        <div className="example-section">
+                          <h4 className="example-label">✅ Outcome</h4>
+                          <p className="example-text">{example.outcome}</p>
+                        </div>
                       </div>
-                      <div className="example-section">
-                        <h4 className="example-label">⚙️ Application</h4>
-                        <p className="example-text">{example.application}</p>
-                      </div>
-                      <div className="example-section">
-                        <h4 className="example-label">✅ Outcome</h4>
-                        <p className="example-text">{example.outcome}</p>
-                      </div>
-                    </div>
-                  ))}
+                    );
+                  })}
                 </div>
               ) : (
                 <div className="empty-state">

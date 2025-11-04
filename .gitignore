@@ -33,6 +33,7 @@ eggs/
 .eggs/
 lib/
 lib64/
+!infrastructure/lib/
 parts/
 sdist/
 var/
@@ -57,7 +58,6 @@ lerna-debug.log*
 .env
 .env.*
 !.env.example
-!.env.staging
 
 # Editor directories and files
 .DS_Store
@@ -98,6 +98,7 @@ eggs/
 .eggs/
 lib/
 lib64/
+!infrastructure/lib/
 parts/
 sdist/
 var/
@@ -111,6 +112,24 @@ MANIFEST
 lambda/package/
 lambda/venv/
 *.zip
+
+# Compiled TypeScript output (generated files)
+*.js
+*.js.map
+!public/**/*.js
+!dist/**/*.js
+!server/**/*.js
+!scripts/*.sh
+!infrastructure/scripts/*.js
+!node_modules/**/*.js
+
+# TypeScript declarations (generated)
+*.d.ts
+*.d.ts.map
+!node_modules/**/*.d.ts
+
+# TypeScript build info
+*.tsbuildinfo
 
 # Misc
 *.bak

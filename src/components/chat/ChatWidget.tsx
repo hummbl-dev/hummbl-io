@@ -1,19 +1,32 @@
 // Floating chat widget component
 
-import { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { ChatWindow } from './ChatWindow';
 import { ConversationHistory } from './ConversationHistory';
 import { ChatSettings } from './ChatSettings';
+import { ModelSuggestions } from './ModelSuggestions';
+import { ChatError } from './ChatError';
 import { getOpenAIService } from '../../services/openaiService';
 import { getStreamingService } from '../../services/openaiStreamingService';
+import { getContextualBuilder } from '../../services/contextualPromptBuilder';
 import { chatStorage } from '../../services/chatStorageService';
 import type { ChatConversation } from '../../../cascade/types/chat';
 import type { ChatContext } from '../../../cascade/types/chatContext';
+import type { MentalModel } from '../../../cascade/types/mental-model';
+import type { ConversationAnalysis } from '../../services/contextualPromptBuilder';
 import { buildContextDescription } from '../../../cascade/types/chatContext';
+import { logger } from '../../utils/logger';
 import './ChatWidget.css';
+
+interface Narrative {
+  title: string;
+  summary?: string;
+  [key: string]: unknown;
+}
+
 interface ChatWidgetProps {
-  mentalModels?: any[];
-  narratives?: any[];
+  mentalModels?: MentalModel[];
+  narratives?: Narrative[];
   apiKey?: string;
   context?: ChatContext | null;
 }
@@ -29,6 +42,10 @@ export function ChatWidget({ mentalModels, narratives, apiKey, context }: ChatWi
   const [showSettings, setShowSettings] = useState(false);
   const [streamingResponse, setStreamingResponse] = useState<string>('');
   const streamingRef = useRef<boolean>(false);
+  const [conversationAnalysis, setConversationAnalysis] = useState<ConversationAnalysis | null>(
+    null
+  );
+  const [isAnalyzing, setIsAnalyzing] = useState(false);
 
   // Initialize conversations on mount
   useEffect(() => {
@@ -41,6 +58,7 @@ export function ChatWidget({ mentalModels, narratives, apiKey, context }: ChatWi
       const existing = loadedConversations.find((c) => c.id === currentId);
       if (existing) {
         setConversation(existing);
+        analyzeConversationAsync(existing);
         return;
       }
     }
@@ -51,7 +69,32 @@ export function ChatWidget({ mentalModels, narratives, apiKey, context }: ChatWi
     setConversations([newConv]);
     chatStorage.saveCurrentConversationId(newConv.id);
     chatStorage.saveConversations([newConv]);
-  }, []);
+  }, [mentalModels]);
+
+  // Analyze conversation for model suggestions
+  const analyzeConversationAsync = React.useCallback(
+    async (conv: ChatConversation) => {
+      if (!mentalModels || mentalModels.length === 0) return;
+
+      setIsAnalyzing(true);
+      try {
+        const contextualBuilder = getContextualBuilder(mentalModels as MentalModel[]);
+        const analysis = contextualBuilder.analyzeConversation(conv);
+        setConversationAnalysis(analysis);
+      } catch (error) {
+        logger.error(
+          'Failed to analyze conversation',
+          error instanceof Error ? error : new Error(String(error)),
+          {
+            conversationId: conv.id,
+          }
+        );
+      } finally {
+        setIsAnalyzing(false);
+      }
+    },
+    [mentalModels]
+  );
 
   // Check for API key
   useEffect(() => {
@@ -111,7 +154,13 @@ export function ChatWidget({ mentalModels, narratives, apiKey, context }: ChatWi
     return conversations.reduce((sum, conv) => sum + conv.messages.length, 0);
   };
 
-  const handleSendMessage = async (message: string) => {
+  /**
+   * Send a message to the chat API and handle the response.
+   * @param message - The message content to send
+   * @param isRetry - If true, prevents adding duplicate user messages when retrying a failed request.
+   *                  The message should already exist in the conversation history when retrying.
+   */
+  const handleSendMessage = async (message: string, isRetry: boolean = false) => {
     if (!conversation || !hasApiKey) {
       setError('OpenAI API key not configured');
       setTimeout(() => setError(null), 5000);
@@ -124,9 +173,12 @@ export function ChatWidget({ mentalModels, narratives, apiKey, context }: ChatWi
     streamingRef.current = true;
 
     try {
-      // Add user message
-      const updatedConv = chatStorage.addMessage(conversation, 'user', message);
-      setConversation(updatedConv);
+      // Add user message only if not retrying (retry means message already exists)
+      let updatedConv = conversation;
+      if (!isRetry) {
+        updatedConv = chatStorage.addMessage(conversation, 'user', message);
+        setConversation(updatedConv);
+      }
 
       // Build system context with current view context
       const openAI = getOpenAIService();
@@ -134,7 +186,7 @@ export function ChatWidget({ mentalModels, narratives, apiKey, context }: ChatWi
       const systemContext = openAI.buildSystemContext(mentalModels, narratives, contextDescription);
 
       // Prepare messages for API
-      const apiMessages = updatedConv.messages.map((msg) => ({
+      const apiMessages = updatedConv.messages.map((msg: { role: string; content: string }) => ({
         role: msg.role,
         content: msg.content,
       }));
@@ -165,10 +217,16 @@ export function ChatWidget({ mentalModels, narratives, apiKey, context }: ChatWi
           // Clear streaming state
           setStreamingResponse('');
           setIsLoading(false);
+
+          // Re-analyze conversation with new message
+          analyzeConversationAsync(finalConv);
         },
         onError: (err: Error) => {
           streamingRef.current = false;
-          console.error('Streaming error:', err);
+          logger.error('Streaming error', err, {
+            conversationId: conversation?.id,
+            hasApiKey: !!apiKey,
+          });
           setError(err.message);
           setTimeout(() => setError(null), 5000);
           setIsLoading(false);
@@ -177,13 +235,21 @@ export function ChatWidget({ mentalModels, narratives, apiKey, context }: ChatWi
       });
     } catch (err) {
       streamingRef.current = false;
-      console.error('Chat error:', err);
+      logger.error('Chat error', err instanceof Error ? err : new Error(String(err)), {
+        conversationId: conversation?.id,
+        hasApiKey: !!apiKey,
+      });
       const errorMessage = err instanceof Error ? err.message : 'Failed to send message';
       setError(errorMessage);
       setTimeout(() => setError(null), 5000);
       setIsLoading(false);
       setStreamingResponse('');
     }
+  };
+
+  // Handler for selecting a model from suggestions
+  const handleModelSelect = (model: MentalModel) => {
+    handleSendMessage(`Tell me about ${model.name} and how it applies to my situation`);
   };
 
   if (!hasApiKey) {
@@ -219,7 +285,31 @@ export function ChatWidget({ mentalModels, narratives, apiKey, context }: ChatWi
         onOpenSettings={() => setShowSettings(true)}
         onOpenHistory={() => setShowHistory(true)}
         streamingResponse={streamingResponse}
-      />
+      >
+        {/* Model Suggestions */}
+        {conversationAnalysis && conversationAnalysis.suggestedModels.length > 0 && (
+          <ModelSuggestions
+            suggestions={conversationAnalysis.suggestedModels}
+            onSelectModel={handleModelSelect}
+            isLoading={isAnalyzing}
+          />
+        )}
+
+        {/* Error Display */}
+        {error && (
+          <ChatError
+            error={error}
+            onDismiss={() => setError(null)}
+            onRetry={() => {
+              const lastMessage = conversation?.messages[conversation.messages.length - 1];
+              if (lastMessage && lastMessage.role === 'user') {
+                // Pass isRetry=true to prevent adding duplicate user message
+                handleSendMessage(lastMessage.content, true);
+              }
+            }}
+          />
+        )}
+      </ChatWindow>
 
       {/* Conversation History */}
       {showHistory && (
@@ -245,6 +335,7 @@ export function ChatWidget({ mentalModels, narratives, apiKey, context }: ChatWi
           }}
           messageCount={getTotalMessageCount()}
           conversationCount={conversations.length}
+          currentConversation={conversation}
         />
       )}
     </>

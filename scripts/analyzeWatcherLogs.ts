@@ -9,7 +9,8 @@ import { stringify } from 'csv-stringify/sync';
 
 // Get the directory name in ES module context
 const __filename = fileURLToPath(import.meta.url);
-const __dirname = path.dirname(__filename);
+// @ts-expect-error - unused variable kept for future use
+const _unusedDirname = path.dirname(__filename);
 
 // Default configuration
 const DEFAULT_CONFIG = {
@@ -52,7 +53,7 @@ type EventType = 'valid' | 'invalid' | 'error' | 'modification' | 'memory';
 interface MetricPoint {
   timestamp: string;
   type: EventType;
-  details: any;
+  details: Record<string, unknown>;
 }
 
 interface AggregatedMetrics {
@@ -183,10 +184,12 @@ function aggregateMetrics(metrics: MetricPoint[], windowSizeMs: number): Aggrega
     const memoryEvents = windowMetrics.filter((m) => m.type === 'memory');
 
     // Calculate memory stats
-    const memoryValues = memoryEvents.map((m) => m.details.rss);
+    const memoryValues = memoryEvents
+      .map((m) => m.details.rss)
+      .filter((rss): rss is number => typeof rss === 'number' && !isNaN(rss));
     const memoryStats = {
-      initial: memoryValues[0] || 0,
-      max: Math.max(...memoryValues, 0),
+      initial: memoryValues[0] ?? 0,
+      max: memoryValues.length > 0 ? Math.max(...memoryValues) : 0,
       min: memoryValues.length > 0 ? Math.min(...memoryValues) : 0,
       avg:
         memoryValues.length > 0 ? memoryValues.reduce((a, b) => a + b, 0) / memoryValues.length : 0,

@@ -4,7 +4,34 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <meta name="description" content="HUMMBL - 120 Mental Models for Strategic Thinking" />
+    <meta name="theme-color" content="#3b82f6" />
+    
+    <!-- Performance & Security -->
+    <meta http-equiv="X-DNS-Prefetch-Control" content="on" />
+    <meta name="referrer" content="strict-origin-when-cross-origin" />
+    
     <title>HUMMBL - Mental Models Framework</title>
+    
+    <!-- DNS Prefetch for external domains -->
+    <link rel="dns-prefetch" href="https://api.hummbl.io" />
+    <link rel="dns-prefetch" href="https://plausible.io" />
+    
+    <!-- Preconnect to critical third-party domains -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" crossorigin />
+    
+    <!-- Prefetch likely next views (loaded after page is interactive) -->
+    <link rel="prefetch" href="/models.json" as="fetch" type="application/json" />
+    
+    <!-- Service Worker registration -->
+    <script>
+      if ('serviceWorker' in navigator) {
+        window.addEventListener('load', () => {
+          navigator.serviceWorker.register('/service-worker.js').catch(() => {
+            // Silently fail if service worker registration fails
+          });
+        });
+      }
+    </script>
   </head>
   <body>
     <div id="root"></div>

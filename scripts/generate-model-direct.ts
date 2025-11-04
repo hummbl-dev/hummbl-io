@@ -2,8 +2,10 @@ import { mkdir, writeFile } from 'fs/promises';
 import { fileURLToPath } from 'url';
 import { dirname, join } from 'path';
 
+// __dirname is available but not currently used in this script
 const __filename = fileURLToPath(import.meta.url);
-const __dirname = dirname(__filename);
+// @ts-expect-error - unused variable kept for future use
+const _unusedDirname = dirname(__filename);
 
 const MODEL_DEFINITION = {
   id: 'IN1',
@@ -15,21 +17,21 @@ const MODEL_DEFINITION = {
     'Prevents mistakes by inversion',
     'Focuses on avoiding failure',
     'Considers worst-case scenarios',
-    'Highlights potential pitfalls'
+    'Highlights potential pitfalls',
   ],
   relatedModels: ['P1', 'ST1', 'ST2'],
   example: {
     problem: 'How to be happy?',
     traditionalApproach: 'Pursue happiness directly',
-    modelApproach: 'Identify what makes you unhappy and eliminate those things'
-  }
+    modelApproach: 'Identify what makes you unhappy and eliminate those things',
+  },
 };
 
 async function createModelFiles() {
   try {
     const outputDir = join(process.cwd(), 'src/models/in1');
     await mkdir(outputDir, { recursive: true });
-    
+
     // Create index.ts
     await writeFile(
       join(outputDir, 'index.ts'),

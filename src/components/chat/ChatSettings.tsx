@@ -1,5 +1,9 @@
 // Chat settings menu component
 
+import { useState } from 'react';
+import { conversationExport } from '../../services/conversationExport';
+import type { ChatConversation } from '../../../cascade/types/chat';
+import { logger } from '../../utils/logger';
 import './ChatSettings.css';
 
 interface ChatSettingsProps {
@@ -9,6 +13,7 @@ interface ChatSettingsProps {
   onViewHistory: () => void;
   messageCount: number;
   conversationCount: number;
+  currentConversation: ChatConversation | null;
 }
 
 export function ChatSettings({
@@ -18,7 +23,10 @@ export function ChatSettings({
   onViewHistory,
   messageCount,
   conversationCount,
+  currentConversation,
 }: ChatSettingsProps) {
+  const [exporting, setExporting] = useState(false);
+
   if (!isOpen) return null;
 
   const handleClearAll = () => {
@@ -32,12 +40,63 @@ export function ChatSettings({
     }
   };
 
+  const handleExportConversation = async (format: 'markdown' | 'text' | 'json') => {
+    if (!currentConversation) {
+      alert('No conversation to export');
+      return;
+    }
+
+    setExporting(true);
+    try {
+      await conversationExport.downloadConversation(currentConversation, {
+        format,
+        includeTimestamp: true,
+        includeMetadata: true,
+      });
+    } catch (error) {
+      logger.error('Export failed', error instanceof Error ? error : new Error(String(error)), {
+        format,
+        conversationId: currentConversation?.id,
+      });
+      alert('Failed to export conversation');
+    } finally {
+      setExporting(false);
+    }
+  };
+
+  const handleCopyToClipboard = async (format: 'markdown' | 'text' | 'json') => {
+    if (!currentConversation) return;
+
+    setExporting(true);
+    try {
+      await conversationExport.copyToClipboard(currentConversation, format);
+      alert('Copied to clipboard!');
+    } catch (error) {
+      logger.error('Copy failed', error instanceof Error ? error : new Error(String(error)), {
+        format,
+        conversationId: currentConversation?.id,
+      });
+      alert('Failed to copy to clipboard');
+    } finally {
+      setExporting(false);
+    }
+  };
+
   return (
-    <div className="chat-settings-overlay" onClick={onClose}>
-      <div className="chat-settings" onClick={(e) => e.stopPropagation()}>
+    <div 
+      className="chat-settings-overlay" 
+      onClick={onClose}
+      onKeyDown={(e) => e.key === 'Escape' && onClose()}
+    >
+      <div 
+        className="chat-settings" 
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby="settings-header"
+      >
         {/* Header */}
         <div className="settings-header">
-          <h3>Chat Settings</h3>
+          <h3 id="settings-header">Chat Settings</h3>
           <button className="settings-close-button" onClick={onClose} aria-label="Close settings">
             ✕
           </button>
@@ -64,6 +123,59 @@ export function ChatSettings({
               <span className="action-description">Browse past conversations</span>
             </div>
           </button>
+
+          {/* Export Section */}
+          {currentConversation && currentConversation.messages.length > 0 && (
+            <>
+              <div className="settings-section-header">
+                <span>Export Current Conversation</span>
+              </div>
+              
+              <div className="export-buttons">
+                <button
+                  className="export-button"
+                  onClick={() => handleExportConversation('markdown')}
+                  disabled={exporting}
+                  title="Download as Markdown"
+                >
+                  <span className="export-icon">📄</span> Markdown
+                </button>
+                <button
+                  className="export-button"
+                  onClick={() => handleExportConversation('text')}
+                  disabled={exporting}
+                  title="Download as Text"
+                >
+                  <span className="export-icon">📝</span> Text
+                </button>
+                <button
+                  className="export-button"
+                  onClick={() => handleExportConversation('json')}
+                  disabled={exporting}
+                  title="Download as JSON"
+                >
+                  <span className="export-icon">🔧</span> JSON
+                </button>
+              </div>
+
+              <div className="copy-buttons">
+                <button
+                  className="copy-button"
+                  onClick={() => handleCopyToClipboard('markdown')}
+                  disabled={exporting}
+                >
+                  📋 Copy Markdown
+                </button>
+                <button
+                  className="copy-button"
+                  onClick={() => handleCopyToClipboard('text')}
+                  disabled={exporting}
+                >
+                  📋 Copy Text
+                </button>
+              </div>
+            </>
+          )}
 
           <button
             className="settings-action-button danger"

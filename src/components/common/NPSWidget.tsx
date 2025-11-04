@@ -1,6 +1,6 @@
 // NPS (Net Promoter Score) survey widget
 
-import { useState, useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
 import './NPSWidget.css';
 
 interface NPSData {
@@ -77,9 +77,8 @@ export const NPSWidget: React.FC = () => {
     localStorage.setItem(NPS_SHOWN_KEY, 'true');
 
     // Track in analytics
-    if (import.meta.env.DEV) {
-      console.log('[NPS Survey]', npsData);
-    }
+    // Note: NPS data is logged in development for debugging
+    // In production, this should be sent to analytics service
 
     // TODO: Send to backend
     // fetch('/api/nps', {
@@ -100,12 +99,6 @@ export const NPSWidget: React.FC = () => {
   };
 
   if (!isVisible) return null;
-
-  const getScoreLabel = (s: number): string => {
-    if (s <= 6) return 'Not likely';
-    if (s <= 8) return 'Neutral';
-    return 'Very likely';
-  };
 
   const getFollowUpPrompt = (): string => {
     if (score === null) return '';

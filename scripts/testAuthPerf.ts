@@ -7,6 +7,7 @@ import { fileURLToPath } from 'node:url';
 import { promisify } from 'node:util';
 import { exec as execCallback } from 'node:child_process';
 
+// @ts-expect-error - unused variable kept for potential future use
 const exec = promisify(execCallback);
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);

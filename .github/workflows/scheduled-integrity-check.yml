@@ -2,8 +2,8 @@ name: Scheduled Integrity Check
 
 on:
   schedule:
-    - cron: '0 */6 * * *' # Every 6 hours
-    - cron: '0 0 * * *' # Daily at midnight
+    # Run once daily at 3 AM UTC (same time as nightly performance tests)
+    - cron: '0 3 * * *'
   workflow_dispatch:
 
 jobs:

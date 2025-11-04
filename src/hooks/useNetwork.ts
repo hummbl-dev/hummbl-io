@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import { apiClient } from '../api/client';
-import type { NetworkData } from '../types/network';
+import type { NetworkData } from '../../cascade/types/network';
 
 interface UseNetworkResult {
   network: NetworkData | null;

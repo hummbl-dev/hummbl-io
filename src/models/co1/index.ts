@@ -2,7 +2,6 @@ import { v4 as uuidv4 } from 'uuid';
 import { 
   ModelBinding, 
   ComponentReference, 
-  Constraint, 
   BindingPattern,
   ValidationResult,
   ValidationError,
@@ -13,8 +12,10 @@ import {
   BindingType,
   ConstraintType,
   ConstraintSeverity,
+  BindingDirection,
 } from './types';
 import { CO1_CONSTANTS } from './constants';
+import { logger } from '../../utils/logger';
 
 /**
  * Creates a new Syntactic Binding model instance
@@ -45,11 +46,14 @@ export const createSyntacticBindingModel = (): SyntacticBindingModel => {
     const binding: ModelBinding = {
       id: `bind-${uuidv4()}`,
       type: params.type,
-      components: params.components.map(comp => ({
-        ...comp,
-        constraints: comp.constraints || [],
-        meta: {},
-      })),
+      components: params.components.map(comp => {
+        const { constraints, meta, ...rest } = comp;
+        return {
+          ...rest,
+          constraints: constraints || [],
+          meta: meta || {},
+        } as ComponentReference;
+      }),
       constraints: params.constraints || [],
       direction: params.direction || BindingDirection.UNIDIRECTIONAL,
       priority: params.priority ?? config.defaultPriority,
@@ -212,14 +216,21 @@ export const createSyntacticBindingModel = (): SyntacticBindingModel => {
     // Validate the binding first
     const validation = validateBinding({ binding });
     if (!validation.isValid) {
-      console.warn('Cannot apply invalid binding:', validation.errors);
+      logger.warn('Cannot apply invalid binding', {
+        bindingId: binding.id,
+        errors: validation.errors,
+      });
       return false;
     }
 
     // Check for conflicts with existing bindings
     const conflicts = findConflictingBindings(binding);
     if (conflicts.length > 0) {
-      console.warn('Binding conflicts with existing bindings:', conflicts);
+      logger.warn('Binding conflicts with existing bindings', {
+        bindingId: binding.id,
+        conflictCount: conflicts.length,
+        conflicts,
+      });
       return false;
     }
 

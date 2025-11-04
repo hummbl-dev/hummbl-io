@@ -170,6 +170,7 @@ export function useMetricsDashboard(refreshInterval = 30000) {
    * Get user activity trend
    */
   const getUserActivityTrend = useCallback((): TrendData[] => {
+    // @ts-expect-error - userStats kept for potential future use
     const userStats = analytics.getStats();
     const recentActions = analytics.getRecentActions(20);
 
