@@ -13,6 +13,8 @@ import { ArrowRight, Brain, Zap } from 'lucide-react';
 import { Header } from './components/Header';
 import { Footer } from './components/Footer';
 import { ScrollToTop } from './components/ScrollToTop';
+import { FeedbackButton } from './components/FeedbackButton';
+import { ContactForm } from './components/ContactForm';
 import { TransformationCard } from './components/TransformationCard';
 import { ModelsPage } from './pages/Models';
 import { TRANSFORMATIONS, TOTAL_MODELS, FRAMEWORK_VERSION } from './constants/transformations';
@@ -36,6 +38,7 @@ export const App: React.FC = () => {
         </div>
         <Footer />
         <ScrollToTop />
+        <FeedbackButton />
       </div>
     );
   }
@@ -240,8 +243,27 @@ export const App: React.FC = () => {
         </div>
       </section>
 
+      {/* Contact Section */}
+      <section id="contact" className="py-20 px-4 bg-gradient-to-b from-gray-50 to-white">
+        <div className="container mx-auto max-w-4xl">
+          <div className="text-center mb-12">
+            <h2 className="text-4xl font-bold text-gray-900 mb-4">
+              Get in Touch
+            </h2>
+            <p className="text-xl text-gray-600">
+              Have questions about the framework? Want to share feedback or collaborate? We'd love to hear from you.
+            </p>
+          </div>
+          
+          <div className="bg-white rounded-lg shadow-lg p-8">
+            <ContactForm />
+          </div>
+        </div>
+      </section>
+
       <Footer />
       <ScrollToTop />
+      <FeedbackButton />
     </div>
   );
 };

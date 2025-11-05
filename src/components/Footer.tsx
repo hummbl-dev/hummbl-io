@@ -10,6 +10,7 @@
 import React from 'react';
 import { Github, Twitter, Linkedin } from 'lucide-react';
 import { cn } from '../utils/cn';
+import { NewsletterSignup } from './NewsletterSignup';
 
 interface FooterProps {
   className?: string;
@@ -20,6 +21,21 @@ export const Footer: React.FC<FooterProps> = ({ className }) => {
 
   return (
     <footer className={cn('bg-gray-900 text-gray-300', className)}>
+      {/* Newsletter Section */}
+      <div className="bg-gray-800 border-b border-gray-700">
+        <div className="container mx-auto px-4 py-12">
+          <div className="max-w-2xl mx-auto text-center">
+            <h3 className="text-2xl font-bold text-white mb-2">
+              Stay Updated
+            </h3>
+            <p className="text-gray-400 mb-6">
+              Get the latest mental models, insights, and framework updates delivered to your inbox.
+            </p>
+            <NewsletterSignup variant="inline" />
+          </div>
+        </div>
+      </div>
+
       <div className="container mx-auto px-4 py-12">
         <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
           {/* Brand */}
