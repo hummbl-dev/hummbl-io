@@ -39,24 +39,70 @@ export const Header: React.FC<HeaderProps> = ({ className, onNavigate, currentVi
 
           {/* Desktop Navigation */}
           <nav className="hidden md:flex items-center space-x-8">
-            <a href="#framework" className="text-gray-600 hover:text-hummbl-primary transition-colors">
-              Framework
-            </a>
-            <a href="#transformations" className="text-gray-600 hover:text-hummbl-primary transition-colors">
-              Transformations
-            </a>
-            <button
-              onClick={() => onNavigate?.('models')}
-              className={cn(
-                "text-gray-600 hover:text-hummbl-primary transition-colors",
-                currentView === 'models' && "text-hummbl-primary font-semibold"
-              )}
-            >
-              Models
-            </button>
-            <a href="#about" className="text-gray-600 hover:text-hummbl-primary transition-colors">
-              About
-            </a>
+            {currentView === 'home' ? (
+              <>
+                <a href="#framework" className="text-gray-600 hover:text-hummbl-primary transition-colors">
+                  Framework
+                </a>
+                <a href="#transformations" className="text-gray-600 hover:text-hummbl-primary transition-colors">
+                  Transformations
+                </a>
+                <button
+                  onClick={() => onNavigate?.('models')}
+                  className="text-gray-600 hover:text-hummbl-primary transition-colors"
+                >
+                  Models
+                </button>
+                <a href="#about" className="text-gray-600 hover:text-hummbl-primary transition-colors">
+                  About
+                </a>
+              </>
+            ) : (
+              <>
+                <button
+                  onClick={() => {
+                    onNavigate?.('home');
+                    setTimeout(() => {
+                      document.getElementById('framework')?.scrollIntoView({ behavior: 'smooth' });
+                    }, 100);
+                  }}
+                  className="text-gray-600 hover:text-hummbl-primary transition-colors"
+                >
+                  Framework
+                </button>
+                <button
+                  onClick={() => {
+                    onNavigate?.('home');
+                    setTimeout(() => {
+                      document.getElementById('transformations')?.scrollIntoView({ behavior: 'smooth' });
+                    }, 100);
+                  }}
+                  className="text-gray-600 hover:text-hummbl-primary transition-colors"
+                >
+                  Transformations
+                </button>
+                <button
+                  onClick={() => onNavigate?.('models')}
+                  className={cn(
+                    "text-gray-600 hover:text-hummbl-primary transition-colors",
+                    currentView === 'models' && "text-hummbl-primary font-semibold"
+                  )}
+                >
+                  Models
+                </button>
+                <button
+                  onClick={() => {
+                    onNavigate?.('home');
+                    setTimeout(() => {
+                      document.getElementById('about')?.scrollIntoView({ behavior: 'smooth' });
+                    }, 100);
+                  }}
+                  className="text-gray-600 hover:text-hummbl-primary transition-colors"
+                >
+                  About
+                </button>
+              </>
+            )}
           </nav>
 
           {/* CTA Button */}
@@ -82,36 +128,88 @@ export const Header: React.FC<HeaderProps> = ({ className, onNavigate, currentVi
         {/* Mobile Menu */}
         {isMenuOpen && (
           <nav className="md:hidden mt-4 pb-4 space-y-3">
-            <a
-              href="#framework"
-              className="block text-gray-600 hover:text-hummbl-primary transition-colors"
-              onClick={() => setIsMenuOpen(false)}
-            >
-              Framework
-            </a>
-            <a
-              href="#transformations"
-              className="block text-gray-600 hover:text-hummbl-primary transition-colors"
-              onClick={() => setIsMenuOpen(false)}
-            >
-              Transformations
-            </a>
-            <button
-              onClick={() => {
-                onNavigate?.('models');
-                setIsMenuOpen(false);
-              }}
-              className="block w-full text-left text-gray-600 hover:text-hummbl-primary transition-colors"
-            >
-              Models
-            </button>
-            <a
-              href="#about"
-              className="block text-gray-600 hover:text-hummbl-primary transition-colors"
-              onClick={() => setIsMenuOpen(false)}
-            >
-              About
-            </a>
+            {currentView === 'home' ? (
+              <>
+                <a
+                  href="#framework"
+                  className="block text-gray-600 hover:text-hummbl-primary transition-colors"
+                  onClick={() => setIsMenuOpen(false)}
+                >
+                  Framework
+                </a>
+                <a
+                  href="#transformations"
+                  className="block text-gray-600 hover:text-hummbl-primary transition-colors"
+                  onClick={() => setIsMenuOpen(false)}
+                >
+                  Transformations
+                </a>
+                <button
+                  onClick={() => {
+                    onNavigate?.('models');
+                    setIsMenuOpen(false);
+                  }}
+                  className="block w-full text-left text-gray-600 hover:text-hummbl-primary transition-colors"
+                >
+                  Models
+                </button>
+                <a
+                  href="#about"
+                  className="block text-gray-600 hover:text-hummbl-primary transition-colors"
+                  onClick={() => setIsMenuOpen(false)}
+                >
+                  About
+                </a>
+              </>
+            ) : (
+              <>
+                <button
+                  onClick={() => {
+                    onNavigate?.('home');
+                    setIsMenuOpen(false);
+                    setTimeout(() => {
+                      document.getElementById('framework')?.scrollIntoView({ behavior: 'smooth' });
+                    }, 100);
+                  }}
+                  className="block w-full text-left text-gray-600 hover:text-hummbl-primary transition-colors"
+                >
+                  Framework
+                </button>
+                <button
+                  onClick={() => {
+                    onNavigate?.('home');
+                    setIsMenuOpen(false);
+                    setTimeout(() => {
+                      document.getElementById('transformations')?.scrollIntoView({ behavior: 'smooth' });
+                    }, 100);
+                  }}
+                  className="block w-full text-left text-gray-600 hover:text-hummbl-primary transition-colors"
+                >
+                  Transformations
+                </button>
+                <button
+                  onClick={() => {
+                    onNavigate?.('models');
+                    setIsMenuOpen(false);
+                  }}
+                  className="block w-full text-left text-gray-600 hover:text-hummbl-primary transition-colors font-semibold text-hummbl-primary"
+                >
+                  Models
+                </button>
+                <button
+                  onClick={() => {
+                    onNavigate?.('home');
+                    setIsMenuOpen(false);
+                    setTimeout(() => {
+                      document.getElementById('about')?.scrollIntoView({ behavior: 'smooth' });
+                    }, 100);
+                  }}
+                  className="block w-full text-left text-gray-600 hover:text-hummbl-primary transition-colors"
+                >
+                  About
+                </button>
+              </>
+            )}
             <button
               onClick={() => {
                 onNavigate?.('models');

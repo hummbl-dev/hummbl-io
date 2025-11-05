@@ -210,16 +210,28 @@ export const App: React.FC = () => {
                 </p>
               </div>
             </div>
-            <div className="space-y-6">
-              <div className="bg-white/10 backdrop-blur-sm rounded-lg p-6">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div className="bg-white/10 backdrop-blur-sm rounded-lg p-6 hover:bg-white/15 transition-colors">
                 <h3 className="text-xl font-bold mb-3">Perspective (P)</h3>
                 <p className="text-gray-300 text-sm">Frame problems from different viewpoints</p>
               </div>
-              <div className="bg-white/10 backdrop-blur-sm rounded-lg p-6">
+              <div className="bg-white/10 backdrop-blur-sm rounded-lg p-6 hover:bg-white/15 transition-colors">
                 <h3 className="text-xl font-bold mb-3">Inversion (IN)</h3>
                 <p className="text-gray-300 text-sm">Work backward to find solutions</p>
               </div>
-              <div className="bg-white/10 backdrop-blur-sm rounded-lg p-6">
+              <div className="bg-white/10 backdrop-blur-sm rounded-lg p-6 hover:bg-white/15 transition-colors">
+                <h3 className="text-xl font-bold mb-3">Composition (CO)</h3>
+                <p className="text-gray-300 text-sm">Build up and integrate elements</p>
+              </div>
+              <div className="bg-white/10 backdrop-blur-sm rounded-lg p-6 hover:bg-white/15 transition-colors">
+                <h3 className="text-xl font-bold mb-3">Decomposition (DE)</h3>
+                <p className="text-gray-300 text-sm">Break down and analyze complexity</p>
+              </div>
+              <div className="bg-white/10 backdrop-blur-sm rounded-lg p-6 hover:bg-white/15 transition-colors">
+                <h3 className="text-xl font-bold mb-3">Recursion (RE)</h3>
+                <p className="text-gray-300 text-sm">Apply patterns iteratively</p>
+              </div>
+              <div className="bg-white/10 backdrop-blur-sm rounded-lg p-6 hover:bg-white/15 transition-colors">
                 <h3 className="text-xl font-bold mb-3">Systems (SY)</h3>
                 <p className="text-gray-300 text-sm">Understand patterns and emergence</p>
               </div>
