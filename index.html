@@ -30,6 +30,7 @@
     <!-- Favicon -->
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
     <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png" />
+    <link rel="manifest" href="/manifest.json" />
     
     <!-- Preconnect to external domains for performance -->
     <link rel="preconnect" href="https://fonts.googleapis.com" />
@@ -40,6 +41,63 @@
     
     <!-- Canonical URL -->
     <link rel="canonical" href="https://hummbl.io/" />
+    
+    <!-- Additional SEO Meta Tags -->
+    <meta name="application-name" content="HUMMBL Base120" />
+    <meta name="language" content="English" />
+    <meta name="rating" content="General" />
+    <meta name="coverage" content="Worldwide" />
+    <meta name="distribution" content="Global" />
+    <meta name="revisit-after" content="7 days" />
+    
+    <!-- Structured Data (JSON-LD) -->
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "WebSite",
+      "name": "HUMMBL",
+      "alternateName": "HUMMBL Base120",
+      "url": "https://hummbl.io",
+      "description": "A comprehensive framework of 120 mental models organized across 6 fundamental transformations for better thinking and decision-making",
+      "publisher": {
+        "@type": "Organization",
+        "name": "HUMMBL Systems",
+        "legalName": "HUMMBL, LLC",
+        "url": "https://hummbl.io",
+        "logo": {
+          "@type": "ImageObject",
+          "url": "https://hummbl.io/logo.png"
+        },
+        "contactPoint": {
+          "@type": "ContactPoint",
+          "email": "contact@hummbl.io",
+          "contactType": "Customer Service"
+        }
+      },
+      "potentialAction": {
+        "@type": "SearchAction",
+        "target": "https://hummbl.io/?s={search_term_string}",
+        "query-input": "required name=search_term_string"
+      }
+    }
+    </script>
+    
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "EducationalOrganization",
+      "name": "HUMMBL Systems",
+      "url": "https://hummbl.io",
+      "description": "Provider of the Base120 mental models framework",
+      "educationalCredentialAwarded": "Mental Models Mastery",
+      "offers": {
+        "@type": "Offer",
+        "category": "Educational Framework",
+        "price": "0",
+        "priceCurrency": "USD"
+      }
+    }
+    </script>
   </head>
   <body>
     <div id="root"></div>
