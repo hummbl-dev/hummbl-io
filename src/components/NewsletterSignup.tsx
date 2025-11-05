@@ -48,13 +48,19 @@ export const NewsletterSignup: React.FC<NewsletterSignupProps> = ({
     setIsSubmitting(true);
 
     try {
-      // TODO: Replace with actual newsletter service integration
-      // Simulate API call delay
-      await new Promise(resolve => setTimeout(resolve, 500));
-      
-      // In production, this would be an API call to newsletter service
-      // Example: await fetch('/api/newsletter/subscribe', { method: 'POST', body: JSON.stringify({ email }) })
-      console.log('Newsletter signup:', email);
+      const response = await fetch('/api/newsletter', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ email }),
+      });
+
+      const data = await response.json();
+
+      if (!response.ok || !data.success) {
+        throw new Error(data.message || 'Failed to subscribe');
+      }
       
       setIsSuccess(true);
       setEmail('');

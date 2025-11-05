@@ -33,12 +33,19 @@ export const FeedbackButton: React.FC<FeedbackButtonProps> = ({ className }) => 
     setIsSubmitting(true);
 
     try {
-      // Using mailto for now - can be replaced with API call
-      const subject = 'HUMMBL Website Feedback';
-      const body = `Feedback: ${feedback}${email ? `%0D%0A%0D%0AFrom: ${email}` : ''}`;
-      const mailtoLink = `mailto:feedback@hummbl.io?subject=${encodeURIComponent(subject)}&body=${body}`;
-      
-      window.location.href = mailtoLink;
+      const response = await fetch('/api/feedback', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ feedback, email: email || undefined }),
+      });
+
+      const data = await response.json();
+
+      if (!response.ok || !data.success) {
+        throw new Error(data.message || 'Failed to send feedback');
+      }
       
       setIsSuccess(true);
       setFeedback('');

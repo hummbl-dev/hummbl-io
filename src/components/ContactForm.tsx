@@ -78,12 +78,19 @@ export const ContactForm: React.FC<ContactFormProps> = ({ className }) => {
     setSubmitStatus('idle');
 
     try {
-      // Using mailto: for now - can be replaced with API call
-      const subject = `HUMMBL Contact: Message from ${formData.name}`;
-      const body = `Name: ${formData.name}%0D%0AEmail: ${formData.email}%0D%0A%0D%0AMessage:%0D%0A${formData.message}`;
-      const mailtoLink = `mailto:contact@hummbl.io?subject=${encodeURIComponent(subject)}&body=${body}`;
-      
-      window.location.href = mailtoLink;
+      const response = await fetch('/api/contact', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(formData),
+      });
+
+      const data = await response.json();
+
+      if (!response.ok || !data.success) {
+        throw new Error(data.message || 'Failed to send message');
+      }
       
       setSubmitStatus('success');
       setFormData({ name: '', email: '', message: '' });
