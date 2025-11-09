@@ -46,8 +46,10 @@ export function findRelatedNarratives(
   limit = 5
 ): RelatedItem[] {
   // Pre-compute current narrative's tag and domain sets for faster comparison
-  const currentTags = new Set((currentNarrative.tags || []).map((t) => t.toLowerCase()));
-  const currentDomain = new Set((currentNarrative.domain || []).map((d) => d.toLowerCase()));
+  const currentTags = new Set((currentNarrative.tags || []).map((t: string) => t.toLowerCase()));
+  const currentDomain = new Set(
+    (currentNarrative.domain || []).map((d: string) => d.toLowerCase())
+  );
 
   const related: RelatedItem[] = [];
   const minScore = 0.1; // Minimum score threshold
@@ -76,7 +78,7 @@ export function findRelatedNarratives(
 
     // Tag similarity - optimized with Set operations
     if (narrative.tags && narrative.tags.length > 0 && currentTags.size > 0) {
-      const narrativeTags = new Set(narrative.tags.map((t) => t.toLowerCase()));
+      const narrativeTags = new Set(narrative.tags.map((t: string) => t.toLowerCase()));
       const intersection = [...currentTags].filter((x) => narrativeTags.has(x)).length;
       if (intersection > 0) {
         const union = new Set([...currentTags, ...narrativeTags]).size;
@@ -88,7 +90,7 @@ export function findRelatedNarratives(
 
     // Domain similarity - optimized with Set operations
     if (narrative.domain && narrative.domain.length > 0 && currentDomain.size > 0) {
-      const narrativeDomain = new Set(narrative.domain.map((d) => d.toLowerCase()));
+      const narrativeDomain = new Set(narrative.domain.map((d: string) => d.toLowerCase()));
       const intersection = [...currentDomain].filter((x) => narrativeDomain.has(x)).length;
       if (intersection > 0) {
         const union = new Set([...currentDomain, ...narrativeDomain]).size;

@@ -23,7 +23,7 @@ export function useMentalModelFilters(models: MentalModel[]) {
   const transformations = useMemo(() => {
     const trans = new Set<string>();
     models.forEach((model) => {
-      model.transformations?.forEach((t) => trans.add(t));
+      model.transformations?.forEach((t: string) => trans.add(t));
     });
     return Array.from(trans).sort();
   }, [models]);
@@ -81,7 +81,7 @@ export function useMentalModelFilters(models: MentalModel[]) {
             (word) =>
               nameLower.includes(word) ||
               descLower.includes(word) ||
-              model.tags?.some((tag) => tag.toLowerCase().includes(word))
+              model.tags?.some((tag: string) => tag.toLowerCase().includes(word))
           );
 
           if (allWordsMatch) {
@@ -95,7 +95,10 @@ export function useMentalModelFilters(models: MentalModel[]) {
         }
 
         // Tags contain search (only check if score is still low)
-        if (score < 100 && model.tags?.some((tag) => tag.toLowerCase().includes(searchLower))) {
+        if (
+          score < 100 &&
+          model.tags?.some((tag: string) => tag.toLowerCase().includes(searchLower))
+        ) {
           score += 75;
         }
 

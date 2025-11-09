@@ -51,7 +51,7 @@ let saveTimeout: ReturnType<typeof setTimeout> | null = null;
  * Optimized with in-memory caching
  */
 function getAnalytics(): UserAnalytics {
-  if (cachedAnalytics) {
+  if (cachedAnalytics !== null) {
     return cachedAnalytics;
   }
 
