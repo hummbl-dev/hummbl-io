@@ -37,40 +37,46 @@ export function useMentalModelFilters(models: MentalModel[]) {
       const searchLower = filters.searchTerm.toLowerCase();
       const searchWords = searchLower.split(/\s+/).filter((w) => w.length > 0);
 
-      result = result
-        .map((model) => {
-          let score = 0;
-          const nameLower = model.name.toLowerCase();
-          const descLower = model.description?.toLowerCase() || '';
-          const codeLower = model.code?.toLowerCase() || '';
+      // Pre-compile regex once for performance
+      const wordBoundaryRegex = new RegExp(
+        `\\b${searchLower.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')}`
+      );
 
-          // Exact name match (highest priority)
-          if (nameLower === searchLower) {
-            score += 1000;
-          }
-          // Name starts with search term
-          else if (nameLower.startsWith(searchLower)) {
-            score += 500;
-          }
-          // Name contains search at word boundary
-          else if (
-            new RegExp(`\\b${searchLower.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')}`).test(nameLower)
-          ) {
-            score += 300;
-          }
-          // Name contains search anywhere
-          else if (nameLower.includes(searchLower)) {
-            score += 100;
-          }
+      // Score and filter in single pass to reduce memory allocations
+      const scored: Array<{ model: MentalModel; score: number }> = [];
 
-          // Code exact match
-          if (codeLower === searchLower) {
-            score += 400;
-          } else if (codeLower.includes(searchLower)) {
-            score += 50;
-          }
+      for (const model of result) {
+        let score = 0;
+        const nameLower = model.name.toLowerCase();
+        const descLower = model.description?.toLowerCase() || '';
+        const codeLower = model.code?.toLowerCase() || '';
 
-          // Check if all search words match
+        // Exact name match (highest priority)
+        if (nameLower === searchLower) {
+          score += 1000;
+        }
+        // Name starts with search term
+        else if (nameLower.startsWith(searchLower)) {
+          score += 500;
+        }
+        // Name contains search at word boundary
+        else if (wordBoundaryRegex.test(nameLower)) {
+          score += 300;
+        }
+        // Name contains search anywhere
+        else if (nameLower.includes(searchLower)) {
+          score += 100;
+        }
+
+        // Code exact match
+        if (codeLower === searchLower) {
+          score += 400;
+        } else if (codeLower.includes(searchLower)) {
+          score += 50;
+        }
+
+        // Check if all search words match (only if we have multiple words)
+        if (searchWords.length > 1) {
           const allWordsMatch = searchWords.every(
             (word) =>
               nameLower.includes(word) ||
@@ -81,22 +87,27 @@ export function useMentalModelFilters(models: MentalModel[]) {
           if (allWordsMatch) {
             score += 200;
           }
+        }
 
-          // Description contains search
-          if (descLower.includes(searchLower)) {
-            score += 50;
-          }
+        // Description contains search (only check if score is still low)
+        if (score < 100 && descLower.includes(searchLower)) {
+          score += 50;
+        }
 
-          // Tags contain search
-          if (model.tags?.some((tag) => tag.toLowerCase().includes(searchLower))) {
-            score += 75;
-          }
+        // Tags contain search (only check if score is still low)
+        if (score < 100 && model.tags?.some((tag) => tag.toLowerCase().includes(searchLower))) {
+          score += 75;
+        }
 
-          return { model, score };
-        })
-        .filter(({ score }) => score > 0)
-        .sort((a, b) => b.score - a.score)
-        .map(({ model }) => model);
+        // Only add if score is positive
+        if (score > 0) {
+          scored.push({ model, score });
+        }
+      }
+
+      // Sort by score descending and extract models
+      scored.sort((a, b) => b.score - a.score);
+      result = scored.map(({ model }) => model);
     }
 
     // Apply category filter

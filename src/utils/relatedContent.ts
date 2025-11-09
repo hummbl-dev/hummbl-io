@@ -38,13 +38,19 @@ function textSimilarity(text1: string, text2: string): number {
 
 /**
  * Find related narratives
+ * Optimized with early filtering and reduced calculations
  */
 export function findRelatedNarratives(
   currentNarrative: Narrative,
   allNarratives: Narrative[],
   limit = 5
 ): RelatedItem[] {
+  // Pre-compute current narrative's tag and domain sets for faster comparison
+  const currentTags = new Set((currentNarrative.tags || []).map((t) => t.toLowerCase()));
+  const currentDomain = new Set((currentNarrative.domain || []).map((d) => d.toLowerCase()));
+
   const related: RelatedItem[] = [];
+  const minScore = 0.1; // Minimum score threshold
 
   for (const narrative of allNarratives) {
     // Skip the current narrative
@@ -53,26 +59,50 @@ export function findRelatedNarratives(
     let score = 0;
     const reasons: string[] = [];
 
-    // Same category (high weight)
+    // Same category (high weight) - quick check first
     if (narrative.category === currentNarrative.category) {
       score += 0.4;
       reasons.push('same category');
     }
 
-    // Tag similarity
-    const tagSimilarity = arraySimilarity(currentNarrative.tags || [], narrative.tags || []);
-    if (tagSimilarity > 0) {
-      score += tagSimilarity * 0.3;
-      reasons.push('similar tags');
+    // Quick early exit if no category match and no tags/domain overlap potential
+    if (
+      score === 0 &&
+      (!narrative.tags || narrative.tags.length === 0) &&
+      (!narrative.domain || narrative.domain.length === 0)
+    ) {
+      continue;
     }
 
-    // Domain similarity
-    const domainSimilarity = arraySimilarity(currentNarrative.domain || [], narrative.domain || []);
-    if (domainSimilarity > 0) {
-      score += domainSimilarity * 0.2;
+    // Tag similarity - optimized with Set operations
+    if (narrative.tags && narrative.tags.length > 0 && currentTags.size > 0) {
+      const narrativeTags = new Set(narrative.tags.map((t) => t.toLowerCase()));
+      const intersection = [...currentTags].filter((x) => narrativeTags.has(x)).length;
+      if (intersection > 0) {
+        const union = new Set([...currentTags, ...narrativeTags]).size;
+        const tagSimilarity = intersection / union;
+        score += tagSimilarity * 0.3;
+        reasons.push('similar tags');
+      }
     }
 
-    // Summary similarity
+    // Domain similarity - optimized with Set operations
+    if (narrative.domain && narrative.domain.length > 0 && currentDomain.size > 0) {
+      const narrativeDomain = new Set(narrative.domain.map((d) => d.toLowerCase()));
+      const intersection = [...currentDomain].filter((x) => narrativeDomain.has(x)).length;
+      if (intersection > 0) {
+        const union = new Set([...currentDomain, ...narrativeDomain]).size;
+        const domainSimilarity = intersection / union;
+        score += domainSimilarity * 0.2;
+      }
+    }
+
+    // Skip expensive text similarity if score is already very low
+    if (score < minScore / 2) {
+      continue;
+    }
+
+    // Summary similarity (only calculate if we have a chance of meeting threshold)
     const summarySimilarity = textSimilarity(currentNarrative.summary, narrative.summary);
     if (summarySimilarity > 0.05) {
       score += summarySimilarity * 0.1;
@@ -84,7 +114,7 @@ export function findRelatedNarratives(
       score += 0.05;
     }
 
-    if (score > 0.1) {
+    if (score > minScore) {
       related.push({
         id: narrative.narrative_id,
         type: 'narrative',
@@ -101,13 +131,18 @@ export function findRelatedNarratives(
 
 /**
  * Find related mental models
+ * Optimized with early filtering and reduced calculations
  */
 export function findRelatedMentalModels(
   currentModel: MentalModel,
   allModels: MentalModel[],
   limit = 5
 ): RelatedItem[] {
+  // Pre-compute current model's tags for faster comparison
+  const currentTags = new Set((currentModel.tags || []).map((t) => t.toLowerCase()));
+
   const related: RelatedItem[] = [];
+  const minScore = 0.1; // Minimum score threshold
 
   for (const model of allModels) {
     // Skip the current model
@@ -116,24 +151,41 @@ export function findRelatedMentalModels(
     let score = 0;
     const reasons: string[] = [];
 
-    // Same category (high weight)
+    // Same category (high weight) - quick check first
     if (model.transformation === currentModel.transformation) {
       score += 0.5;
       reasons.push('same category');
     }
 
-    // Tag similarity
-    const tagSimilarity = arraySimilarity(currentModel.tags || [], model.tags || []);
-    if (tagSimilarity > 0) {
-      score += tagSimilarity * 0.3;
-      reasons.push('similar tags');
+    // Quick early exit if no transformation match and no tags
+    if (score === 0 && (!model.tags || model.tags.length === 0 || currentTags.size === 0)) {
+      continue;
     }
 
-    // Description similarity
-    const descSimilarity = textSimilarity(currentModel.definition || '', model.definition || '');
-    if (descSimilarity > 0.05) {
-      score += descSimilarity * 0.2;
-      reasons.push('similar description');
+    // Tag similarity - optimized with Set operations
+    if (model.tags && model.tags.length > 0 && currentTags.size > 0) {
+      const modelTags = new Set(model.tags.map((t) => t.toLowerCase()));
+      const intersection = [...currentTags].filter((x) => modelTags.has(x)).length;
+      if (intersection > 0) {
+        const union = new Set([...currentTags, ...modelTags]).size;
+        const tagSimilarity = intersection / union;
+        score += tagSimilarity * 0.3;
+        reasons.push('similar tags');
+      }
+    }
+
+    // Skip expensive text similarity if score is already very low
+    if (score < minScore / 2) {
+      continue;
+    }
+
+    // Description similarity (only calculate if we have a chance of meeting threshold)
+    if (currentModel.definition && model.definition) {
+      const descSimilarity = textSimilarity(currentModel.definition, model.definition);
+      if (descSimilarity > 0.05) {
+        score += descSimilarity * 0.2;
+        reasons.push('similar description');
+      }
     }
 
     // Same difficulty level
@@ -141,7 +193,7 @@ export function findRelatedMentalModels(
       score += 0.05;
     }
 
-    if (score > 0.1) {
+    if (score > minScore) {
       related.push({
         id: model.code,
         type: 'mentalModel',

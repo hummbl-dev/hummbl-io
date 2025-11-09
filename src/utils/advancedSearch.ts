@@ -26,36 +26,59 @@ export interface SearchMatch {
 
 /**
  * Calculate Levenshtein distance between two strings
+ * Optimized with early exit and length-based short circuit
  */
 function levenshteinDistance(str1: string, str2: string): number {
   const len1 = str1.length;
   const len2 = str2.length;
-  const matrix: number[][] = [];
 
-  for (let i = 0; i <= len1; i++) {
-    matrix[i] = [i];
+  // Early exits for performance
+  if (len1 === 0) return len2;
+  if (len2 === 0) return len1;
+  if (str1 === str2) return 0;
+
+  // If length difference is too large, skip expensive calculation
+  const maxLen = Math.max(len1, len2);
+  const minLen = Math.min(len1, len2);
+  if ((maxLen - minLen) / maxLen > 0.5) {
+    return maxLen; // Too different to be a good match
   }
 
+  // Use only two rows instead of full matrix for memory optimization
+  let prevRow: number[] = new Array(len2 + 1);
+  let currRow: number[] = new Array(len2 + 1);
+
+  // Initialize first row
   for (let j = 0; j <= len2; j++) {
-    matrix[0][j] = j;
+    prevRow[j] = j;
   }
 
   for (let i = 1; i <= len1; i++) {
+    currRow[0] = i;
+
     for (let j = 1; j <= len2; j++) {
       const cost = str1[i - 1] === str2[j - 1] ? 0 : 1;
-      matrix[i][j] = Math.min(
-        matrix[i - 1][j] + 1, // deletion
-        matrix[i][j - 1] + 1, // insertion
-        matrix[i - 1][j - 1] + cost // substitution
+      currRow[j] = Math.min(
+        prevRow[j] + 1, // deletion
+        currRow[j - 1] + 1, // insertion
+        prevRow[j - 1] + cost // substitution
       );
     }
+
+    // Swap rows for next iteration
+    [prevRow, currRow] = [currRow, prevRow];
   }
 
-  return matrix[len1][len2];
+  return prevRow[len2];
 }
+
+// Cache for fuzzy score results to avoid recalculating
+const fuzzyScoreCache = new Map<string, number>();
+const MAX_CACHE_SIZE = 1000;
 
 /**
  * Calculate fuzzy match score (0-1, higher is better)
+ * Optimized with caching and early exits
  */
 function fuzzyScore(query: string, text: string, caseSensitive = false): number {
   if (!query || !text) return 0;
@@ -63,25 +86,54 @@ function fuzzyScore(query: string, text: string, caseSensitive = false): number 
   const q = caseSensitive ? query : query.toLowerCase();
   const t = caseSensitive ? text : text.toLowerCase();
 
-  // Exact match
-  if (t === q) return 1.0;
-
-  // Contains match
-  if (t.includes(q)) return 0.9;
-
-  // Word boundary match
-  const words = t.split(/\s+/);
-  for (const word of words) {
-    if (word === q) return 0.85;
-    if (word.startsWith(q)) return 0.8;
+  // Check cache first
+  const cacheKey = `${q}:${t}`;
+  if (fuzzyScoreCache.has(cacheKey)) {
+    return fuzzyScoreCache.get(cacheKey)!;
   }
 
-  // Fuzzy match using Levenshtein distance
-  const distance = levenshteinDistance(q, t);
-  const maxLen = Math.max(q.length, t.length);
-  const similarity = 1 - distance / maxLen;
+  let score = 0;
 
-  return similarity > 0.5 ? similarity * 0.7 : 0;
+  // Exact match
+  if (t === q) {
+    score = 1.0;
+  }
+  // Contains match
+  else if (t.includes(q)) {
+    score = 0.9;
+  }
+  // Word boundary match
+  else {
+    const words = t.split(/\s+/);
+    for (const word of words) {
+      if (word === q) {
+        score = 0.85;
+        break;
+      }
+      if (word.startsWith(q)) {
+        score = 0.8;
+        break;
+      }
+    }
+
+    // Fuzzy match using Levenshtein distance (only if no other match found)
+    if (score === 0) {
+      const distance = levenshteinDistance(q, t);
+      const maxLen = Math.max(q.length, t.length);
+      const similarity = 1 - distance / maxLen;
+      score = similarity > 0.5 ? similarity * 0.7 : 0;
+    }
+  }
+
+  // Cache the result (with size limit)
+  if (fuzzyScoreCache.size >= MAX_CACHE_SIZE) {
+    // Clear oldest entries (simple LRU approximation)
+    const keysToDelete = Array.from(fuzzyScoreCache.keys()).slice(0, 100);
+    keysToDelete.forEach((k) => fuzzyScoreCache.delete(k));
+  }
+  fuzzyScoreCache.set(cacheKey, score);
+
+  return score;
 }
 
 /**

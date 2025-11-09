@@ -41,21 +41,32 @@ export interface UserAnalytics {
 const ANALYTICS_KEY = 'hummbl_user_analytics';
 const MAX_ACTIONS = 100; // Keep last 100 actions
 
+// Cache analytics in memory to reduce localStorage reads
+let cachedAnalytics: UserAnalytics | null = null;
+let pendingSave = false;
+let saveTimeout: ReturnType<typeof setTimeout> | null = null;
+
 /**
- * Get analytics from localStorage
+ * Get analytics from cache or localStorage
+ * Optimized with in-memory caching
  */
 function getAnalytics(): UserAnalytics {
+  if (cachedAnalytics) {
+    return cachedAnalytics;
+  }
+
   try {
     const stored = localStorage.getItem(ANALYTICS_KEY);
     if (stored) {
-      return JSON.parse(stored);
+      cachedAnalytics = JSON.parse(stored);
+      return cachedAnalytics;
     }
   } catch (error) {
     console.warn('Failed to load analytics:', error);
   }
 
   // Return default analytics
-  return {
+  cachedAnalytics = {
     views: {
       narrativeViews: {},
       modelViews: {},
@@ -78,22 +89,59 @@ function getAnalytics(): UserAnalytics {
     sessionDuration: 0,
     actions: [],
   };
+  return cachedAnalytics;
 }
 
 /**
- * Save analytics to localStorage
+ * Save analytics to localStorage with debouncing
+ * Batches multiple saves to reduce localStorage writes
  */
 function saveAnalytics(analytics: UserAnalytics): void {
-  try {
-    // Update session duration
-    analytics.sessionDuration = Date.now() - analytics.sessionStart;
+  // Update cache immediately
+  cachedAnalytics = analytics;
 
-    // Trim actions if needed
+  // Debounce localStorage writes
+  if (saveTimeout) {
+    clearTimeout(saveTimeout);
+  }
+
+  saveTimeout = setTimeout(() => {
+    try {
+      // Update session duration
+      analytics.sessionDuration = Date.now() - analytics.sessionStart;
+
+      // Trim actions if needed
+      if (analytics.actions.length > MAX_ACTIONS) {
+        analytics.actions = analytics.actions.slice(-MAX_ACTIONS);
+      }
+
+      localStorage.setItem(ANALYTICS_KEY, JSON.stringify(analytics));
+      pendingSave = false;
+    } catch (error) {
+      console.warn('Failed to save analytics:', error);
+    }
+  }, 500); // Batch writes with 500ms delay
+
+  pendingSave = true;
+}
+
+/**
+ * Force immediate save (useful for critical operations)
+ */
+function saveAnalyticsImmediate(analytics: UserAnalytics): void {
+  if (saveTimeout) {
+    clearTimeout(saveTimeout);
+    saveTimeout = null;
+  }
+
+  try {
+    analytics.sessionDuration = Date.now() - analytics.sessionStart;
     if (analytics.actions.length > MAX_ACTIONS) {
       analytics.actions = analytics.actions.slice(-MAX_ACTIONS);
     }
-
     localStorage.setItem(ANALYTICS_KEY, JSON.stringify(analytics));
+    cachedAnalytics = analytics;
+    pendingSave = false;
   } catch (error) {
     console.warn('Failed to save analytics:', error);
   }
@@ -110,7 +158,14 @@ export function useUserAnalytics() {
       saveAnalytics(analytics);
     }, 30000); // Every 30 seconds
 
-    return () => clearInterval(interval);
+    return () => {
+      clearInterval(interval);
+      // Force save on unmount to avoid data loss
+      if (pendingSave) {
+        const analytics = getAnalytics();
+        saveAnalyticsImmediate(analytics);
+      }
+    };
   }, []);
 
   /**
