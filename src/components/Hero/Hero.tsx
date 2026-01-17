@@ -109,6 +109,24 @@ export const Hero: React.FC<HeroProps> = ({ onViewChange, currentView }) => {
               <path d="M5 12h14M12 5l7 7-7 7" />
             </svg>
           </button>
+          <button
+            className={`hero-cta-button ${currentView === 'beta' ? 'active' : ''}`}
+            onClick={() => onViewChange('beta')}
+            aria-label="Join Beta Program"
+            aria-pressed={currentView === 'beta'}
+          >
+            <span>Join Beta</span>
+            <svg
+              width="20"
+              height="20"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              strokeWidth="2"
+            >
+              <path d="M5 12h14M12 5l7 7-7 7" />
+            </svg>
+          </button>
         </div>
 
         <div className="hero-features">

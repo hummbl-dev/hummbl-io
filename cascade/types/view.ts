@@ -1,1 +1,1 @@
-export type ViewType = 'narratives' | 'models';
+export type ViewType = 'narratives' | 'models' | 'beta';

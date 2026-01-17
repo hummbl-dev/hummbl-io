@@ -2,7 +2,7 @@
 
 import { useState, useCallback, useEffect } from 'react';
 
-export type ViewType = 'models' | 'narratives';
+export type ViewType = 'models' | 'narratives' | 'beta';
 export type ExportFormat = 'json' | 'csv' | 'md';
 
 export interface FilterPreferences {

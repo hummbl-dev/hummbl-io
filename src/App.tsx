@@ -6,6 +6,7 @@ import ModelDetailModal from './components/mental-models/ModelDetailModal';
 import { Hero } from './components/Hero/Hero';
 import { ChatWidget } from './components/chat/ChatWidget';
 import { AuthProvider } from './contexts/AuthContext';
+import BetaSignup from './pages/BetaSignup';
 import type { ViewType } from '@cascade/types/view';
 import type { MentalModel } from '@cascade/types/mental-model';
 import { fetchMentalModels, clearMentalModelsCache } from './services/mentalModelsService';
@@ -122,6 +123,8 @@ function App() {
         <main className="main-content">
           {currentView === 'narratives' ? (
             <NarrativeList />
+          ) : currentView === 'beta' ? (
+            <BetaSignup />
           ) : (
             <div className="mental-models-wrapper">
               <div
@@ -247,6 +250,17 @@ function App() {
                 viewMode: 'browsing',
                 metadata: {
                   totalNarratives: 0, // TODO: Add narratives count when available
+                },
+              };
+            }
+
+            // If on beta signup page
+            if (currentView === 'beta') {
+              return {
+                type: 'beta',
+                viewMode: 'signup',
+                metadata: {
+                  betaStatus: 'open',
                 },
               };
             }
