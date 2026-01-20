@@ -17,7 +17,7 @@
 - **Authentication:** Supabase Auth
 - **Analytics:** Sentry (error tracking) + Plausible (privacy-focused)
 - **Testing:** Vitest (unit) + Jest (e2e) + Testing Library
-- **Deployment:** Vercel (frontend)
+- **Deployment:** Cloudflare Pages (frontend)
 
 ### Project Structure
 
