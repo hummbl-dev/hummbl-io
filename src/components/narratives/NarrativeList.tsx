@@ -1,6 +1,6 @@
 // Narrative list component
 
-import { useState } from 'react';
+import { useState, useMemo } from 'react';
 import { useNarratives } from '../../hooks/useNarratives';
 import { useNarrativeFilters, type FilterOptions } from '../../hooks/useNarrativeFilters';
 import { NarrativeCard } from './NarrativeCard';
@@ -29,8 +29,11 @@ export function NarrativeList() {
   // Apply filters
   const { filteredNarratives, resultCount, totalCount } = useNarrativeFilters(narratives, filters);
 
-  // Extract unique categories
-  const categories = Array.from(new Set(narratives.map((n) => n.category))).sort();
+  // Extract unique categories - memoized to avoid recalculation on every render
+  const categories = useMemo(
+    () => Array.from(new Set(narratives.map((n) => n.category))).sort(),
+    [narratives]
+  );
 
   const handleCardClick = (narrative: Narrative) => {
     setSelectedNarrative(narrative);
@@ -127,7 +130,7 @@ export function NarrativeList() {
             </div>
             <h2 className="empty-state-title">No Narratives Found</h2>
             <p className="empty-state-description">
-              Try adjusting your search terms or filters to find what you're looking for.
+              Try adjusting your search terms or filters to find what you&apos;re looking for.
             </p>
           </div>
         )}

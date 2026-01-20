@@ -1,0 +1,6 @@
+{
+  "version": "3.2.4",
+  "results": [
+    [":src/utils/__tests__/analytics.test.ts", { "duration": 117.38722500000006, "failed": false }]
+  ]
+}

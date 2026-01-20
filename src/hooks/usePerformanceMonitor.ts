@@ -226,11 +226,12 @@ export function usePerformanceMonitor(enabled = true) {
 
   // Auto-start if enabled
   useEffect(() => {
-    if (enabled && !isMonitoring) {
-      const cleanup = startMonitoring();
-      return cleanup;
-    }
-  }, [enabled, isMonitoring, startMonitoring]);
+    if (!enabled || isMonitoring) return;
+
+    const cleanup = startMonitoring();
+    return cleanup;
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [enabled, startMonitoring]); // isMonitoring intentionally excluded to avoid infinite loop
 
   return {
     snapshot,
