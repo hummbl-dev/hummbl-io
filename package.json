@@ -8,7 +8,7 @@
     "build": "pnpm --filter @hummbl/shared build && pnpm --filter @hummbl/mobile export",
     "build:shared": "pnpm --filter @hummbl/shared build",
     "lint": "pnpm -r lint",
-    "typecheck": "pnpm -r typecheck",
+    "type-check": "pnpm -r type-check",
     "test": "pnpm -r test",
     "clean": "pnpm -r clean && rimraf node_modules",
     "format": "prettier --write .",

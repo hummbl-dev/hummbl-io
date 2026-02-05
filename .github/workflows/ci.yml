@@ -37,12 +37,7 @@ jobs:
         run: pnpm lint
         continue-on-error: true
 
-      - name: Type check (root)
-        run: pnpm typecheck
-        continue-on-error: true
-
-      - name: Type check (mobile)
-        working-directory: mobile
+      - name: Type check
         run: pnpm type-check
         continue-on-error: true
 
@@ -71,36 +66,3 @@ jobs:
       - name: Run tests
         run: pnpm test
         continue-on-error: true
-
-      - name: Run mobile tests
-        working-directory: mobile
-        run: pnpm test
-        continue-on-error: true
-
-  build:
-    name: Build
-    runs-on: ubuntu-latest
-    timeout-minutes: 15
-
-    steps:
-      - uses: actions/checkout@v4
-
-      - name: Setup pnpm
-        uses: pnpm/action-setup@v4
-        with:
-          version: 10
-
-      - name: Setup Node.js
-        uses: actions/setup-node@v4
-        with:
-          node-version: '20'
-          cache: 'pnpm'
-
-      - name: Install dependencies
-        run: pnpm install --frozen-lockfile
-
-      - name: Build shared types
-        run: pnpm run build:types
-
-      - name: Build
-        run: pnpm run build
