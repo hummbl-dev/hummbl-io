@@ -1,3 +1,8 @@
 // Using CO5 (Composition) - Export all stores
 
-export { useBookmarkStore, createBookmarkStore } from './bookmarkStore';
+export {
+  useBookmarkStore,
+  createBookmarkStore,
+  initializeBookmarkStore,
+  getBookmarkStoreHook,
+} from './bookmarkStore';

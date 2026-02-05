@@ -1,6 +1,6 @@
 // Using CO5 (Composition) - Zustand store for bookmarks with persistence
 
-import { create } from 'zustand';
+import { create, StoreApi, UseBoundStore } from 'zustand';
 import { persist, createJSONStorage, StateStorage } from 'zustand/middleware';
 import type { Bookmark, BookmarkType, BookmarkState, BookmarkActions } from '../types';
 
@@ -10,7 +10,7 @@ const generateId = () => `${Date.now()}-${Math.random().toString(36).substr(2, 9
 type BookmarkStore = BookmarkState & BookmarkActions;
 
 // Using DE3 (Decomposition) - Separate store creation for different storage backends
-export const createBookmarkStore = (storage: StateStorage) =>
+export const createBookmarkStore = (storage: StateStorage): UseBoundStore<StoreApi<BookmarkStore>> =>
   create<BookmarkStore>()(
     persist(
       (set, get) => ({
@@ -58,24 +58,52 @@ export const createBookmarkStore = (storage: StateStorage) =>
     )
   );
 
-// Default store using localStorage (web) - mobile will override
-let defaultStorage: StateStorage;
-
-// Using SY8 (Systems) - Platform detection for storage
-if (typeof window !== 'undefined' && window.localStorage) {
-  defaultStorage = {
-    getItem: (name) => window.localStorage.getItem(name),
-    setItem: (name, value) => window.localStorage.setItem(name, value),
-    removeItem: (name) => window.localStorage.removeItem(name),
-  };
-} else {
-  // Fallback for SSR/non-browser
+// Using SY8 (Systems) - Platform-adaptive default storage
+const createDefaultStorage = (): StateStorage => {
+  if (typeof window !== 'undefined' && window.localStorage) {
+    return {
+      getItem: (name) => window.localStorage.getItem(name),
+      setItem: (name, value) => window.localStorage.setItem(name, value),
+      removeItem: (name) => window.localStorage.removeItem(name),
+    };
+  }
+  // Fallback for SSR/non-browser (memory storage)
   const memoryStorage = new Map<string, string>();
-  defaultStorage = {
+  return {
     getItem: (name) => memoryStorage.get(name) ?? null,
     setItem: (name, value) => { memoryStorage.set(name, value); },
     removeItem: (name) => { memoryStorage.delete(name); },
   };
-}
+};
 
-export const useBookmarkStore = createBookmarkStore(defaultStorage);
+// Store singleton - can be re-initialized for mobile
+let bookmarkStoreInstance: UseBoundStore<StoreApi<BookmarkStore>> | null = null;
+
+/**
+ * Initialize the bookmark store with a specific storage adapter.
+ * Must be called before using useBookmarkStore on mobile.
+ */
+export const initializeBookmarkStore = (storage: StateStorage): void => {
+  bookmarkStoreInstance = createBookmarkStore(storage);
+};
+
+/**
+ * Get the bookmark store, initializing with default storage if needed.
+ */
+export const useBookmarkStore = (): BookmarkStore => {
+  if (!bookmarkStoreInstance) {
+    bookmarkStoreInstance = createBookmarkStore(createDefaultStorage());
+  }
+  return bookmarkStoreInstance();
+};
+
+/**
+ * Get the raw store hook for direct Zustand usage.
+ * Useful when you need the selector pattern: useBookmarkStoreHook(state => state.bookmarks)
+ */
+export const getBookmarkStoreHook = (): UseBoundStore<StoreApi<BookmarkStore>> => {
+  if (!bookmarkStoreInstance) {
+    bookmarkStoreInstance = createBookmarkStore(createDefaultStorage());
+  }
+  return bookmarkStoreInstance;
+};
