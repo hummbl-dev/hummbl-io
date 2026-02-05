@@ -1,9 +1,11 @@
-// Using P1 (First Principles) - Home screen with quick access
+// Using P1 (First Principles) - Home screen with featured content
 
 import { View, Text, ScrollView, StyleSheet, Pressable } from 'react-native';
 import { Link } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
 import { colors, spacing, layout, typography } from '../../theme';
+import { SAMPLE_MODELS, SAMPLE_NARRATIVES } from '../../services/data';
+import { useBookmarks } from '@hummbl/shared';
 
 interface QuickActionProps {
   icon: keyof typeof Ionicons.glyphMap;
@@ -30,7 +32,23 @@ function QuickAction({ icon, title, description, href, color }: QuickActionProps
   );
 }
 
+// Featured model of the day (rotates based on date)
+const getFeaturedModel = () => {
+  const dayIndex = new Date().getDate() % SAMPLE_MODELS.length;
+  return SAMPLE_MODELS[dayIndex];
+};
+
+// Featured narrative
+const getFeaturedNarrative = () => {
+  const dayIndex = new Date().getDate() % SAMPLE_NARRATIVES.length;
+  return SAMPLE_NARRATIVES[dayIndex];
+};
+
 export default function HomeScreen() {
+  const { bookmarks } = useBookmarks();
+  const featuredModel = getFeaturedModel();
+  const featuredNarrative = getFeaturedNarrative();
+
   return (
     <ScrollView style={styles.container} contentContainerStyle={styles.content}>
       {/* Welcome section */}
@@ -41,6 +59,26 @@ export default function HomeScreen() {
         </Text>
       </View>
 
+      {/* Daily Insight */}
+      <View style={styles.section}>
+        <Text style={styles.sectionTitle}>Today's Model</Text>
+        <Link href={`/mental-models/${featuredModel.id}` as any} asChild>
+          <Pressable style={styles.featuredCard}>
+            <View style={[styles.featuredBadge, { backgroundColor: colors.transformations[featuredModel.transformation] }]}>
+              <Text style={styles.featuredBadgeText}>{featuredModel.code}</Text>
+            </View>
+            <Text style={styles.featuredTitle}>{featuredModel.name}</Text>
+            <Text style={styles.featuredDescription} numberOfLines={2}>
+              {featuredModel.description}
+            </Text>
+            <View style={styles.featuredFooter}>
+              <Text style={styles.featuredCategory}>{featuredModel.category}</Text>
+              <Ionicons name="arrow-forward" size={16} color={colors.primary[500]} />
+            </View>
+          </Pressable>
+        </Link>
+      </View>
+
       {/* Quick actions */}
       <View style={styles.section}>
         <Text style={styles.sectionTitle}>Quick Access</Text>
@@ -48,7 +86,7 @@ export default function HomeScreen() {
         <QuickAction
           icon="grid"
           title="Mental Models"
-          description="120+ thinking frameworks"
+          description={`${SAMPLE_MODELS.length} thinking frameworks`}
           href="/explore"
           color={colors.transformations.DE}
         />
@@ -56,7 +94,7 @@ export default function HomeScreen() {
         <QuickAction
           icon="document-text"
           title="Narratives"
-          description="Evidence-based insights"
+          description={`${SAMPLE_NARRATIVES.length} evidence-based insights`}
           href="/explore"
           color={colors.transformations.SY}
         />
@@ -72,10 +110,33 @@ export default function HomeScreen() {
         <QuickAction
           icon="bookmark"
           title="Bookmarks"
-          description="Your saved items"
+          description={bookmarks.length > 0 ? `${bookmarks.length} saved items` : 'Your saved items'}
           href="/bookmarks"
           color={colors.transformations.P}
         />
+      </View>
+
+      {/* Featured Narrative */}
+      <View style={styles.section}>
+        <Text style={styles.sectionTitle}>Featured Narrative</Text>
+        <Link href={`/narratives/${featuredNarrative.id}` as any} asChild>
+          <Pressable style={styles.narrativeCard}>
+            <View style={styles.narrativeHeader}>
+              <View style={[styles.evidenceBadge, { backgroundColor: colors.evidence[featuredNarrative.evidenceQuality] }]}>
+                <Text style={styles.evidenceBadgeText}>
+                  {featuredNarrative.evidenceQuality === 'A' ? 'Strong' : featuredNarrative.evidenceQuality === 'B' ? 'Moderate' : 'Limited'}
+                </Text>
+              </View>
+              <Text style={styles.confidenceText}>
+                {Math.round(featuredNarrative.confidence * 100)}% confidence
+              </Text>
+            </View>
+            <Text style={styles.narrativeTitle}>{featuredNarrative.title}</Text>
+            <Text style={styles.narrativeDescription} numberOfLines={2}>
+              {featuredNarrative.summary}
+            </Text>
+          </Pressable>
+        </Link>
       </View>
 
       {/* Stats section */}
@@ -83,7 +144,7 @@ export default function HomeScreen() {
         <Text style={styles.sectionTitle}>At a Glance</Text>
         <View style={styles.statsRow}>
           <View style={styles.statCard}>
-            <Text style={styles.statNumber}>120+</Text>
+            <Text style={styles.statNumber}>{SAMPLE_MODELS.length}</Text>
             <Text style={styles.statLabel}>Models</Text>
           </View>
           <View style={styles.statCard}>
@@ -91,7 +152,7 @@ export default function HomeScreen() {
             <Text style={styles.statLabel}>Domains</Text>
           </View>
           <View style={styles.statCard}>
-            <Text style={styles.statNumber}>20+</Text>
+            <Text style={styles.statNumber}>{SAMPLE_NARRATIVES.length}</Text>
             <Text style={styles.statLabel}>Narratives</Text>
           </View>
         </View>
@@ -177,6 +238,76 @@ const styles = StyleSheet.create({
     ...typography.bodySmall,
     color: colors.text.secondary,
     marginTop: spacing.xxs,
+  },
+  featuredCard: {
+    backgroundColor: colors.background.primary,
+    padding: layout.cardPadding,
+    borderRadius: layout.cardBorderRadius,
+  },
+  featuredBadge: {
+    alignSelf: 'flex-start',
+    paddingHorizontal: spacing.md,
+    paddingVertical: spacing.xs,
+    borderRadius: 6,
+    marginBottom: spacing.sm,
+  },
+  featuredBadgeText: {
+    ...typography.labelMedium,
+    color: colors.text.inverse,
+  },
+  featuredTitle: {
+    ...typography.headingMedium,
+    color: colors.text.primary,
+    marginBottom: spacing.xs,
+  },
+  featuredDescription: {
+    ...typography.bodyMedium,
+    color: colors.text.secondary,
+    lineHeight: 22,
+    marginBottom: spacing.md,
+  },
+  featuredFooter: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+  },
+  featuredCategory: {
+    ...typography.labelSmall,
+    color: colors.text.secondary,
+  },
+  narrativeCard: {
+    backgroundColor: colors.background.primary,
+    padding: layout.cardPadding,
+    borderRadius: layout.cardBorderRadius,
+  },
+  narrativeHeader: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    marginBottom: spacing.sm,
+  },
+  evidenceBadge: {
+    paddingHorizontal: spacing.sm,
+    paddingVertical: spacing.xxs,
+    borderRadius: 4,
+  },
+  evidenceBadgeText: {
+    ...typography.caption,
+    color: colors.text.inverse,
+  },
+  confidenceText: {
+    ...typography.caption,
+    color: colors.text.secondary,
+  },
+  narrativeTitle: {
+    ...typography.labelLarge,
+    color: colors.text.primary,
+    marginBottom: spacing.xs,
+  },
+  narrativeDescription: {
+    ...typography.bodyMedium,
+    color: colors.text.secondary,
+    lineHeight: 22,
   },
   statsRow: {
     flexDirection: 'row',
