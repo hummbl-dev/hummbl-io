@@ -29,9 +29,6 @@ jobs:
     name: Setup Test Environment
     runs-on: ubuntu-latest
     timeout-minutes: 5
-    outputs:
-      cache-key: ${{ steps.cache-deps.outputs.cache-key }}
-
     steps:
       - uses: actions/checkout@v4
 
@@ -399,7 +396,8 @@ jobs:
           if-no-files-found: warn
 
       - name: Upload coverage to Codecov
-        if: steps.tests.outputs.status == 'success' && secrets.CODECOV_TOKEN != ''
+        if: steps.tests.outputs.status == 'success'
+        continue-on-error: true  # Gracefully handle missing CODECOV_TOKEN
         uses: codecov/codecov-action@v4
         with:
           token: ${{ secrets.CODECOV_TOKEN }}
