@@ -107,8 +107,7 @@ jobs:
         run: pnpm install --frozen-lockfile
 
       - name: Run Analytics Tests
-        run: npx vitest run src/utils/__tests__/analytics*.test.ts --no-watch --silent --run --sourcemap=false
-
+        run: npx vitest run src/utils/__tests__/analytics*.test.ts --no-watch --silent --run 
   test-code-quality:
     name: Test - Code Quality
     needs: test-base
@@ -137,8 +136,7 @@ jobs:
         run: pnpm install --frozen-lockfile
 
       - name: Run Code Quality Tests
-        run: npx vitest run src/utils/__tests__/codeQualityMetrics.test.ts --no-watch --silent --run --sourcemap=false
-
+        run: npx vitest run src/utils/__tests__/codeQualityMetrics.test.ts --no-watch --silent --run 
   test-root:
     name: Test - Root (Main App)
     needs: test-base
