@@ -1,14 +1,13 @@
-// Shared logic for web and mobile
+// Using CO5 (Composition) - Single entry point for @hummbl/shared package
 
-// Re-export hooks
-export * from './hooks/useBookmarks';
-export * from './hooks/useNotes';
-export * from './hooks/useSearchHistory';
-export * from './hooks/useReadingHistory';
-
-// Re-export utilities
-export * from './utils/fuzzySearch';
-export * from './utils/relatedContent';
-
-// Re-export types
+// Types
 export * from './types';
+
+// Stores
+export * from './stores';
+
+// Hooks
+export * from './hooks';
+
+// Utilities
+export * from './utils';

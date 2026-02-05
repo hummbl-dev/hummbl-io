@@ -1,7 +1,8 @@
-// Root layout for mobile app
+// Using P1 (First Principles) - Root layout with tab navigation
 
 import { Stack } from 'expo-router';
 import { StatusBar } from 'expo-status-bar';
+import { colors } from '../theme';
 
 export default function RootLayout() {
   return (
@@ -9,44 +10,31 @@ export default function RootLayout() {
       <StatusBar style="auto" />
       <Stack
         screenOptions={{
-          headerShown: true,
-          headerStyle: {
-            backgroundColor: '#3b82f6',
-          },
-          headerTintColor: '#fff',
-          headerTitleStyle: {
-            fontWeight: 'bold',
+          headerShown: false,
+          contentStyle: {
+            backgroundColor: colors.background.primary,
           },
         }}
       >
+        <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
         <Stack.Screen
-          name="index"
+          name="mental-models/[id]"
           options={{
-            title: 'HUMMBL',
+            headerShown: true,
+            title: 'Mental Model',
+            headerStyle: { backgroundColor: colors.primary[500] },
+            headerTintColor: colors.text.inverse,
+            presentation: 'card',
           }}
         />
         <Stack.Screen
-          name="mental-models/index"
+          name="narratives/[id]"
           options={{
-            title: 'Mental Models',
-          }}
-        />
-        <Stack.Screen
-          name="narratives/index"
-          options={{
-            title: 'Narratives',
-          }}
-        />
-        <Stack.Screen
-          name="search"
-          options={{
-            title: 'Search',
-          }}
-        />
-        <Stack.Screen
-          name="bookmarks"
-          options={{
-            title: 'Bookmarks',
+            headerShown: true,
+            title: 'Narrative',
+            headerStyle: { backgroundColor: colors.primary[500] },
+            headerTintColor: colors.text.inverse,
+            presentation: 'card',
           }}
         />
       </Stack>
