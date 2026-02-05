@@ -2,7 +2,7 @@
 
 import { create, StoreApi, UseBoundStore } from 'zustand';
 import { persist, createJSONStorage, StateStorage } from 'zustand/middleware';
-import type { Bookmark, BookmarkType, BookmarkState, BookmarkActions } from '../types';
+import type { Bookmark, BookmarkState, BookmarkActions } from '../types';
 
 // Generate unique ID
 const generateId = () => `${Date.now()}-${Math.random().toString(36).substr(2, 9)}`;
@@ -58,16 +58,10 @@ export const createBookmarkStore = (storage: StateStorage): UseBoundStore<StoreA
     )
   );
 
-// Using SY8 (Systems) - Platform-adaptive default storage
-const createDefaultStorage = (): StateStorage => {
-  if (typeof window !== 'undefined' && window.localStorage) {
-    return {
-      getItem: (name) => window.localStorage.getItem(name),
-      setItem: (name, value) => window.localStorage.setItem(name, value),
-      removeItem: (name) => window.localStorage.removeItem(name),
-    };
-  }
-  // Fallback for SSR/non-browser (memory storage)
+// Using SY8 (Systems) - Default in-memory storage
+// Platform-specific storage (AsyncStorage for mobile, localStorage for web) should be
+// provided via initializeBookmarkStore() for persistence
+const createMemoryStorage = (): StateStorage => {
   const memoryStorage = new Map<string, string>();
   return {
     getItem: (name) => memoryStorage.get(name) ?? null,
@@ -92,7 +86,7 @@ export const initializeBookmarkStore = (storage: StateStorage): void => {
  */
 export const useBookmarkStore = (): BookmarkStore => {
   if (!bookmarkStoreInstance) {
-    bookmarkStoreInstance = createBookmarkStore(createDefaultStorage());
+    bookmarkStoreInstance = createBookmarkStore(createMemoryStorage());
   }
   return bookmarkStoreInstance();
 };
@@ -103,7 +97,7 @@ export const useBookmarkStore = (): BookmarkStore => {
  */
 export const getBookmarkStoreHook = (): UseBoundStore<StoreApi<BookmarkStore>> => {
   if (!bookmarkStoreInstance) {
-    bookmarkStoreInstance = createBookmarkStore(createDefaultStorage());
+    bookmarkStoreInstance = createBookmarkStore(createMemoryStorage());
   }
   return bookmarkStoreInstance;
 };

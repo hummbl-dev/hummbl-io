@@ -6,13 +6,7 @@ import { Ionicons } from '@expo/vector-icons';
 import { colors, spacing, layout, typography } from '../../theme';
 import { MentalModelCard, NarrativeCard } from '../../components';
 import { SAMPLE_MODELS, SAMPLE_NARRATIVES } from '../../services/data';
-import { fuzzySearch, highlightMatches } from '@hummbl/shared';
-
-type SearchResult = {
-  type: 'model' | 'narrative';
-  item: typeof SAMPLE_MODELS[0] | typeof SAMPLE_NARRATIVES[0];
-  score: number;
-};
+import { fuzzySearch } from '@hummbl/shared';
 
 const SUGGESTIONS = ['First Principles', 'Systems', 'Decision Making', 'Risk', 'Feedback'];
 
@@ -88,7 +82,7 @@ export default function SearchScreen() {
               <Text style={styles.resultsCount}>
                 {results.length} result{results.length !== 1 ? 's' : ''}
               </Text>
-              {results.map((result, index) => (
+              {results.map((result) => (
                 result.type === 'model' ? (
                   <MentalModelCard
                     key={`model-${result.item.id}`}

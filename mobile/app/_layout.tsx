@@ -1,6 +1,5 @@
 // Using P1 (First Principles) - Root layout with store initialization
 
-import { useEffect } from 'react';
 import { Stack } from 'expo-router';
 import { StatusBar } from 'expo-status-bar';
 import { colors } from '../theme';

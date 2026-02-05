@@ -36,8 +36,8 @@ export function Button({
     styles.button,
     styles[`button_${variant}`],
     styles[`button_${size}`],
-    fullWidth && styles.fullWidth,
-    isDisabled && styles.disabled,
+    ...(fullWidth ? [styles.fullWidth] : []),
+    ...(isDisabled ? [styles.disabled] : []),
   ];
 
   const textStyles: TextStyle[] = [

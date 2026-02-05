@@ -5,7 +5,7 @@ import { useLocalSearchParams, Stack, router } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
 import { colors, spacing, layout, typography } from '../../theme';
 import { useBookmarks } from '@hummbl/shared';
-import { getModelById, type SampleModel } from '../../services/data';
+import { getModelById } from '../../services/data';
 
 const transformationColors: Record<string, string> = {
   P: colors.transformations.P,

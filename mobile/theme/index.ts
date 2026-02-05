@@ -1,19 +1,20 @@
 // Using CO5 (Composition) - HUMMBL mobile design system
 
-export { colors, darkColors } from './colors';
-export type { Colors } from './colors';
+import { colors, darkColors, type Colors } from './colors';
+import { spacing, layout, type Spacing, type Layout } from './spacing';
+import { typography, fontWeights, fontSizes, lineHeights, type Typography } from './typography';
 
-export { spacing, layout } from './spacing';
-export type { Spacing, Layout } from './spacing';
+// Re-export everything
+export { colors, darkColors };
+export type { Colors };
 
-export { typography, fontWeights, fontSizes, lineHeights } from './typography';
-export type { Typography } from './typography';
+export { spacing, layout };
+export type { Spacing, Layout };
 
-// Combined theme type
-import { colors, darkColors } from './colors';
-import { spacing, layout } from './spacing';
-import { typography } from './typography';
+export { typography, fontWeights, fontSizes, lineHeights };
+export type { Typography };
 
+// Combined theme
 export const lightTheme = {
   colors,
   spacing,
