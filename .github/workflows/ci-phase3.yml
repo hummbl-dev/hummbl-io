@@ -86,7 +86,7 @@ jobs:
           mkdir -p test-results
 
           # Run tests with JUnit reporter for better CI integration
-          npm run test:memory-optimized -- --reporter=junit --reporter-options="outputFile=test-results/junit-phase3.xml" --verbose || {
+          npm run test:memory-optimized -- --reporter=junit --outputFile=test-results/junit-phase3.xml --verbose || {
             echo "Tests failed with exit code $?"
             # Don't fail here, we'll handle it after collecting artifacts
             echo "test_status=failure" >> $GITHUB_OUTPUT
