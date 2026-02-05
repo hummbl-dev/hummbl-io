@@ -6,11 +6,18 @@ export interface SampleNarrative {
   id: string;
   title: string;
   summary: string;
+  content?: string;
   category: string;
   evidenceQuality: EvidenceQuality;
   confidence: number;
   tags: string[];
   domain: string[];
+  complexity?: {
+    cognitiveLoad: 'Low' | 'Medium' | 'High';
+    timeToElicit: string;
+    expertiseRequired: 'Beginner' | 'Intermediate' | 'Advanced';
+  };
+  citations?: { author: string; year: number; title: string; source: string }[];
 }
 
 export const SAMPLE_NARRATIVES: SampleNarrative[] = [
@@ -18,11 +25,29 @@ export const SAMPLE_NARRATIVES: SampleNarrative[] = [
     id: 'nar1',
     title: 'Decision Making Under Uncertainty',
     summary: 'Evidence-based frameworks for making decisions when outcomes are uncertain and information is incomplete.',
+    content: `Decision making under uncertainty is a fundamental challenge in both personal and professional contexts.
+
+Key frameworks include:
+• Expected Value Analysis - Weighing outcomes by their probabilities
+• Scenario Planning - Developing multiple plausible futures
+• Real Options Thinking - Treating decisions as options to exercise, delay, or abandon
+• Bayesian Updating - Continuously revising beliefs with new information
+
+The evidence suggests that embracing uncertainty and using probabilistic thinking leads to better predictions and decisions than expressing overconfident certainty.`,
     category: 'Decision Science',
     evidenceQuality: 'A',
     confidence: 0.85,
     tags: ['decision-making', 'uncertainty', 'probability', 'risk'],
     domain: ['Business', 'Psychology', 'Economics'],
+    complexity: {
+      cognitiveLoad: 'Medium',
+      timeToElicit: '15-30 minutes',
+      expertiseRequired: 'Intermediate',
+    },
+    citations: [
+      { author: 'Kahneman, D.', year: 2011, title: 'Thinking, Fast and Slow', source: 'Farrar, Straus and Giroux' },
+      { author: 'Tetlock, P.', year: 2015, title: 'Superforecasting', source: 'Crown Publishing' },
+    ],
   },
   {
     id: 'nar2',

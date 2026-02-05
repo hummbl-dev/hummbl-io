@@ -1,49 +1,11 @@
 // Using SY8 (Systems) - Narrative detail screen
 
 import { View, Text, ScrollView, StyleSheet, Pressable } from 'react-native';
-import { useLocalSearchParams, Stack } from 'expo-router';
+import { useLocalSearchParams, Stack, router } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
 import { colors, spacing, layout, typography } from '../../theme';
 import { useBookmarks } from '@hummbl/shared';
-
-// Sample data - will be replaced with real data
-const SAMPLE_NARRATIVE = {
-  id: '1',
-  narrative_id: 'NAR-001',
-  title: 'Decision Making Under Uncertainty',
-  summary: 'This narrative explores evidence-based frameworks for making decisions when outcomes are uncertain and information is incomplete.',
-  content: `Decision making under uncertainty is a fundamental challenge in both personal and professional contexts. Traditional rational decision-making models assume complete information, but real-world decisions often involve significant uncertainty.
-
-Key frameworks for handling uncertainty include:
-
-1. **Expected Value Analysis**: Weighing outcomes by their probabilities to find the optimal choice.
-
-2. **Scenario Planning**: Developing multiple plausible futures and creating flexible strategies.
-
-3. **Real Options Thinking**: Treating decisions as options that can be exercised, delayed, or abandoned.
-
-4. **Bayesian Updating**: Continuously revising beliefs as new information becomes available.
-
-The evidence suggests that experts who embrace uncertainty and use probabilistic thinking tend to make better predictions and decisions than those who express overconfident certainty.`,
-  category: 'Decision Science',
-  evidence_quality: 'A' as const,
-  confidence: 0.85,
-  tags: ['decision-making', 'uncertainty', 'probability', 'risk'],
-  domain: ['Business', 'Psychology', 'Economics'],
-  complexity: {
-    cognitive_load: 'Medium',
-    time_to_elicit: '15-30 minutes',
-    expertise_required: 'Intermediate',
-  },
-  citations: [
-    { author: 'Kahneman, D.', year: 2011, title: 'Thinking, Fast and Slow', source: 'Farrar, Straus and Giroux' },
-    { author: 'Tetlock, P.', year: 2015, title: 'Superforecasting', source: 'Crown Publishing' },
-  ],
-  methods: [
-    { method: 'Pre-mortem Analysis', description: 'Imagine the decision failed and work backwards', duration: '30 min', difficulty: 'Beginner' as const },
-    { method: 'Decision Matrix', description: 'Score options against weighted criteria', duration: '1 hour', difficulty: 'Intermediate' as const },
-  ],
-};
+import { getNarrativeById } from '../../services/data';
 
 const evidenceColors: Record<string, string> = {
   A: colors.evidence.A,
@@ -55,9 +17,25 @@ export default function NarrativeDetailScreen() {
   const { id } = useLocalSearchParams<{ id: string }>();
   const { isBookmarked, toggleBookmark } = useBookmarks();
 
-  // In real app, fetch narrative by id
-  const narrative = SAMPLE_NARRATIVE;
-  const evidenceColor = evidenceColors[narrative.evidence_quality] || colors.evidence.C;
+  const narrative = getNarrativeById(id || '');
+
+  if (!narrative) {
+    return (
+      <>
+        <Stack.Screen options={{ title: 'Not Found' }} />
+        <View style={styles.notFound}>
+          <Ionicons name="alert-circle" size={48} color={colors.text.secondary} />
+          <Text style={styles.notFoundTitle}>Narrative not found</Text>
+          <Text style={styles.notFoundText}>The narrative you're looking for doesn't exist.</Text>
+          <Pressable style={styles.backButton} onPress={() => router.back()}>
+            <Text style={styles.backButtonText}>Go Back</Text>
+          </Pressable>
+        </View>
+      </>
+    );
+  }
+
+  const evidenceColor = evidenceColors[narrative.evidenceQuality] || colors.evidence.C;
   const bookmarked = isBookmarked(narrative.id, 'narrative');
 
   const handleBookmark = () => {
@@ -95,7 +73,7 @@ export default function NarrativeDetailScreen() {
           <View style={styles.headerTop}>
             <View style={[styles.evidenceBadge, { backgroundColor: evidenceColor }]}>
               <Text style={styles.evidenceBadgeText}>
-                Evidence: {narrative.evidence_quality}
+                Evidence: {narrative.evidenceQuality}
               </Text>
             </View>
             <Text style={styles.confidence}>
@@ -109,57 +87,41 @@ export default function NarrativeDetailScreen() {
               <Ionicons name="folder" size={14} color={colors.text.secondary} />
               <Text style={styles.metaText}>{narrative.category}</Text>
             </View>
-            <View style={styles.metaItem}>
-              <Ionicons name="time" size={14} color={colors.text.secondary} />
-              <Text style={styles.metaText}>{narrative.complexity.time_to_elicit}</Text>
-            </View>
+            {narrative.complexity && (
+              <View style={styles.metaItem}>
+                <Ionicons name="time" size={14} color={colors.text.secondary} />
+                <Text style={styles.metaText}>{narrative.complexity.timeToElicit}</Text>
+              </View>
+            )}
           </View>
         </View>
 
         {/* Content */}
-        <View style={styles.section}>
-          <Text style={styles.sectionTitle}>Overview</Text>
-          <Text style={styles.contentText}>{narrative.content}</Text>
-        </View>
+        {narrative.content && (
+          <View style={styles.section}>
+            <Text style={styles.sectionTitle}>Overview</Text>
+            <Text style={styles.contentText}>{narrative.content}</Text>
+          </View>
+        )}
 
         {/* Complexity */}
-        <View style={styles.section}>
-          <Text style={styles.sectionTitle}>Complexity</Text>
-          <View style={styles.complexityGrid}>
-            <View style={styles.complexityItem}>
-              <Text style={styles.complexityLabel}>Cognitive Load</Text>
-              <Text style={styles.complexityValue}>{narrative.complexity.cognitive_load}</Text>
-            </View>
-            <View style={styles.complexityItem}>
-              <Text style={styles.complexityLabel}>Time Required</Text>
-              <Text style={styles.complexityValue}>{narrative.complexity.time_to_elicit}</Text>
-            </View>
-            <View style={styles.complexityItem}>
-              <Text style={styles.complexityLabel}>Expertise</Text>
-              <Text style={styles.complexityValue}>{narrative.complexity.expertise_required}</Text>
-            </View>
-          </View>
-        </View>
-
-        {/* Methods */}
-        {narrative.methods && narrative.methods.length > 0 && (
+        {narrative.complexity && (
           <View style={styles.section}>
-            <Text style={styles.sectionTitle}>Methods</Text>
-            {narrative.methods.map((method, index) => (
-              <View key={index} style={styles.methodCard}>
-                <View style={styles.methodHeader}>
-                  <Text style={styles.methodName}>{method.method}</Text>
-                  <View style={styles.methodBadge}>
-                    <Text style={styles.methodBadgeText}>{method.difficulty}</Text>
-                  </View>
-                </View>
-                <Text style={styles.methodDescription}>{method.description}</Text>
-                <View style={styles.methodMeta}>
-                  <Ionicons name="time-outline" size={14} color={colors.text.secondary} />
-                  <Text style={styles.methodDuration}>{method.duration}</Text>
-                </View>
+            <Text style={styles.sectionTitle}>Complexity</Text>
+            <View style={styles.complexityGrid}>
+              <View style={styles.complexityItem}>
+                <Text style={styles.complexityLabel}>Cognitive Load</Text>
+                <Text style={styles.complexityValue}>{narrative.complexity.cognitiveLoad}</Text>
               </View>
-            ))}
+              <View style={styles.complexityItem}>
+                <Text style={styles.complexityLabel}>Time Required</Text>
+                <Text style={styles.complexityValue}>{narrative.complexity.timeToElicit}</Text>
+              </View>
+              <View style={styles.complexityItem}>
+                <Text style={styles.complexityLabel}>Expertise</Text>
+                <Text style={styles.complexityValue}>{narrative.complexity.expertiseRequired}</Text>
+              </View>
+            </View>
           </View>
         )}
 
@@ -183,21 +145,23 @@ export default function NarrativeDetailScreen() {
         </View>
 
         {/* Citations */}
-        <View style={styles.section}>
-          <Text style={styles.sectionTitle}>Citations</Text>
-          {narrative.citations.map((citation, index) => (
-            <View key={index} style={styles.citationItem}>
-              <Ionicons name="book" size={16} color={colors.text.secondary} />
-              <View style={styles.citationContent}>
-                <Text style={styles.citationAuthor}>
-                  {citation.author} ({citation.year})
-                </Text>
-                <Text style={styles.citationTitle}>{citation.title}</Text>
-                <Text style={styles.citationSource}>{citation.source}</Text>
+        {narrative.citations && narrative.citations.length > 0 && (
+          <View style={styles.section}>
+            <Text style={styles.sectionTitle}>Citations</Text>
+            {narrative.citations.map((citation, index) => (
+              <View key={index} style={styles.citationItem}>
+                <Ionicons name="book" size={16} color={colors.text.secondary} />
+                <View style={styles.citationContent}>
+                  <Text style={styles.citationAuthor}>
+                    {citation.author} ({citation.year})
+                  </Text>
+                  <Text style={styles.citationTitle}>{citation.title}</Text>
+                  <Text style={styles.citationSource}>{citation.source}</Text>
+                </View>
               </View>
-            </View>
-          ))}
-        </View>
+            ))}
+          </View>
+        )}
       </ScrollView>
     </>
   );
@@ -210,6 +174,35 @@ const styles = StyleSheet.create({
   },
   content: {
     paddingBottom: spacing.xxl,
+  },
+  notFound: {
+    flex: 1,
+    alignItems: 'center',
+    justifyContent: 'center',
+    padding: layout.screenPadding,
+    backgroundColor: colors.background.secondary,
+  },
+  notFoundTitle: {
+    ...typography.headingMedium,
+    color: colors.text.primary,
+    marginTop: spacing.md,
+  },
+  notFoundText: {
+    ...typography.bodyMedium,
+    color: colors.text.secondary,
+    textAlign: 'center',
+    marginTop: spacing.xs,
+    marginBottom: spacing.lg,
+  },
+  backButton: {
+    backgroundColor: colors.primary[500],
+    paddingVertical: spacing.sm,
+    paddingHorizontal: spacing.lg,
+    borderRadius: layout.buttonBorderRadius,
+  },
+  backButtonText: {
+    ...typography.labelLarge,
+    color: colors.text.inverse,
   },
   header: {
     backgroundColor: colors.background.primary,

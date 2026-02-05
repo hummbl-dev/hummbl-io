@@ -11,6 +11,9 @@ export interface SampleModel {
   transformation: TransformationKey;
   difficulty: number;
   tags: string[];
+  example?: string;
+  sources?: { name: string; reference: string }[];
+  relatedModels?: string[];
 }
 
 export const SAMPLE_MODELS: SampleModel[] = [
@@ -19,11 +22,17 @@ export const SAMPLE_MODELS: SampleModel[] = [
     id: 'p1',
     code: 'P1',
     name: 'First Principles Thinking',
-    description: 'Break down complex problems into their most basic, foundational elements.',
+    description: 'Break down complex problems into their most basic, foundational elements. Instead of reasoning by analogy, you deconstruct the problem to its core truths and build up from there.',
     category: 'Perspective',
     transformation: 'P',
     difficulty: 3,
     tags: ['problem-solving', 'innovation', 'critical-thinking'],
+    example: 'Elon Musk used first principles thinking to reduce the cost of SpaceX rockets. Instead of accepting the market price for rocket components, he broke down a rocket into its raw materials and found he could build them for a fraction of the cost.',
+    sources: [
+      { name: 'Aristotle', reference: 'Metaphysics' },
+      { name: 'Elon Musk', reference: 'Various Interviews' },
+    ],
+    relatedModels: ['IN1', 'DE1', 'CO1'],
   },
   {
     id: 'p2',
@@ -61,11 +70,17 @@ export const SAMPLE_MODELS: SampleModel[] = [
     id: 'in2',
     code: 'IN2',
     name: 'Premortem Analysis',
-    description: 'Imagine a project has failed and work backwards to identify why.',
+    description: 'Imagine a project has failed and work backwards to identify why. This technique helps uncover potential issues that optimism bias might otherwise hide.',
     category: 'Inversion',
     transformation: 'IN',
     difficulty: 2,
     tags: ['risk', 'planning', 'projects'],
+    example: 'Before launching a new product, a team imagines it flopped completely. They then brainstorm all the reasons for failure: poor market fit, weak marketing, technical bugs, competitor response. This surfaces risks they can address proactively.',
+    sources: [
+      { name: 'Gary Klein', reference: 'The Power of Intuition' },
+      { name: 'Daniel Kahneman', reference: 'Thinking, Fast and Slow' },
+    ],
+    relatedModels: ['P1', 'IN1', 'SY2'],
   },
   {
     id: 'in3',

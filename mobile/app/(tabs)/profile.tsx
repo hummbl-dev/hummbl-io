@@ -4,6 +4,7 @@ import { View, Text, ScrollView, StyleSheet, Pressable, Switch } from 'react-nat
 import { Ionicons } from '@expo/vector-icons';
 import { useState } from 'react';
 import { colors, spacing, layout, typography } from '../../theme';
+import { useBookmarks } from '@hummbl/shared';
 
 interface SettingRowProps {
   icon: keyof typeof Ionicons.glyphMap;
@@ -37,6 +38,7 @@ function SettingRow({ icon, title, subtitle, onPress, rightElement }: SettingRow
 }
 
 export default function ProfileScreen() {
+  const { bookmarks, modelBookmarks, narrativeBookmarks } = useBookmarks();
   const [darkMode, setDarkMode] = useState(false);
   const [notifications, setNotifications] = useState(true);
   const [offlineMode, setOfflineMode] = useState(false);
@@ -59,18 +61,18 @@ export default function ProfileScreen() {
       {/* Stats */}
       <View style={styles.statsSection}>
         <View style={styles.statItem}>
-          <Text style={styles.statNumber}>0</Text>
+          <Text style={styles.statNumber}>{bookmarks.length}</Text>
           <Text style={styles.statLabel}>Bookmarks</Text>
         </View>
         <View style={styles.statDivider} />
         <View style={styles.statItem}>
-          <Text style={styles.statNumber}>0</Text>
-          <Text style={styles.statLabel}>Notes</Text>
+          <Text style={styles.statNumber}>{modelBookmarks.length}</Text>
+          <Text style={styles.statLabel}>Models</Text>
         </View>
         <View style={styles.statDivider} />
         <View style={styles.statItem}>
-          <Text style={styles.statNumber}>0</Text>
-          <Text style={styles.statLabel}>Read</Text>
+          <Text style={styles.statNumber}>{narrativeBookmarks.length}</Text>
+          <Text style={styles.statLabel}>Narratives</Text>
         </View>
       </View>
 
