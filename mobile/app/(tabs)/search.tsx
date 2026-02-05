@@ -2,92 +2,54 @@
 
 import { useState, useMemo, useCallback } from 'react';
 import { View, Text, TextInput, ScrollView, StyleSheet, Pressable } from 'react-native';
-import { Link } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
 import { colors, spacing, layout, typography } from '../../theme';
+import { MentalModelCard, NarrativeCard } from '../../components';
+import { SAMPLE_MODELS, SAMPLE_NARRATIVES } from '../../services/data';
 import { fuzzySearch, highlightMatches } from '@hummbl/shared';
 
-// Sample data - will be replaced with real data
-const SEARCH_DATA = [
-  { id: '1', type: 'model' as const, code: 'P1', name: 'First Principles', description: 'Break down complex problems into basic elements' },
-  { id: '2', type: 'model' as const, code: 'IN1', name: 'Inversion', description: 'Think backwards from the desired outcome' },
-  { id: '3', type: 'model' as const, code: 'CO1', name: 'Composition', description: 'Combine simple elements into complex systems' },
-  { id: '4', type: 'model' as const, code: 'DE1', name: 'Decomposition', description: 'Break complex problems into manageable parts' },
-  { id: '5', type: 'model' as const, code: 'RE1', name: 'Recursion', description: 'Apply patterns at multiple levels' },
-  { id: '6', type: 'model' as const, code: 'SY1', name: 'Systems Thinking', description: 'Understand interconnections and feedback loops' },
-  { id: '7', type: 'narrative' as const, name: 'Decision Making Under Uncertainty', description: 'Frameworks for making decisions with incomplete information' },
-  { id: '8', type: 'narrative' as const, name: 'Cognitive Biases', description: 'Understanding systematic errors in thinking' },
-];
+type SearchResult = {
+  type: 'model' | 'narrative';
+  item: typeof SAMPLE_MODELS[0] | typeof SAMPLE_NARRATIVES[0];
+  score: number;
+};
 
-function HighlightedText({ text, query }: { text: string; query: string }) {
-  const parts = highlightMatches(text, query);
-
-  return (
-    <Text style={styles.resultTitle}>
-      {parts.map((part, i) => (
-        <Text
-          key={i}
-          style={part.highlight ? styles.highlight : undefined}
-        >
-          {part.text}
-        </Text>
-      ))}
-    </Text>
-  );
-}
-
-function SearchResult({ item, query }: { item: typeof SEARCH_DATA[0]; query: string }) {
-  const href = item.type === 'model'
-    ? `/mental-models/${item.id}`
-    : `/narratives/${item.id}`;
-
-  return (
-    <Link href={href as any} asChild>
-      <Pressable style={styles.resultCard}>
-        <View style={styles.resultIcon}>
-          <Ionicons
-            name={item.type === 'model' ? 'grid' : 'document-text'}
-            size={20}
-            color={colors.primary[500]}
-          />
-        </View>
-        <View style={styles.resultContent}>
-          <View style={styles.resultHeader}>
-            {item.code && (
-              <Text style={styles.resultCode}>{item.code}</Text>
-            )}
-            <HighlightedText text={item.name} query={query} />
-          </View>
-          <Text style={styles.resultDescription} numberOfLines={2}>
-            {item.description}
-          </Text>
-          <Text style={styles.resultType}>
-            {item.type === 'model' ? 'Mental Model' : 'Narrative'}
-          </Text>
-        </View>
-        <Ionicons name="chevron-forward" size={20} color={colors.text.secondary} />
-      </Pressable>
-    </Link>
-  );
-}
+const SUGGESTIONS = ['First Principles', 'Systems', 'Decision Making', 'Risk', 'Feedback'];
 
 export default function SearchScreen() {
   const [query, setQuery] = useState('');
-  const [recentSearches] = useState(['systems', 'cognitive', 'decision']);
+  const [recentSearches, setRecentSearches] = useState(['systems', 'cognitive', 'decision']);
 
   const results = useMemo(() => {
     if (!query.trim()) return [];
 
-    return fuzzySearch(SEARCH_DATA, query, {
-      keys: ['name', 'code', 'description'],
-      threshold: 0.3,
-      limit: 20,
-    });
+    // Search both models and narratives
+    const modelResults = fuzzySearch(
+      SAMPLE_MODELS.map((m) => ({ ...m, searchText: `${m.code} ${m.name} ${m.description}` })),
+      query,
+      { keys: ['name', 'code', 'description', 'tags'], threshold: 0.4, limit: 10 }
+    ).map((r) => ({ type: 'model' as const, item: r.item, score: r.score }));
+
+    const narrativeResults = fuzzySearch(
+      SAMPLE_NARRATIVES.map((n) => ({ ...n, searchText: `${n.title} ${n.summary}` })),
+      query,
+      { keys: ['title', 'summary', 'category', 'tags'], threshold: 0.4, limit: 10 }
+    ).map((r) => ({ type: 'narrative' as const, item: r.item, score: r.score }));
+
+    // Combine and sort by score
+    return [...modelResults, ...narrativeResults].sort((a, b) => b.score - a.score);
   }, [query]);
 
   const clearSearch = useCallback(() => {
     setQuery('');
   }, []);
+
+  const handleSearch = useCallback((searchQuery: string) => {
+    setQuery(searchQuery);
+    if (searchQuery.trim() && !recentSearches.includes(searchQuery.toLowerCase())) {
+      setRecentSearches((prev) => [searchQuery.toLowerCase(), ...prev.slice(0, 4)]);
+    }
+  }, [recentSearches]);
 
   return (
     <View style={styles.container}>
@@ -104,6 +66,7 @@ export default function SearchScreen() {
             autoCapitalize="none"
             autoCorrect={false}
             returnKeyType="search"
+            onSubmitEditing={() => handleSearch(query)}
           />
           {query.length > 0 && (
             <Pressable onPress={clearSearch} hitSlop={8}>
@@ -125,8 +88,28 @@ export default function SearchScreen() {
               <Text style={styles.resultsCount}>
                 {results.length} result{results.length !== 1 ? 's' : ''}
               </Text>
-              {results.map((result) => (
-                <SearchResult key={result.item.id} item={result.item} query={query} />
+              {results.map((result, index) => (
+                result.type === 'model' ? (
+                  <MentalModelCard
+                    key={`model-${result.item.id}`}
+                    id={result.item.id}
+                    code={(result.item as typeof SAMPLE_MODELS[0]).code}
+                    name={(result.item as typeof SAMPLE_MODELS[0]).name}
+                    description={(result.item as typeof SAMPLE_MODELS[0]).description}
+                    transformation={(result.item as typeof SAMPLE_MODELS[0]).transformation}
+                    difficulty={(result.item as typeof SAMPLE_MODELS[0]).difficulty}
+                  />
+                ) : (
+                  <NarrativeCard
+                    key={`narrative-${result.item.id}`}
+                    id={result.item.id}
+                    title={(result.item as typeof SAMPLE_NARRATIVES[0]).title}
+                    summary={(result.item as typeof SAMPLE_NARRATIVES[0]).summary}
+                    category={(result.item as typeof SAMPLE_NARRATIVES[0]).category}
+                    evidenceQuality={(result.item as typeof SAMPLE_NARRATIVES[0]).evidenceQuality}
+                    confidence={(result.item as typeof SAMPLE_NARRATIVES[0]).confidence}
+                  />
+                )
               ))}
             </View>
           ) : (
@@ -139,31 +122,52 @@ export default function SearchScreen() {
             </View>
           )
         ) : (
-          // Recent searches
+          // Recent searches and suggestions
           <View style={styles.recentSection}>
-            <Text style={styles.sectionTitle}>Recent Searches</Text>
-            {recentSearches.map((search, index) => (
-              <Pressable
-                key={index}
-                style={styles.recentItem}
-                onPress={() => setQuery(search)}
-              >
-                <Ionicons name="time-outline" size={18} color={colors.text.secondary} />
-                <Text style={styles.recentText}>{search}</Text>
-              </Pressable>
-            ))}
+            {recentSearches.length > 0 && (
+              <>
+                <Text style={styles.sectionTitle}>Recent Searches</Text>
+                {recentSearches.map((search, index) => (
+                  <Pressable
+                    key={index}
+                    style={styles.recentItem}
+                    onPress={() => setQuery(search)}
+                  >
+                    <Ionicons name="time-outline" size={18} color={colors.text.secondary} />
+                    <Text style={styles.recentText}>{search}</Text>
+                  </Pressable>
+                ))}
+              </>
+            )}
 
             <Text style={[styles.sectionTitle, { marginTop: spacing.lg }]}>
               Suggestions
             </Text>
             <View style={styles.suggestionsGrid}>
-              {['First Principles', 'Systems', 'Decision Making', 'Cognitive'].map((suggestion) => (
+              {SUGGESTIONS.map((suggestion) => (
                 <Pressable
                   key={suggestion}
                   style={styles.suggestionChip}
                   onPress={() => setQuery(suggestion)}
                 >
                   <Text style={styles.suggestionText}>{suggestion}</Text>
+                </Pressable>
+              ))}
+            </View>
+
+            {/* Transformation quick filters */}
+            <Text style={[styles.sectionTitle, { marginTop: spacing.lg }]}>
+              Browse by Transformation
+            </Text>
+            <View style={styles.transformationGrid}>
+              {(['P', 'IN', 'CO', 'DE', 'RE', 'SY'] as const).map((t) => (
+                <Pressable
+                  key={t}
+                  style={[styles.transformationChip, { borderColor: colors.transformations[t] }]}
+                  onPress={() => setQuery(t)}
+                >
+                  <View style={[styles.transformationDot, { backgroundColor: colors.transformations[t] }]} />
+                  <Text style={[styles.transformationText, { color: colors.transformations[t] }]}>{t}</Text>
                 </Pressable>
               ))}
             </View>
@@ -213,56 +217,6 @@ const styles = StyleSheet.create({
     color: colors.text.secondary,
     marginBottom: spacing.xs,
   },
-  resultCard: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    backgroundColor: colors.background.primary,
-    padding: layout.cardPadding,
-    borderRadius: layout.cardBorderRadius,
-  },
-  resultIcon: {
-    width: 40,
-    height: 40,
-    borderRadius: 8,
-    backgroundColor: colors.primary[50],
-    alignItems: 'center',
-    justifyContent: 'center',
-    marginRight: spacing.md,
-  },
-  resultContent: {
-    flex: 1,
-  },
-  resultHeader: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: spacing.xs,
-    marginBottom: spacing.xxs,
-  },
-  resultCode: {
-    ...typography.labelSmall,
-    color: colors.primary[500],
-    backgroundColor: colors.primary[50],
-    paddingHorizontal: spacing.xs,
-    paddingVertical: 2,
-    borderRadius: 4,
-  },
-  resultTitle: {
-    ...typography.labelLarge,
-    color: colors.text.primary,
-  },
-  highlight: {
-    backgroundColor: colors.primary[100],
-    color: colors.primary[700],
-  },
-  resultDescription: {
-    ...typography.bodySmall,
-    color: colors.text.secondary,
-    marginBottom: spacing.xxs,
-  },
-  resultType: {
-    ...typography.caption,
-    color: colors.text.secondary,
-  },
   emptyState: {
     alignItems: 'center',
     paddingVertical: spacing.xxl,
@@ -309,5 +263,28 @@ const styles = StyleSheet.create({
   suggestionText: {
     ...typography.labelMedium,
     color: colors.text.primary,
+  },
+  transformationGrid: {
+    flexDirection: 'row',
+    flexWrap: 'wrap',
+    gap: spacing.sm,
+  },
+  transformationChip: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    backgroundColor: colors.background.primary,
+    paddingVertical: spacing.sm,
+    paddingHorizontal: spacing.md,
+    borderRadius: 20,
+    borderWidth: 1,
+    gap: spacing.xs,
+  },
+  transformationDot: {
+    width: 8,
+    height: 8,
+    borderRadius: 4,
+  },
+  transformationText: {
+    ...typography.labelMedium,
   },
 });

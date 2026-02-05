@@ -1,80 +1,48 @@
-// Using DE3 (Decomposition) - Explore screen with mental models and narratives
+// Using DE3 (Decomposition) - Explore screen with filtering
 
-import { useState } from 'react';
+import { useState, useMemo } from 'react';
 import { View, Text, ScrollView, StyleSheet, Pressable } from 'react-native';
-import { Link } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
 import { colors, spacing, layout, typography } from '../../theme';
+import { MentalModelCard, NarrativeCard } from '../../components';
+import { SAMPLE_MODELS, SAMPLE_NARRATIVES } from '../../services/data';
+import type { TransformationKey, EvidenceQuality } from '@hummbl/shared';
 
 type ContentType = 'models' | 'narratives';
+type TransformationFilter = TransformationKey | 'all';
+type EvidenceFilter = EvidenceQuality | 'all';
 
-// Sample data - will be replaced with real data from shared package
-const SAMPLE_MODELS = [
-  { id: '1', code: 'P1', name: 'First Principles', category: 'Perspective', transformation: 'P' },
-  { id: '2', code: 'IN1', name: 'Inversion', category: 'Inversion', transformation: 'IN' },
-  { id: '3', code: 'CO1', name: 'Composition', category: 'Composition', transformation: 'CO' },
-  { id: '4', code: 'DE1', name: 'Decomposition', category: 'Decomposition', transformation: 'DE' },
-  { id: '5', code: 'RE1', name: 'Recursion', category: 'Recursion', transformation: 'RE' },
-  { id: '6', code: 'SY1', name: 'Systems Thinking', category: 'Systems', transformation: 'SY' },
+const TRANSFORMATIONS: { key: TransformationFilter; label: string; color: string }[] = [
+  { key: 'all', label: 'All', color: colors.primary[500] },
+  { key: 'P', label: 'P', color: colors.transformations.P },
+  { key: 'IN', label: 'IN', color: colors.transformations.IN },
+  { key: 'CO', label: 'CO', color: colors.transformations.CO },
+  { key: 'DE', label: 'DE', color: colors.transformations.DE },
+  { key: 'RE', label: 'RE', color: colors.transformations.RE },
+  { key: 'SY', label: 'SY', color: colors.transformations.SY },
 ];
 
-const SAMPLE_NARRATIVES = [
-  { id: '1', title: 'Decision Making Under Uncertainty', evidence_quality: 'A', category: 'Decision Science' },
-  { id: '2', title: 'Cognitive Biases in Judgment', evidence_quality: 'A', category: 'Psychology' },
-  { id: '3', title: 'Risk Assessment Frameworks', evidence_quality: 'B', category: 'Risk Management' },
+const EVIDENCE_FILTERS: { key: EvidenceFilter; label: string; color: string }[] = [
+  { key: 'all', label: 'All', color: colors.primary[500] },
+  { key: 'A', label: 'Strong (A)', color: colors.evidence.A },
+  { key: 'B', label: 'Moderate (B)', color: colors.evidence.B },
+  { key: 'C', label: 'Limited (C)', color: colors.evidence.C },
 ];
-
-const transformationColors: Record<string, string> = {
-  P: colors.transformations.P,
-  IN: colors.transformations.IN,
-  CO: colors.transformations.CO,
-  DE: colors.transformations.DE,
-  RE: colors.transformations.RE,
-  SY: colors.transformations.SY,
-};
-
-const evidenceColors: Record<string, string> = {
-  A: colors.evidence.A,
-  B: colors.evidence.B,
-  C: colors.evidence.C,
-};
-
-function ModelCard({ model }: { model: typeof SAMPLE_MODELS[0] }) {
-  const color = transformationColors[model.transformation] || colors.primary[500];
-
-  return (
-    <Link href={`/mental-models/${model.id}` as any} asChild>
-      <Pressable style={styles.card}>
-        <View style={[styles.cardBadge, { backgroundColor: color }]}>
-          <Text style={styles.cardBadgeText}>{model.code}</Text>
-        </View>
-        <Text style={styles.cardTitle}>{model.name}</Text>
-        <Text style={styles.cardSubtitle}>{model.category}</Text>
-      </Pressable>
-    </Link>
-  );
-}
-
-function NarrativeCard({ narrative }: { narrative: typeof SAMPLE_NARRATIVES[0] }) {
-  const evidenceColor = evidenceColors[narrative.evidence_quality] || colors.evidence.C;
-
-  return (
-    <Link href={`/narratives/${narrative.id}` as any} asChild>
-      <Pressable style={styles.narrativeCard}>
-        <View style={styles.narrativeContent}>
-          <Text style={styles.cardTitle} numberOfLines={2}>{narrative.title}</Text>
-          <Text style={styles.cardSubtitle}>{narrative.category}</Text>
-        </View>
-        <View style={[styles.evidenceBadge, { backgroundColor: evidenceColor }]}>
-          <Text style={styles.evidenceBadgeText}>{narrative.evidence_quality}</Text>
-        </View>
-      </Pressable>
-    </Link>
-  );
-}
 
 export default function ExploreScreen() {
   const [contentType, setContentType] = useState<ContentType>('models');
+  const [transformationFilter, setTransformationFilter] = useState<TransformationFilter>('all');
+  const [evidenceFilter, setEvidenceFilter] = useState<EvidenceFilter>('all');
+
+  const filteredModels = useMemo(() => {
+    if (transformationFilter === 'all') return SAMPLE_MODELS;
+    return SAMPLE_MODELS.filter((m) => m.transformation === transformationFilter);
+  }, [transformationFilter]);
+
+  const filteredNarratives = useMemo(() => {
+    if (evidenceFilter === 'all') return SAMPLE_NARRATIVES;
+    return SAMPLE_NARRATIVES.filter((n) => n.evidenceQuality === evidenceFilter);
+  }, [evidenceFilter]);
 
   return (
     <View style={styles.container}>
@@ -108,6 +76,64 @@ export default function ExploreScreen() {
         </Pressable>
       </View>
 
+      {/* Filters */}
+      <View style={styles.filterContainer}>
+        <ScrollView
+          horizontal
+          showsHorizontalScrollIndicator={false}
+          contentContainerStyle={styles.filterScroll}
+        >
+          {contentType === 'models'
+            ? TRANSFORMATIONS.map((t) => (
+                <Pressable
+                  key={t.key}
+                  style={[
+                    styles.filterChip,
+                    transformationFilter === t.key && { backgroundColor: t.color },
+                  ]}
+                  onPress={() => setTransformationFilter(t.key)}
+                >
+                  <Text
+                    style={[
+                      styles.filterChipText,
+                      transformationFilter === t.key && styles.filterChipTextActive,
+                    ]}
+                  >
+                    {t.label}
+                  </Text>
+                </Pressable>
+              ))
+            : EVIDENCE_FILTERS.map((e) => (
+                <Pressable
+                  key={e.key}
+                  style={[
+                    styles.filterChip,
+                    evidenceFilter === e.key && { backgroundColor: e.color },
+                  ]}
+                  onPress={() => setEvidenceFilter(e.key)}
+                >
+                  <Text
+                    style={[
+                      styles.filterChipText,
+                      evidenceFilter === e.key && styles.filterChipTextActive,
+                    ]}
+                  >
+                    {e.label}
+                  </Text>
+                </Pressable>
+              ))}
+        </ScrollView>
+      </View>
+
+      {/* Results count */}
+      <View style={styles.resultsHeader}>
+        <Text style={styles.resultsCount}>
+          {contentType === 'models'
+            ? `${filteredModels.length} model${filteredModels.length !== 1 ? 's' : ''}`
+            : `${filteredNarratives.length} narrative${filteredNarratives.length !== 1 ? 's' : ''}`}
+        </Text>
+      </View>
+
       {/* Content */}
       <ScrollView
         style={styles.scrollView}
@@ -115,15 +141,31 @@ export default function ExploreScreen() {
         showsVerticalScrollIndicator={false}
       >
         {contentType === 'models' ? (
-          <View style={styles.grid}>
-            {SAMPLE_MODELS.map((model) => (
-              <ModelCard key={model.id} model={model} />
+          <View style={styles.list}>
+            {filteredModels.map((model) => (
+              <MentalModelCard
+                key={model.id}
+                id={model.id}
+                code={model.code}
+                name={model.name}
+                description={model.description}
+                transformation={model.transformation}
+                difficulty={model.difficulty}
+              />
             ))}
           </View>
         ) : (
           <View style={styles.list}>
-            {SAMPLE_NARRATIVES.map((narrative) => (
-              <NarrativeCard key={narrative.id} narrative={narrative} />
+            {filteredNarratives.map((narrative) => (
+              <NarrativeCard
+                key={narrative.id}
+                id={narrative.id}
+                title={narrative.title}
+                summary={narrative.summary}
+                category={narrative.category}
+                evidenceQuality={narrative.evidenceQuality}
+                confidence={narrative.confidence}
+              />
             ))}
           </View>
         )}
@@ -166,66 +208,46 @@ const styles = StyleSheet.create({
   tabTextActive: {
     color: colors.primary[500],
   },
+  filterContainer: {
+    backgroundColor: colors.background.primary,
+    borderBottomWidth: 1,
+    borderBottomColor: colors.border.light,
+  },
+  filterScroll: {
+    paddingHorizontal: layout.screenPadding,
+    paddingVertical: spacing.sm,
+    gap: spacing.xs,
+  },
+  filterChip: {
+    paddingVertical: spacing.xs,
+    paddingHorizontal: spacing.md,
+    borderRadius: 16,
+    backgroundColor: colors.background.secondary,
+    marginRight: spacing.xs,
+  },
+  filterChipText: {
+    ...typography.labelSmall,
+    color: colors.text.secondary,
+  },
+  filterChipTextActive: {
+    color: colors.text.inverse,
+  },
+  resultsHeader: {
+    paddingHorizontal: layout.screenPadding,
+    paddingVertical: spacing.sm,
+  },
+  resultsCount: {
+    ...typography.caption,
+    color: colors.text.secondary,
+  },
   scrollView: {
     flex: 1,
   },
   scrollContent: {
-    padding: layout.screenPadding,
-  },
-  grid: {
-    flexDirection: 'row',
-    flexWrap: 'wrap',
-    gap: spacing.sm,
+    paddingHorizontal: layout.screenPadding,
+    paddingBottom: spacing.xl,
   },
   list: {
     gap: spacing.sm,
-  },
-  card: {
-    width: '48%',
-    backgroundColor: colors.background.primary,
-    padding: layout.cardPadding,
-    borderRadius: layout.cardBorderRadius,
-  },
-  cardBadge: {
-    alignSelf: 'flex-start',
-    paddingHorizontal: spacing.sm,
-    paddingVertical: spacing.xxs,
-    borderRadius: 4,
-    marginBottom: spacing.sm,
-  },
-  cardBadgeText: {
-    ...typography.labelSmall,
-    color: colors.text.inverse,
-  },
-  cardTitle: {
-    ...typography.labelLarge,
-    color: colors.text.primary,
-    marginBottom: spacing.xxs,
-  },
-  cardSubtitle: {
-    ...typography.caption,
-    color: colors.text.secondary,
-  },
-  narrativeCard: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    backgroundColor: colors.background.primary,
-    padding: layout.cardPadding,
-    borderRadius: layout.cardBorderRadius,
-  },
-  narrativeContent: {
-    flex: 1,
-    marginRight: spacing.md,
-  },
-  evidenceBadge: {
-    width: 32,
-    height: 32,
-    borderRadius: 16,
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  evidenceBadgeText: {
-    ...typography.labelMedium,
-    color: colors.text.inverse,
   },
 });
